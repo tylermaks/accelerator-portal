@@ -17,14 +17,17 @@ export async function GET(request: NextRequest) {
 
     if(user) {
         // const email = user.email // uncomment later for production
-        const TABLE_ID = process.env.MEETING_TABLE_ID
+        const API_KEY = process.env.AIRTABLE_API_KEY
         const BASE_ID = process.env.BASE_ID
-        const API_KEY = process.env.API_KEY
+        const TABLE_ID = process.env.MEETING_TABLE_ID
         const VIEW_ID = process.env.MEETING_VIEW_ID
         const TEST_EMAIL = process.env.TEST_EMAIL
 
+        const filterFormula = `AND({Email} = '${TEST_EMAIL}')`;
+        const encodedFormula = encodeURIComponent(filterFormula);
+
         try {
-            const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?view=${VIEW_ID}&filterByFormula=${TEST_EMAIL}`
+            const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?view=${VIEW_ID}&filterByFormula=${encodedFormula}`
             const response = await fetch(url, {
                 method:'GET',
                 headers: {
