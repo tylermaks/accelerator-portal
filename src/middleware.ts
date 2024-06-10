@@ -1,13 +1,13 @@
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
+import { updateSession } from '@/utils/supabase/middleware'
+import { createClient } from '@/utils/supabase/server'
 
-export async function middleware(req: NextRequest){
-    const res = NextResponse.next();
-    const { pathname } = req.nextUrl;
-    const supabase = createMiddlewareClient({req, res});
-    const { data: { session }, error } = await supabase.auth.getSession();
 
-    const publicRoutes = ['/', '/auth/login', '/auth/callback', '/reset-password']; 
+export async function middleware(request: NextRequest){
+    const supabase = createClient();
+    const { data: { user }, error } = await supabase.auth.getUser();
+    
+    const publicRoutes = ['/', '/reset-password']; 
 
     const roleRoutes = {
         admin: ['/admin/dashboard', '/admin/members', '/admin/controls'],
@@ -21,46 +21,38 @@ export async function middleware(req: NextRequest){
         company: '/company/dashboard',
     };
 
-    if (publicRoutes.includes(pathname)) {
-        return res
-    }
+    const { pathname } = request.nextUrl;
 
-    
-    if(session) {
-        if(pathname === '/auth/logout') {
-            return res
-        }
-
-        const userId = session.user.id;
+    if(user) {
         let { data: user_profiles, error } = await supabase
             .from('user_profiles')
             .select('role')
-            .eq('id', userId)
+            .eq('id', user.id)
             .single()
 
         if (error) {
-            return NextResponse.redirect(new URL('/', req.url));
+            return NextResponse.redirect(new URL('/', request.url));
         }
 
         const userRole = user_profiles?.role as keyof typeof defaultRoutes;
-
+    
         // Redirect to default route if accessing base route
         if (pathname === `/${userRole}`) {
-            return NextResponse.redirect(new URL(defaultRoutes[userRole], req.url));
+            return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
         }
 
-        // Redirect to default route if accessing unauthorized route
+        // // Redirect to default route if accessing unauthorized route
         if (!roleRoutes[userRole].includes(pathname)) {
-            return NextResponse.redirect(new URL(defaultRoutes[userRole], req.url));
+            return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
         }
     } else { 
         // Avoid redirect loop if already on the login page
         if (!publicRoutes.includes(pathname)) {
-            return NextResponse.redirect(new URL('/', req.url));
+            return NextResponse.redirect(new URL('/', request.url));
         }
     }
 
-    return res
+    return await updateSession(request)
 }
 
 export const config = {

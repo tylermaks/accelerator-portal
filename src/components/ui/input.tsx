@@ -2,7 +2,7 @@ export default function Input({
     label,
     type, 
     id,
-    name
+    name,
 }: { 
     label: string,
     type: string, 

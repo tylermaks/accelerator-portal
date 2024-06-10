@@ -1,10 +1,11 @@
 import Input from "../ui/input";
 import MainButton from "../ui/main-button";
+import { login } from "@/lib/actions";
 
 
 export default function SignInForm() {
     return (
-        <form action="/auth/login" method="POST" className="flex flex-col gap-4 w-full">   
+        <form className="flex flex-col gap-4 w-full">   
             <Input 
                 label="Email:"
                 type="email" 
@@ -19,6 +20,7 @@ export default function SignInForm() {
             />
             <MainButton 
                 text="Sign In"
+                action={login}
             />
         </form>
     );
