@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
         const encodedFormula = encodeURIComponent(filterFormula);
 
         try {
-            const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?view=${VIEW_ID}&filterByFormula=${encodedFormula}`
+            const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?view=${VIEW_ID}&filterByFormula=${encodedFormula}&pageSize=12`
             const response = await fetch(url, {
                 method:'GET',
                 headers: {

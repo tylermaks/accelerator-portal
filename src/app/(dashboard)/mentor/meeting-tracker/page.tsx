@@ -1,4 +1,6 @@
-import Logout from "@/components/ui/logout";
+import SummaryChart from "@/components/dashboard/mentor/summary-chart";
+import Table from "@/components/ui/table";
+import PageHeader from "@/components/ui/page-header";
 import { headers } from "next/headers";
 
 const getData = async () => {
@@ -25,18 +27,19 @@ const getData = async () => {
     }
 };
 export default async function MeetingTracker() {
-    // const data = await getData();
+    const data = await getData();
 
     return(
-        <div>
-            <p>Meeting Tracker</p>
-            {/* {
-                data?.records.map((item: any) => (
-                    <div key={item.id}>
-                        <p>{item.fields.companyName}</p>
-                    </div>
-                ))
-            } */}
+        <div className="flex flex-col gap-8">
+            <PageHeader 
+                title="Meeting Tracker"
+                subTitle="View your meeting history"
+            />
+            <SummaryChart />
+            <Table 
+                tableHeaders={["Date", "Company Name", "Duration (hrs)", "Support Type", ""]}
+                tableRows={data?.records}
+            />
         </div>
     )
 }

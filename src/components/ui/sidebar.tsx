@@ -9,12 +9,12 @@ export default async function Sidebar() {
     const userLinks = sideBarLinks.find(link => link.role === user?.role)
 
     return(
-        <nav className="h-screen flex flex-col justify-between p-8 w-1/5 bg-teal text-gray-100">
+        <nav className="h-screen flex flex-col justify-between p-8 w-1/5 bg-teal text-gray-100 ">
             <div className="flex flex-col gap-8">
                 <Image src="/images/logo-secondary.png" width={125} height={100} alt="logo" />
                 {
                     userLinks?.links.map((link, index) => (
-                        <div key={index} className="flex items-center gap-4">
+                        <div key={index} className="flex items-center gap-3.5">
                             <Image
                                 className="filter invert"
                                 src={userLinks.icons[index]} 
@@ -55,7 +55,6 @@ async function getUserData() {
             .eq('id', user.id)
             .single()
         
-     
         if (error) {
             console.error('Error fetching user:', error);
             return null;
