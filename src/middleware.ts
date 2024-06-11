@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest){
 
     const roleRoutes = {
         admin: ['/admin/dashboard', '/admin/members', '/admin/controls'],
-        mentor: ['/mentor/meeting-tracker', '/mentor/profiles', '/mentor/reports', '/mentor/faqs',],
+        mentor: ['/mentor/meeting-tracker', '/mentor/profile', '/mentor/reports', '/mentor/faqs',],
         company: ['/company/dashboard', '/company/mentors', '/company/faqs'],
     };
 

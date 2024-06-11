@@ -25,19 +25,18 @@ const getData = async () => {
     }
 };
 export default async function MeetingTracker() {
-    const data = await getData();
+    // const data = await getData();
 
     return(
         <div>
             <p>Meeting Tracker</p>
-            <Logout />
-            {
+            {/* {
                 data?.records.map((item: any) => (
                     <div key={item.id}>
                         <p>{item.fields.companyName}</p>
                     </div>
                 ))
-            }
+            } */}
         </div>
     )
 }
