@@ -10,7 +10,8 @@ const getCompanyLIst = async () => {
         const response = await fetch('http://localhost:3000/api/getCompanyList', { 
             headers: {
                 cookie: headers().get("cookie") as string,
-            }
+            },
+            cache: 'force-cache'
         });
         
         if (!response.ok) {
@@ -31,7 +32,6 @@ const getCompanyLIst = async () => {
 export default async function MeetingForm() {
     const supportOptions = ["Supporting a Company", "Program Moderation", "Goodwill Advising", "Access to Capital", "Advisory Board", "Content Development", "Intake", "Other"]
     const companyList = await getCompanyLIst();
-    const companyOptions = companyList?.records.map((company: any) => company.fields.companyName)
     
     return(
         <form className="flex flex-col gap-4">
@@ -45,7 +45,7 @@ export default async function MeetingForm() {
                 label="Company Name*"
                 id="companyName"
                 name="companyName"
-                data={companyOptions} //companyOptions  
+                data={companyList.records}
                 searchable={true}
            />
            <div className="flex gap-4">

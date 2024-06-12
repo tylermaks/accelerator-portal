@@ -11,7 +11,7 @@ const getData = async () => {
             headers: {
                 cookie: headers().get("cookie") as string,
             },
-            cache: 'no-store'
+            cache: 'force-cache'
         });
         
         if (!response.ok) {

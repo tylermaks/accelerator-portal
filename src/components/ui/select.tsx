@@ -16,18 +16,12 @@ export default function Select(
 ) {
     const [dropdown, setDropdown] = useState(false)
     const [search, setSearch] = useState("")
-    const [filteredList, setFilteredList] = useState([])
+    const [filteredList, setFilteredList] = useState<any[]>([])
     const [currentOption, setCurrentOption] = useState("")
     const dropdownRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    console.log(typeof(data))
-
-
-    const selectClass = "cursor-pointer flex flex-row justify-between p-2.5 border border-gray-300 rounded-lg"
-    const dropdownClass = dropdown ? "max-h-64 bg-gray-50 px-1 overflow-scroll absolute top-5 left-0 right-0 border border-2 border-blue-700 rounded-lg z-10" : "hidden"
-    const dropdownOptionClass = "p-2 bg-gray-50 text-fsGray cursor-pointer text-sm hover:bg-blue-400 hover:text-white rounded-md"
-
+    
     const toggleDropdown = () => { 
         setDropdown(!dropdown)
     }
@@ -74,6 +68,10 @@ export default function Select(
         filterCompanyList()
     }, [search])
 
+
+    const selectClass = "cursor-pointer flex flex-row justify-between p-2.5 border border-gray-300 rounded-lg"
+    const dropdownClass = dropdown ? "max-h-64 bg-gray-50 px-1 overflow-scroll absolute top-5 left-0 right-0 border border-2 border-blue-700 rounded-lg z-10" : "hidden"
+    const dropdownOptionClass = "p-2 bg-gray-50 text-fsGray cursor-pointer text-sm hover:bg-blue-400 hover:text-white rounded-md"
 
 
     return (
