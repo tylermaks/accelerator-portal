@@ -8,7 +8,7 @@ export default function MainButton({
     return (
         <button 
             type="submit" 
-            className="bg-orange-500 text-white p-2 rounded-md"
+            className="bg-orange text-white p-2 rounded-md"
             formAction={action}
         >
             {text}

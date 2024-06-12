@@ -10,8 +10,8 @@ export default function Input({
     name: string
 }) {
     return (
-        <div>
-            <label htmlFor={id} className="block mb-1 text-sm text-gray-700">
+        <div className="w-full">
+            <label htmlFor={id} className="block mb-1 text-xs text-gray-700">
                 {label}
             </label>
             <input
