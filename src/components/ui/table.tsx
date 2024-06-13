@@ -1,11 +1,12 @@
 import Image from "next/image"
 
-interface TableProps {
+type TableProps = {
     tableHeaders: string[]
     tableRows: any[]
 }
 
 export default async function Table( { tableHeaders, tableRows } : TableProps) {
+
     const headerStyles = "p-3 text-left text-sm font-semibold text-gray-100 bg-teal-md opacity-65 top-0"
     const rowStyles = "px-3 py-5 text-sm border-t border-gray-200 text-fsGray"
 

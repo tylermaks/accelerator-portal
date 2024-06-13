@@ -3,7 +3,7 @@ import Select from "@/components/ui/select";
 import Textarea from "@/components/ui/textarea";
 import MainButton from "@/components/ui/main-button";
 import { headers } from "next/headers";
-
+import { addMeeting } from "@/lib/actions";
 
 const getCompanyLIst = async () => {
     try {
@@ -11,7 +11,6 @@ const getCompanyLIst = async () => {
             headers: {
                 cookie: headers().get("cookie") as string,
             },
-            cache: 'force-cache'
         });
         
         if (!response.ok) {
@@ -30,11 +29,21 @@ const getCompanyLIst = async () => {
 }
 
 export default async function MeetingForm() {
-    const supportOptions = ["Supporting a Company", "Program Moderation", "Goodwill Advising", "Access to Capital", "Advisory Board", "Content Development", "Intake", "Other"]
+    const supportOptions: string[] = [
+        "Supporting a company", 
+        "Program Moderation", 
+        "Goodwill Advising", 
+        "Access to Capital", 
+        "Advisory Board", 
+        "Content Development", 
+        "Intake", 
+        "Other"
+    ]
+
     const companyList = await getCompanyLIst();
     
     return(
-        <form className="flex flex-col gap-4">
+        <form action={addMeeting} className="flex flex-col gap-6">
            <Select 
                 label="Support Type"
                 id="supportType"
@@ -42,30 +51,37 @@ export default async function MeetingForm() {
                 data={supportOptions}
            />
            <Select 
-                label="Company Name*"
+                label="Company Name"
                 id="companyName"
                 name="companyName"
                 data={companyList.records}
                 searchable={true}
            />
-           <div className="flex gap-4">
+           
                 <Input 
-                        label="Date"
-                        type="date"
-                        id="date"
-                        name="date"
+                    label="Date"
+                    type="date"
+                    id="date"
+                    name="date"
                 />
                 <Input 
-                        label="Duration (hrs)"
-                        type="number"
-                        id="duration"
-                        name="duration"
+                    label="Duration (hrs)"
+                    type="number"
+                    id="duration"
+                    name="duration"
                 />
-           </div>
-           <Textarea label="Notes"/> 
-           <MainButton 
-                text="Submit"
-           />
+         
+           <Textarea 
+                name="notes" 
+                label="Notes"
+            /> 
+
+            <div className="flex gap-4">
+                <MainButton text="Create"/>
+                <MainButton text="Create and add another" altButton={true}/>
+            </div>
+
+           
         </form>
     )
 }

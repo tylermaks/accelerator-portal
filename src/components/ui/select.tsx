@@ -3,11 +3,11 @@
 import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
 
-interface SelectProps {
+type SelectProps = {
     label: string;
     id: string;
     name: string;
-    data: any[];
+    data: string[];
     searchable?: boolean;
 }
 
@@ -17,9 +17,10 @@ export default function Select(
     const [dropdown, setDropdown] = useState(false)
     const [search, setSearch] = useState("")
     const [filteredList, setFilteredList] = useState<any[]>([])
-    const [currentOption, setCurrentOption] = useState("")
+    const [currentOption, setCurrentOption] = useState<string>("")
     const dropdownRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const selectRef = useRef<HTMLSelectElement>(null)
 
     
     const toggleDropdown = () => { 
@@ -33,9 +34,13 @@ export default function Select(
     };
 
     const updateOption = (item: string) => {
+        console.log("item", item, typeof(item))
+
         setCurrentOption(item)
         setDropdown(false)
-        // selectRef.current.value = companyName
+        if(selectRef.current){
+            selectRef.current.value = item
+        }
     }
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => { 
@@ -68,7 +73,7 @@ export default function Select(
         filterCompanyList()
     }, [search])
 
-
+   
     const selectClass = "cursor-pointer flex flex-row justify-between p-2.5 border border-gray-300 rounded-lg"
     const dropdownClass = dropdown ? "max-h-64 bg-gray-50 px-1 overflow-scroll absolute top-5 left-0 right-0 border border-2 border-blue-700 rounded-lg z-10" : "hidden"
     const dropdownOptionClass = "p-2 bg-gray-50 text-fsGray cursor-pointer text-sm hover:bg-blue-400 hover:text-white rounded-md"
@@ -127,13 +132,16 @@ export default function Select(
             )}
 
             <select
+                ref={selectRef}
                 id={id}
                 name={name}
                 className=" hidden block py-2.5 px-1 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
             >
-                {data?.map(option => {
+                {data?.map((option, index) => {
                     return(
-                        <option key={option} value={currentOption}>{option}</option>
+                        <option key={index} value={option}>
+                            {option}
+                        </option>
                     )
                 })}
             </select>

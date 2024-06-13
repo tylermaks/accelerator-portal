@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
+
 import { createClient } from '@/utils/supabase/server'
 
 export async function login(formData: FormData) {
@@ -50,4 +51,59 @@ export async function logout() {
   const { error } = await supabase.auth.signOut()
   revalidatePath('/', 'layout')
   redirect('/')
+}
+
+
+const API_KEY = process.env.AIRTABLE_API_KEY
+const BASE_ID = process.env.BASE_ID
+const TABLE_ID = process.env.MEETING_TABLE_ID
+const VIEW_ID = process.env.MEETING_VIEW_ID
+const TEST_EMAIL = process.env.TEST_EMAIL
+ // const email = user.email // uncomment later for production
+
+export async function addMeeting(formData: FormData) {
+  const supabase = createClient();
+  const { data: user, error } = await supabase.auth.getUser();
+
+  if (error) {
+      console.error('Error fetching user:', error);
+      return
+  }
+
+  if(user) {
+      const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}`
+
+      const meetingRecord = { 
+        "companyName": formData.get('companyName') as string,
+        "supportType": formData.get('supportType') as string,
+        "email": TEST_EMAIL as string, //add user email here
+        "date": formData.get('date') as string,
+        "duration": Number(formData.get('duration')) as number,
+        "notes": formData.get('notes') as string
+      }
+
+      try {
+        const response = await fetch(url, {
+            method:'POST',
+            headers: {
+              'Authorization': `Bearer ${API_KEY}`,
+              'Content-Type': 'application/json',
+            }, 
+            body: JSON.stringify({
+              'records': [
+                {
+                  'fields': meetingRecord
+                }
+              ]
+            })
+        })
+        
+        revalidatePath("/mentor/meeting-tracker")
+          
+        return { message: "Meeting added successfully" };
+      } catch (error) {
+        console.error('Error fetching data:', error);
+       return { error: error }; 
+      }
+  }
 }

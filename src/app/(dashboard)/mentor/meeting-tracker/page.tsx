@@ -7,11 +7,10 @@ import { headers } from "next/headers";
 
 const getData = async () => {
     try {
-        const response = await fetch('http://localhost:3000/api/getTableData', {
+        const response = await fetch('http://localhost:3000/api/tableData', {
             headers: {
                 cookie: headers().get("cookie") as string,
             },
-            cache: 'force-cache'
         });
         
         if (!response.ok) {
