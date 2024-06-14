@@ -24,7 +24,6 @@ export default function MainButton({
     return (
         <button 
             onClick={handleClick}
-            type="submit" 
             className={`${altButtonStyle} ${smallButtonStyle} ${loadingButtonStyle} rounded-md w-full`}
         >
              {text}

@@ -1,23 +1,23 @@
 "use client"
 
-import { useState, useOptimistic } from "react"
+import { useState, useOptimistic, useEffect } from "react"
 import Table from "@/components/ui/table";
 import Modal from "@/components/ui/modal";
 import MeetingForm from "@/components/dashboard/mentor/meeting-form";
 import MainButton from "@/components/ui/main-button";
 
 
-export default function TableWrapper({ data } : any) {
+export default function TableWrapper({data } : any) {
     const [showModal, setShowModal] = useState(false);
     const [optimisticRows, addOptimisticRow] = useOptimistic(
         data.records, 
         (state, newRow: any) => [...state, newRow]
     );
 
-
     const toggleModal = () => {
         setShowModal(!showModal);
     }
+
 
     return(
         <div>

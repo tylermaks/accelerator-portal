@@ -42,6 +42,7 @@ export async function GET(request: NextRequest) {
             }
 
             let records = await response.json()
+
             return NextResponse.json(records)
         } catch (error) {
             console.error('Error fetching data:', error);

@@ -3,11 +3,10 @@ import SummaryChart from "@/components/dashboard/mentor/summary-chart";
 import TableWrapper from "@/components/dashboard/mentor/table-wrapper";
 import { headers } from "next/headers";
 
-const URL = process.env.URL_ROOT
-
+const url = `${process.env.URL_ROOT}/api/tableData`;
 const getData = async () => {
     try {
-        const response = await fetch(`${URL}/api/tableData`, {
+        const response = await fetch(url, {
             headers: {
                 cookie: headers().get("cookie") as string,
             },
@@ -32,7 +31,6 @@ export default async function MeetingTracker() {
 
     return(
         <div className="flex flex-col gap-8">
-
             <PageHeader 
                 title="Meeting Tracker"
                 subTitle="View your meeting history"
