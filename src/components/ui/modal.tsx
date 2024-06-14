@@ -11,6 +11,11 @@ interface ModalProps {
 export default function Modal(
     {title, action, children} : ModalProps
 ) {
+
+    const handleClick = () => {
+        action && action();
+    }
+
     return(
         <div className=" w-2/5 shadow-2xl bg-gray-50 absolute right-0 top-0 bottom-0 z-10">
             <div className="flex justify-between items-center px-6 py-8 mb-6 bg-gradient-to-r from-teal-md to-green-300 text-gray-50">
@@ -21,7 +26,7 @@ export default function Modal(
                     width={20}
                     height={20}
                     className="cursor-pointer filter invert"
-                    onClick={action}
+                    onClick={handleClick}
                 />
             </div>
             <div className="px-6">
