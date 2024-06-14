@@ -33,7 +33,7 @@ export default function TableWrapper({ data } : any) {
             <div className="flex justify-end gap-8">
                 <MainButton 
                     text="Add Meeting"
-                    action={() => setShowModal(true)}
+                    // action={setShowModal}
                 />
             </div>
             <Table 

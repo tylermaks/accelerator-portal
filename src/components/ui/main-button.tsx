@@ -4,7 +4,7 @@ export default function MainButton({
     altButton = false
 }: { 
     text: string,
-    action?: () => void | undefined
+    action?: () => void,
     altButton?: boolean
 }) {
 
