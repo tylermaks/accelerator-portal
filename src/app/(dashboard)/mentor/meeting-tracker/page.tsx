@@ -3,7 +3,7 @@ import SummaryChart from "@/components/dashboard/mentor/summary-chart";
 import TableWrapper from "@/components/dashboard/mentor/table-wrapper";
 import { headers } from "next/headers";
 
-const URL = process.env.URL
+const URL = process.env.URL_ROOT
 
 const getData = async () => {
     try {

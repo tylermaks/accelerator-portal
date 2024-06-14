@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
-const URL = process.env.URL
+const URL = process.env.URL_ROOT
 
 export async function login(formData: FormData) {
     const supabase = createClient()
