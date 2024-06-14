@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
+const URL = process.env.URL
+
 export async function login(formData: FormData) {
     const supabase = createClient()
 
@@ -109,7 +111,7 @@ export async function addMeeting(formData: FormData) {
 
 export async function getCompanyList() {
   try {
-      const response = await fetch('http://localhost:3000/api/getCompanyList', { 
+      const response = await fetch(`${URL}/api/getCompanyList`, { 
           headers: {
               cookie: headers().get("cookie") as string,
           },

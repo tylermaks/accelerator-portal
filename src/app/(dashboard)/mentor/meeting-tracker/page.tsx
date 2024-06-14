@@ -1,14 +1,13 @@
 import PageHeader from "@/components/ui/page-header";
 import SummaryChart from "@/components/dashboard/mentor/summary-chart";
 import TableWrapper from "@/components/dashboard/mentor/table-wrapper";
-// import Table from "@/components/ui/table";
-// import MeetingForm from "@/components/dashboard/mentor/meeting-form";
-// import Modal from "@/components/ui/modal";
 import { headers } from "next/headers";
+
+const URL = process.env.URL
 
 const getData = async () => {
     try {
-        const response = await fetch('http://localhost:3000/api/tableData', {
+        const response = await fetch(`${URL}/api/tableData`, {
             headers: {
                 cookie: headers().get("cookie") as string,
             },
