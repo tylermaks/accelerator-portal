@@ -5,7 +5,7 @@ import { login } from "@/lib/actions";
 
 export default function SignInForm() {
     return (
-        <form className="flex flex-col gap-4 w-full">   
+        <form action={login} className="flex flex-col gap-4 w-full">   
             <Input 
                 label="Email:"
                 type="email" 
@@ -20,7 +20,6 @@ export default function SignInForm() {
             />
             <MainButton 
                 text="Sign In"
-                action={login}
             />
         </form>
     );
