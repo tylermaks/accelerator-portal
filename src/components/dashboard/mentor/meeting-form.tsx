@@ -10,7 +10,7 @@ import { getCompanyList } from "@/lib/actions";
 
 
 
-export default function MeetingForm( { addOptimistic, closeModal } : any) {
+export default function MeetingForm( { addOptimistic } : any) {
     const [companyList, setCompanyList] = useState<any>([]);
 
     const supportOptions: string[] = [
@@ -49,7 +49,7 @@ export default function MeetingForm( { addOptimistic, closeModal } : any) {
         });
 
         await addMeeting(formData);
-        closeModal()
+        // closeModal()
     };
     
     return(

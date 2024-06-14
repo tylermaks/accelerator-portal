@@ -2,12 +2,12 @@ import Image from "next/image"
 interface ModalProps {
     title: string
     subtitle: string
-    closeModal: () => void | undefined
+    // closeModal: () => void | undefined
     children: React.ReactNode
 }
 
 export default function Modal(
-    {title, closeModal, children} : ModalProps
+    {title, children} : ModalProps
 ) {
 
   
@@ -21,7 +21,7 @@ export default function Modal(
                     width={20}
                     height={20}
                     className="cursor-pointer filter invert"
-                    onClick={closeModal}
+                    // onClick={closeModal}
                 />
             </div>
             <div className="px-6">

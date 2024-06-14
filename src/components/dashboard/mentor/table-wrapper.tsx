@@ -22,11 +22,11 @@ export default function TableWrapper({ data } : any) {
                 <Modal 
                     title="Add Meeting"
                     subtitle="Please add your meeting details"
-                    closeModal={() => setShowModal(false)}
+                    // closeModal={() => setShowModal(false)}
                 >
                     <MeetingForm 
                         addOptimistic={addOptimisticRows}
-                        closeModal={() => setShowModal(false)}
+                        // closeModal={() => setShowModal(false)}
                     />
                 </Modal>
             } 
