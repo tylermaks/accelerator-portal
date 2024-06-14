@@ -5,29 +5,19 @@ import Table from "@/components/ui/table";
 import Modal from "@/components/ui/modal";
 import MeetingForm from "@/components/dashboard/mentor/meeting-form";
 import MainButton from "@/components/ui/main-button";
-import { addMeeting } from "@/lib/actions";
+
 
 export default function TableWrapper({ data } : any) {
     const [showModal, setShowModal] = useState(false);
-    const [optimisticRows, addOptimisticRows] = useOptimistic(
-        data?.records,
-        (state, newRow) => { 
-            return[...state, newRow]}
+    const [optimisticRows, addOptimisticRow] = useOptimistic(
+        data.records, 
+        (state, newRow: any) => [...state, newRow]
     );
 
-    const handleFormSubmit = async (formData: FormData, newMeeting: any) => {
-        addOptimisticRows({
-            id: Math.random(), 
-            fields: newMeeting
-        });
-        setShowModal(false); 
-        await addMeeting(formData);
-    };
 
     const toggleModal = () => {
         setShowModal(!showModal);
     }
-
 
     return(
         <div>
@@ -38,15 +28,20 @@ export default function TableWrapper({ data } : any) {
                     action={toggleModal}
                 >
                     <MeetingForm 
-                        handleSubmit={handleFormSubmit}
+                        addOptimistic={addOptimisticRow}
+                        toggleModal={toggleModal}
                     />
                 </Modal>
             } 
-            <div className="flex justify-end gap-8">
-                <MainButton 
-                    text="Add Meeting"
-                    action={toggleModal}
-                />
+            <div className="flex justify-end gap-8 mb-4">
+                <div className="w-1/8">
+                    <MainButton 
+                        text="+ Add Meeting"
+                        action={toggleModal}
+                        small={true}
+                    />
+                </div>
+
             </div>
             <Table 
                 tableHeaders={["Date", "Company Name", "Duration (hrs)", "Support Type", ""]}

@@ -3,15 +3,20 @@
 export default function MainButton({ 
     text,
     action,
-    altButton = false
+    altButton = false,
+    small = false,
+    loading = false
 }: { 
     text: string,
     action?: () => void,
-    altButton?: boolean
+    altButton?: boolean,
+    small?: boolean, 
+    loading?: boolean
 }) {
 
-    const altButtonStyle = altButton ? "border border-orange text-orange hover:bg-orange hover:text-white" : "bg-orange text-white"
-
+    const altButtonStyle = altButton ? `border border-orange text-orange hover:bg-orange hover:text-white` : "bg-orange text-white"
+    const smallButtonStyle = small ? "p-1.5 text-sm" : "p-2"
+    const loadingButtonStyle = loading ? "opacity-50 cursor-not-allowed" : ""
     const handleClick = () => {
         action && action();
     }
@@ -20,9 +25,9 @@ export default function MainButton({
         <button 
             onClick={handleClick}
             type="submit" 
-            className={`${altButtonStyle} p-2 rounded-md w-full`}
+            className={`${altButtonStyle} ${smallButtonStyle} ${loadingButtonStyle} rounded-md w-full`}
         >
-            {text}
+             {text}
         </button>
     )
 }

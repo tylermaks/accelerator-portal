@@ -5,11 +5,13 @@ import Select from "@/components/ui/select";
 import Textarea from "@/components/ui/textarea";
 import MainButton from "@/components/ui/main-button";
 import { useEffect, useState } from "react";
-import { getCompanyList } from "@/lib/actions";
+// import { getCompanyList } from "@/lib/actions";
+import { addMeeting } from "@/lib/actions";
 
 
-export default function MeetingForm( { handleSubmit } : any) {
+export default function MeetingForm( { toggleModal, addOptimistic } : any) {
     const [companyList, setCompanyList] = useState<any>([]);
+    const [loading, setLoading] = useState(false);
 
     const supportOptions: string[] = [
         "Supporting a company", 
@@ -23,7 +25,22 @@ export default function MeetingForm( { handleSubmit } : any) {
     ]
 
     const getCompanyData = async () => {
-        const data = await getCompanyList();
+        const response = await fetch("/api/getCompanyList", { 
+            headers: {
+                contentType: "application/json",
+                credentials: "include",
+            },
+            cache: "force-cache"
+        });
+
+        if (!response.ok) {
+            // Handle response errors
+            console.error("Fetch error:", response.statusText);
+            return null;
+        }
+        
+        const data = await response.json();
+        console.log("COMPANY LIST", data);
         setCompanyList(data);
     }
 
@@ -31,20 +48,31 @@ export default function MeetingForm( { handleSubmit } : any) {
         getCompanyData();
     }, [])
 
-    const formAction = async (formData : FormData) => {
-        const newMeeting = {
-            date: formData.get('date'),
-            companyName: formData.get('companyName'),
-            duration: formData.get('duration'),
-            supportType: formData.get('supportType'),
-            notes: formData.get('notes'),
-        };
+    const handleSubmit = async (formData: FormData) => {
+        setLoading(true);
 
-        handleSubmit(formData, newMeeting);
+        const newMeeting = {
+            date: formData.get("date"),
+            companyName: formData.get("companyName"),
+            duration: formData.get("duration"),
+            supportType: formData.get("supportType"),
+            notes: formData.get("notes")
+        }
+
+        addOptimistic({
+            id: Math.random(),
+            fields: newMeeting
+        });
+
+        toggleModal();
+        addMeeting(formData);
+        setLoading(false);
     };
+
+
     
     return(
-        <form action={formAction} className="flex flex-col gap-6">
+        <form action={handleSubmit} className="flex flex-col gap-6">
            <Select 
                 label="Support Type"
                 id="supportType"
@@ -76,7 +104,7 @@ export default function MeetingForm( { handleSubmit } : any) {
             /> 
 
             <div className="flex gap-4">
-                <MainButton text="Submit"/>
+                <MainButton text="Submit" loading={loading}/>
                 <MainButton text="Submit and add another" altButton={true}/>
             </div>
         </form>

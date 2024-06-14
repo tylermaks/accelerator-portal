@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
+const API_KEY = process.env.AIRTABLE_API_KEY
+const BASE_ID = process.env.BASE_ID
+const TABLE_ID = process.env.COMPANY_TABLE_ID
+const VIEW_ID = process.env.COMPANY_VIEW_ID
 export async function GET(request: NextRequest) {
     const supabase = createClient();
     const { data: user, error } = await supabase.auth.getUser();
@@ -15,11 +19,6 @@ export async function GET(request: NextRequest) {
     }
 
     if(user) {
-        const API_KEY = process.env.AIRTABLE_API_KEY
-        const BASE_ID = process.env.BASE_ID
-        const TABLE_ID = process.env.COMPANY_TABLE_ID
-        const VIEW_ID = process.env.COMPANY_VIEW_ID
-
         let allRecords: any[] = [];
         let offset = null;
 
