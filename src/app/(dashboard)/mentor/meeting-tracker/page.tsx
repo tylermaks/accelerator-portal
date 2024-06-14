@@ -1,8 +1,9 @@
 import PageHeader from "@/components/ui/page-header";
 import SummaryChart from "@/components/dashboard/mentor/summary-chart";
-import Table from "@/components/ui/table";
-import MeetingForm from "@/components/dashboard/mentor/meeting-form";
-import Modal from "@/components/ui/modal";
+import TableWrapper from "@/components/dashboard/mentor/table-wrapper";
+// import Table from "@/components/ui/table";
+// import MeetingForm from "@/components/dashboard/mentor/meeting-form";
+// import Modal from "@/components/ui/modal";
 import { headers } from "next/headers";
 
 const getData = async () => {
@@ -32,21 +33,13 @@ export default async function MeetingTracker() {
 
     return(
         <div className="flex flex-col gap-8">
-            <Modal 
-                title="Add Meeting"
-                subtitle="Please add your meeting details"
-            >
-                <MeetingForm />
-            </Modal>
+
             <PageHeader 
                 title="Meeting Tracker"
                 subTitle="View your meeting history"
             />
             <SummaryChart />
-            <Table 
-                tableHeaders={["Date", "Company Name", "Duration (hrs)", "Support Type", ""]}
-                tableRows={data?.records}
-            />
+            <TableWrapper data={data} />
         </div>
     )
 }

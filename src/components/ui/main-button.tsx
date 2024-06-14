@@ -10,11 +10,15 @@ export default function MainButton({
 
     const altButtonStyle = altButton ? "border border-orange text-orange hover:bg-orange hover:text-white" : "bg-orange text-white"
 
+    const handleClick = () => {
+        action && action();
+    }
+
     return (
         <button 
+            onClick={handleClick}
             type="submit" 
             className={`${altButtonStyle} p-2 rounded-md w-full`}
-            formAction={action}
         >
             {text}
         </button>

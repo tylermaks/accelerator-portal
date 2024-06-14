@@ -2,8 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-
-
+import { headers } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
 export async function login(formData: FormData) {
@@ -105,5 +104,29 @@ export async function addMeeting(formData: FormData) {
         console.error('Error fetching data:', error);
        return { error: error }; 
       }
+  }
+}
+
+export async function getCompanyList() {
+  try {
+      const response = await fetch('http://localhost:3000/api/getCompanyList', { 
+          headers: {
+              cookie: headers().get("cookie") as string,
+          },
+          cache: 'force-cache'
+      });
+      
+      if (!response.ok) {
+          // Handle response errors
+          console.error("Fetch error:", response.statusText);
+          return null;
+      }
+      
+      const data = await response.json();
+      return data;
+  } catch (error) {
+      // Handle network errors or other unexpected errors
+      console.error("An error occurred:", error);
+      return null;
   }
 }

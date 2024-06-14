@@ -34,8 +34,6 @@ export default function Select(
     };
 
     const updateOption = (item: string) => {
-        console.log("item", item, typeof(item))
-
         setCurrentOption(item)
         setDropdown(false)
         if(selectRef.current){
@@ -72,6 +70,12 @@ export default function Select(
     useEffect(() => { 
         filterCompanyList()
     }, [search])
+
+    useEffect(() => { 
+        if(data){
+            setFilteredList(data)
+        }
+    }, [data])
 
    
     const selectClass = "cursor-pointer flex flex-row justify-between p-2.5 border border-gray-300 rounded-lg"
