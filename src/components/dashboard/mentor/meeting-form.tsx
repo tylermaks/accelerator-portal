@@ -1,16 +1,14 @@
+"use client"
+
 import Input from "@/components/ui/input";
 import Select from "@/components/ui/select";
 import Textarea from "@/components/ui/textarea";
 import MainButton from "@/components/ui/main-button";
-// import { headers } from "next/headers";
 import { useEffect, useState } from "react";
-import { addMeeting } from "@/lib/actions";
 import { getCompanyList } from "@/lib/actions";
 
 
-
-
-export default function MeetingForm( { addOptimistic, handleSubmit } : any) {
+export default function MeetingForm( { handleSubmit } : any) {
     const [companyList, setCompanyList] = useState<any>([]);
 
     const supportOptions: string[] = [

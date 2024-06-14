@@ -12,7 +12,6 @@ export default function TableWrapper({ data } : any) {
     const [optimisticRows, addOptimisticRows] = useOptimistic(
         data?.records,
         (state, newRow) => { 
-            // console.log("OPTIMISTIC", state, newRow)
             return[...state, newRow]}
     );
 
