@@ -10,7 +10,7 @@ import { getCompanyList } from "@/lib/actions";
 
 
 
-export default function MeetingForm( { addOptimistic } : any) {
+export default function MeetingForm( { addOptimistic, handleSubmit } : any) {
     const [companyList, setCompanyList] = useState<any>([]);
 
     const supportOptions: string[] = [
@@ -42,14 +42,7 @@ export default function MeetingForm( { addOptimistic } : any) {
             notes: formData.get('notes'),
         };
 
-        // Optimistically update the UI
-        addOptimistic({
-            id: Math.random(),
-            fields: newMeeting
-        });
-
-        await addMeeting(formData);
-        // closeModal()
+        handleSubmit(formData, newMeeting);
     };
     
     return(

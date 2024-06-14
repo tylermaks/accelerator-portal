@@ -5,6 +5,7 @@ import Table from "@/components/ui/table";
 import Modal from "@/components/ui/modal";
 import MeetingForm from "@/components/dashboard/mentor/meeting-form";
 import MainButton from "@/components/ui/main-button";
+import { addMeeting } from "@/lib/actions";
 
 export default function TableWrapper({ data } : any) {
     const [showModal, setShowModal] = useState(false);
@@ -15,6 +16,19 @@ export default function TableWrapper({ data } : any) {
             return[...state, newRow]}
     );
 
+    const handleFormSubmit = async (formData: FormData, newMeeting: any) => {
+        addOptimisticRows({
+            id: Math.random(), 
+            fields: newMeeting
+        });
+        setShowModal(false); 
+        await addMeeting(formData);
+    };
+
+    const toggleModal = () => {
+        setShowModal(!showModal);
+    }
+
 
     return(
         <div>
@@ -22,18 +36,17 @@ export default function TableWrapper({ data } : any) {
                 <Modal 
                     title="Add Meeting"
                     subtitle="Please add your meeting details"
-                    // closeModal={() => setShowModal(false)}
+                    action={toggleModal}
                 >
                     <MeetingForm 
-                        addOptimistic={addOptimisticRows}
-                        // closeModal={() => setShowModal(false)}
+                        handleSubmit={handleFormSubmit}
                     />
                 </Modal>
             } 
             <div className="flex justify-end gap-8">
                 <MainButton 
                     text="Add Meeting"
-                    // action={setShowModal}
+                    action={toggleModal}
                 />
             </div>
             <Table 
