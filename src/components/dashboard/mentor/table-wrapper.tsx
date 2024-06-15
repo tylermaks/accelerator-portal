@@ -21,7 +21,7 @@ export default function TableWrapper() {
                     contentType: "application/json",
                     credentials: "include",
                 },
-                cache: "force-cache"
+                
             });
             
             if (!response.ok) {
