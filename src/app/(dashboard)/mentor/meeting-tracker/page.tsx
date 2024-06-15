@@ -27,7 +27,7 @@ const getData = async () => {
     }
 };
 export default async function MeetingTracker() {
-    // const data = await getData();
+    const data = await getData();
 
     return(
         <div className="flex flex-col gap-8">
@@ -36,7 +36,7 @@ export default async function MeetingTracker() {
                 subTitle="View your meeting history"
             />
             <SummaryChart />
-            <TableWrapper />
+            <TableWrapper data={data}/>
         </div>
     )
 }

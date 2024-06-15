@@ -6,42 +6,42 @@ import Modal from "@/components/ui/modal";
 import MeetingForm from "@/components/dashboard/mentor/meeting-form";
 import MainButton from "@/components/ui/main-button";
 
-export default function TableWrapper() {
+export default function TableWrapper({ data }: any) {
     const [rowData, setRowData] = useState<any>({});
     const [showModal, setShowModal] = useState(false);
     const [optimisticRows, addOptimisticRow] = useOptimistic(
-        rowData.records, 
+        data.records, 
         (state, newRow: any) => [...state, newRow]
     );
 
-    const getData = async () => {
-        try {
-            const response = await fetch("/api/tableData", {
-                headers: {
-                    contentType: "application/json",
-                    credentials: "include",
-                },
+    // const getData = async () => {
+    //     try {
+    //         const response = await fetch("/api/tableData", {
+    //             headers: {
+    //                 contentType: "application/json",
+    //                 credentials: "include",
+    //             },
                 
-            });
+    //         });
             
-            if (!response.ok) {
-                // Handle response errors
-                console.error("Fetch error:", response.statusText);
-                return null;
-            }
+    //         if (!response.ok) {
+    //             // Handle response errors
+    //             console.error("Fetch error:", response.statusText);
+    //             return null;
+    //         }
             
-            const data = await response.json();
-            setRowData(data);
-        } catch (error) {
-            // Handle network errors or other unexpected errors
-            console.error("An error occurred:", error);
-            return null;
-        }
-    };
+    //         const data = await response.json();
+    //         setRowData(data);
+    //     } catch (error) {
+    //         // Handle network errors or other unexpected errors
+    //         console.error("An error occurred:", error);
+    //         return null;
+    //     }
+    // };
 
-    useEffect(() => {
-        getData();
-    }, [])
+    // useEffect(() => {
+    //     getData();
+    // }, [])
 
 
     const toggleModal = () => {
