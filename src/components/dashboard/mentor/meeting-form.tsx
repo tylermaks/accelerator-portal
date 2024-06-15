@@ -7,6 +7,7 @@ import MainButton from "@/components/ui/main-button";
 import { useEffect, useState } from "react";
 // import { getCompanyList } from "@/lib/actions";
 import { addMeeting } from "@/lib/actions";
+import { revalidatePath } from "next/cache";
 
 
 export default function MeetingForm( { toggleModal, addOptimistic } : any) {
@@ -66,6 +67,7 @@ export default function MeetingForm( { toggleModal, addOptimistic } : any) {
 
         toggleModal();
         addMeeting(formData);
+        revalidatePath("/mentor/meeting-tracker");
         setLoading(false);
     };
 
