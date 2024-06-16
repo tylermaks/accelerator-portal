@@ -67,10 +67,8 @@ const TEST_EMAIL = process.env.TEST_EMAIL
  // const email = user.email // uncomment later for production
 
  export async function addMeeting(formData: FormData) {
-  const start = performance.now(); // Start timing
-
   const supabase = createClient();
-  const userPromise = supabase.auth.getUser();
+  const user =  await supabase.auth.getUser();
 
   const meetingRecord = {
     "companyName": formData.get('companyName') as string,
@@ -81,41 +79,33 @@ const TEST_EMAIL = process.env.TEST_EMAIL
     "notes": formData.get('notes') as string
   };
 
-  const airtablePromise = fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      'records': [
-        {
-          'fields': meetingRecord
-        }
-      ]
-    })
-  });
+  if(user){
+    try {
+      const response = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          'records': [
+            {
+              'fields': meetingRecord
+            }
+          ]
+        })
+      });
 
-  try {
-    const [userResult, airtableResponse] = await Promise.all([userPromise, airtablePromise]);
+      if(!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-    const { data: user, error: userError } = userResult;
-    if (userError) {
-      console.error('Error fetching user:', userError);
-      return { error: userError };
-    }
-
-    if (user) {
       revalidatePath("/mentor/meeting-tracker");
-
-      const end = performance.now(); // End timing
-      console.log(`API took ${end - start} milliseconds`);
-
       return { message: "Meeting added successfully" };
+    } catch (error) {
+      console.error('Error:', error);
+      return { error: error };
     }
-  } catch (error) {
-    console.error('Error:', error);
-    return { error: error };
   }
 }
 

@@ -8,11 +8,13 @@ type SelectProps = {
     id: string;
     name: string;
     data: string[];
+    isRequired?: boolean;
     searchable?: boolean;
+    setFormState?: React.Dispatch<React.SetStateAction<string>> ;
 }
 
 export default function Select(
-    {label, id, name, data, searchable = false } : SelectProps
+    {label, id, name, data, setFormState, isRequired = false, searchable = false } : SelectProps
 ) {
     const [dropdown, setDropdown] = useState(false)
     const [search, setSearch] = useState("")
@@ -34,6 +36,9 @@ export default function Select(
     };
 
     const updateOption = (item: string) => {
+        if (setFormState) {
+            setFormState(item)
+        }
         setCurrentOption(item)
         setDropdown(false)
         if(selectRef.current){
@@ -136,11 +141,14 @@ export default function Select(
             )}
 
             <select
+               
                 ref={selectRef}
                 id={id}
                 name={name}
                 className=" hidden block py-2.5 px-1 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                required={isRequired}
             >
+                <option value="" disabled>Select</option>
                 {data?.map((option, index) => {
                     return(
                         <option key={index} value={option}>
