@@ -114,7 +114,7 @@ export default function ProfileSkill({ id, data, metaData, title, index }: Profi
                             <div key={index} className={`text-fsGray flex gap-2 items-center text-sm bg-gray-200 py-1.5 px-3.5 rounded-full ${editing && "cursor-pointer"}`}>
                                 <span 
                                     id={item} 
-                                    onClick={() => handleRemoveSkill}
+                                    onClick={handleRemoveSkill}
                                 >
                                     {item}
                                 </span>
