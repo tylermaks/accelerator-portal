@@ -19,6 +19,7 @@ export default function SignInForm() {
                 name="password"
             />
             <MainButton 
+                id='signin'
                 text="Sign In"
             />
         </form>
