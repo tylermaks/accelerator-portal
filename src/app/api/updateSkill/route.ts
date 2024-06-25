@@ -8,8 +8,14 @@ const VIEW_ID = process.env.SKILLS_VIEW_ID
 const TEST_EMAIL = process.env.TEST_EMAIL
 // const email = user.email // uncomment later for production
 
+export async function PATCH(request: Request) {
+    const requestData = await request.json();
+    const { recordID, fieldData } = requestData;
 
- export async function GET(request: NextRequest) {
+    if (!recordID || !fieldData) {
+        return NextResponse.json({ error: 'Missing record ID or fields' }, { status: 400 });
+    }
+
     const supabase = createClient();
     const { data: user, error } = await supabase.auth.getUser();
 
@@ -23,29 +29,29 @@ const TEST_EMAIL = process.env.TEST_EMAIL
     }
 
     if(user) {
-        const filterFormula = `AND({Email} = '${TEST_EMAIL}')`;
-        const encodedFormula = encodeURIComponent(filterFormula);
-
         try {
-            const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?view=${VIEW_ID}&filterByFormula=${encodedFormula}`
+            const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}/${recordID}`
             const response = await fetch(url, {
-                method:'GET',
+                method:'PATCH',
                 headers: {
                     'Authorization': `Bearer ${API_KEY}`,
                     'Content-Type': 'application/json',
-                }
+                },
+                body: JSON.stringify({  
+                    fields: fieldData
+        
+                })
             })
 
             if (!response.ok) {
                 throw new Error('Network response was not ok');
-            }
+            }    
 
-            let records = await response.json()
-            return NextResponse.json(records)
+           
+            return NextResponse.json({ success: 'Record updated successfully' }, { status: 200 });
         } catch (error) {
             console.error('Error fetching data:', error);
             return NextResponse.json({ error: 'Error fetching data' }, { status: 500 });
         }
     }
 }
-

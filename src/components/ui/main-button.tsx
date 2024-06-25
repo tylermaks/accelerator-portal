@@ -6,7 +6,8 @@ export default function MainButton({
     action,
     altButton = false,
     small = false,
-    loading = false
+    loading = false,
+    width
 }: { 
     id: string,
     text: string,
@@ -14,6 +15,7 @@ export default function MainButton({
     altButton?: boolean,
     small?: boolean, 
     loading?: boolean
+    width?: string
 }) {
 
     const altButtonStyle = altButton ? `border border-orange text-orange hover:bg-orange hover:text-white` : "bg-orange text-white"
@@ -27,7 +29,7 @@ export default function MainButton({
         <button 
             id={id}
             onClick={handleClick}
-            className={`${altButtonStyle} ${smallButtonStyle} ${loadingButtonStyle} rounded-md w-full`}
+            className={`${altButtonStyle} ${smallButtonStyle} ${loadingButtonStyle} rounded-md ${width ? width : 'w-full'}`}
         >
              {text}
         </button>

@@ -10,11 +10,12 @@ type SelectProps = {
     data: string[];
     isRequired?: boolean;
     searchable?: boolean;
-    setFormState?: React.Dispatch<React.SetStateAction<string>> ;
+    setFormState?: React.Dispatch<React.SetStateAction<string>>;
+    closeDropdown?: (currentOption: string) => void;
 }
 
 export default function Select(
-    {label, id, name, data, setFormState, isRequired = false, searchable = false } : SelectProps
+    {label, id, name, data, setFormState, closeDropdown, isRequired = false, searchable = false } : SelectProps
 ) {
     const [dropdown, setDropdown] = useState(false)
     const [search, setSearch] = useState("")
@@ -41,6 +42,8 @@ export default function Select(
         }
         setCurrentOption(item)
         setDropdown(false)
+        closeDropdown && closeDropdown(item)
+      
         if(selectRef.current){
             selectRef.current.value = item
         }
