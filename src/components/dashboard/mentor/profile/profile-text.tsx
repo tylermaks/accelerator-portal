@@ -1,7 +1,8 @@
 "use client"
 
-import Image from "next/image"
+
 import { useState, useEffect, useRef } from "react"
+import Edit from "@/components/ui/edit";
 
 type EditableTextProps = {
     id: string;
@@ -92,14 +93,24 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
         >
          
             {editing ? (
-                <textarea
-                    ref={textareaRef}
-                    name="profileTextInput"
-                    id="profileTextInput"
-                    className="text-fsGray w-5/6 resize-none border border-fsGray rounded-md p-2"
-                    onChange={handleTextChange}
-                    value={value}
-                />
+                <div>
+                    <textarea
+                        ref={textareaRef}
+                        name="profileTextInput"
+                        id="profileTextInput"
+                        className="text-fsGray w-5/6 resize-none border border-fsGray rounded-md p-2"
+                        onChange={handleTextChange}
+                        value={value}
+                    />
+                    <div
+                    className="flex items-end gap-1 absolute bottom-0 right-0 cursor-pointer"
+                    onClick={toggleEdit}
+                >
+                    <Edit title="Save" save={true} toggleEdit={handleSave} />
+                </div>
+
+                </div>
+                
             ) : (
                 <p className="text-fsGray w-5/6">{value}</p>
             )}
@@ -109,13 +120,7 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
                     className="flex items-end gap-1 absolute bottom-0 right-0 cursor-pointer"
                     onClick={toggleEdit}
                 >
-                    <Image
-                        src="/images/edit-pencil.svg"
-                        alt="edit"
-                        width={20}
-                        height={20}
-                    />
-                    <p className="text-fsGray text-xs">Edit</p>
+                    <Edit title="Edit" toggleEdit={toggleEdit} />
                 </div>
             )}
         </div>

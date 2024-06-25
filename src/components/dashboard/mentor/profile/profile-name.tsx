@@ -43,8 +43,9 @@ const StarComponent = () => {
     }
   
     return (
-      <div className="flex gap-1">
+      <div className="flex gap-1 items-end">
         {stars}
+        <p className="text-fsGray text-xs">(4.96)</p>
       </div>
     );
   };

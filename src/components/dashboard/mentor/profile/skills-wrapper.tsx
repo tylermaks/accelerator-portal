@@ -10,7 +10,7 @@ type ProfileWrapperProps = {
     metaData: any[]
 }
 
-export default function SkillsWrapper ({ id, data, metaData }: ProfileWrapperProps) {
+export default function SkillsWrapper ({ id, data, metaData, }: ProfileWrapperProps) {
     const [skills, setSkills] = useState<any>([]);
 
 

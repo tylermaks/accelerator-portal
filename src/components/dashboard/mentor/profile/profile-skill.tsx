@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react"
 import Edit from "@/components/ui/edit"
+import Image from "next/image"
+import { revalidateFromClient } from "@/lib/actions"
 
 type ProfileSkillsProps = {
     id: string
@@ -33,6 +35,7 @@ const updateProfileSkills = async (id: string, fields: any) => {
 }
 
 export default function ProfileSkill({ id, data, metaData, title, index }: ProfileSkillsProps) {
+    const [skillsOnLoad, setSkillsOnLoad] = useState<string[]>([]);
     const [skills, setSkills] = useState<string[]>([]);
     const [metaSkills, setMetaSkills] = useState<string[]>([]);
     const [hover, setHover] = useState(false);
@@ -46,9 +49,17 @@ export default function ProfileSkill({ id, data, metaData, title, index }: Profi
         setEditing(false);
         setHover(false);
 
+        if (skills === skillsOnLoad) return;
+
         let skillsArr = skills.map((item) => item);
         await updateProfileSkills(id,  { [title]: skillsArr });
     };
+
+    const handleDeleteSkill = (skillToDelete: string) => {
+        updateProfileSkills(id,  { [skillToDelete]: [] });
+        revalidateFromClient(`/mentor/profile`);
+    }
+    
 
     const handleAddSkill = (event: React.MouseEvent<HTMLButtonElement>) => {
         const value = (event.target as HTMLInputElement).id;
@@ -66,6 +77,7 @@ export default function ProfileSkill({ id, data, metaData, title, index }: Profi
     useEffect(() => {
         const metaDataArray = metaData.map((item: any) => item.name);
         const filteredMetaData = metaDataArray.filter((item: any) => !data.includes(item));
+        setSkillsOnLoad(data)
         setSkills(data);
         setMetaSkills(filteredMetaData);
     }, []);
@@ -77,9 +89,21 @@ export default function ProfileSkill({ id, data, metaData, title, index }: Profi
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >
-            <h3 className="text-fsGray font-bold mb-2">
-                {title}:
-            </h3>
+            <div className="relative">
+                <h3 className="text-fsGray font-bold">
+                    {title}:
+                </h3>
+                {
+                    editing && (
+                        <div
+                            className="cursor-pointer absolute top-0 bottom-0 left-[-22px] flex gap-1 items-center"
+                            onClick={() => handleDeleteSkill(title)}
+                        >
+                            <Image src="/images/remove-icon.svg" alt="remove" width={17} height={17}/>
+                        </div>
+                    )
+                }
+            </div>
             <div className="flex flex-wrap gap-2.5">
                 {
                     skills.length === 0 ? (
@@ -87,14 +111,15 @@ export default function ProfileSkill({ id, data, metaData, title, index }: Profi
                     ) : (
                     skills.map((item: any, index: number) => {
                         return(
-                            <span 
-                                id={item} 
-                                key={index} 
-                                onClick={handleRemoveSkill}
-                                className={`text-fsGray text-sm bg-gray-200 py-1.5 px-3.5 rounded-full ${editing && "cursor-pointer"}`}
-                            >
-                                {item}
-                            </span>
+                            <div key={index} className={`text-fsGray flex gap-2 items-center text-sm bg-gray-200 py-1.5 px-3.5 rounded-full ${editing && "cursor-pointer"}`}>
+                                <span 
+                                    id={item} 
+                                    onClick={() => handleRemoveSkill}
+                                >
+                                    {item}
+                                </span>
+                                { editing && <Image src="/images/remove-icon.svg" alt="remove" width={17} height={17}/>}
+                            </div>
                         )
                     })
                     )

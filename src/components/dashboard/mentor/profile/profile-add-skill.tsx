@@ -43,12 +43,12 @@ export default function ProfileAddSkill({ metaData, setSkills, skills } : Profil
                 open ? (
                     <div >
                         <h3 className="text-fsGray font-bold mb-2" >
-                            Add New Skill: 
+                            Add New Category: 
                         </h3>
                         <div className="flex flex-wrap gap-2.5">  
                             {
                                 metaDataOptions.length === 0 ? (
-                                    <span className="px-3 text-fsGray text-sm">You have added all available skills</span>
+                                    <span className="px-3 text-fsGray text-sm">You have added all available categories</span>
                                 ) : (
                                 
                                 metaDataOptions.map((item: any, index: number) => {
@@ -68,7 +68,7 @@ export default function ProfileAddSkill({ metaData, setSkills, skills } : Profil
                         </div>
                     </div>
                 ) : (
-                    <p className="text-fsGray text-sm" onClick={toggleOpen}>+ Add Skill</p>
+                    <p className="text-fsGray text-sm" onClick={toggleOpen}>+ Add Category</p>
                 )
             }
         </div>

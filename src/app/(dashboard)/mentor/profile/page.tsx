@@ -4,6 +4,7 @@ import Image from "next/image";
 import ProfileText from "@/components/dashboard/mentor/profile/profile-text";
 import ProfileName from "@/components/dashboard/mentor/profile/profile-name";
 import SkillsWrapper from "@/components/dashboard/mentor/profile/skills-wrapper";
+import { revalidatePath } from "next/cache";
 
 const url = `${process.env.URL_ROOT}/api/skillsData`;
 
@@ -51,13 +52,14 @@ const getMetaData = async () => {
 };
 
 
-  
+
 
 export default async function Profile() {
     const skillsData = await getSkillData();
     const metaData = await getMetaData();
     const { fields } = skillsData.records[0];
     const { id } = skillsData.records[0];
+
  
     return(
        <div className="flex flex-col gap-8 px-24 pb-10 relative bg-white">
