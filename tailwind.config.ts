@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       colors:{
         'teal': '#00747A',
-        'teal-lt': '#00D5E0;', 
+        'teal-lt': '#00D5E0', 
         'teal-md': '#00888F',
         'orange': '#FF6800',
         'fsGray': '#4D4D4D'
