@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
+import DOMPurify from "dompurify"
+import { z } from "zod"
 
 type SelectProps = {
     label: string;
@@ -14,18 +16,35 @@ type SelectProps = {
     closeDropdown?: (currentOption: string) => void;
 }
 
+// Define the schema using Zod for allowed options
+const allowedOptionsSchema = z.array(z.string());
+
 export default function Select(
     {label, id, name, data, setFormState, closeDropdown, isRequired = false, searchable = false } : SelectProps
 ) {
     const [dropdown, setDropdown] = useState(false)
     const [search, setSearch] = useState("")
-    const [filteredList, setFilteredList] = useState<any[]>([])
+    const [filteredList, setFilteredList] = useState<string[]>([])
     const [currentOption, setCurrentOption] = useState<string>("")
+    const [error, setError] = useState<string>("")
     const dropdownRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const selectRef = useRef<HTMLSelectElement>(null)
 
-    
+    // Sanitize and validate the provided options
+    useEffect(() => {
+        const sanitizedData = data?.map(option => DOMPurify.sanitize(option));
+        const result = allowedOptionsSchema.safeParse(sanitizedData);
+        
+        if (!result.success) {
+            setError("Invalid options provided");
+            setFilteredList([]);
+        } else {
+            setError("");
+            setFilteredList(result.data);
+        }
+    }, [data]);
+
     const toggleDropdown = () => { 
         setDropdown(!dropdown)
     }
@@ -50,15 +69,14 @@ export default function Select(
     }
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => { 
-        const newValue = event.target.value
+        const newValue = DOMPurify.sanitize(event.target.value);
         setSearch(newValue)
     }
 
     const filterCompanyList = () => { 
-        const filteredOptions = data && data.filter(item => {
-            return item.toLowerCase().includes(search.toLowerCase())
-        })
-        
+        const filteredOptions = filteredList.filter(item => 
+            item.toLowerCase().includes(search.toLowerCase())
+        );
         setFilteredList(filteredOptions)
     }
 
@@ -85,11 +103,9 @@ export default function Select(
         }
     }, [data])
 
-   
     const selectClass = "cursor-pointer flex flex-row justify-between p-2.5 border border-gray-300 rounded-lg"
     const dropdownClass = dropdown ? "max-h-64 bg-gray-50 px-1 overflow-scroll absolute top-5 left-0 right-0 border border-2 border-blue-700 rounded-lg z-10" : "hidden"
     const dropdownOptionClass = "p-2 bg-gray-50 text-fsGray cursor-pointer text-sm hover:bg-blue-400 hover:text-white rounded-md"
-
 
     return (
         <div className="relative">
@@ -124,7 +140,7 @@ export default function Select(
                     )}
 
                     <div aria-hidden="true">
-                        {filteredList?.length > 0 ? (
+                        {filteredList.length > 0 ? (
                             filteredList.map(item => (
                                 <div 
                                     key={item} 
@@ -144,7 +160,6 @@ export default function Select(
             )}
 
             <select
-               
                 ref={selectRef}
                 id={id}
                 name={name}
@@ -152,15 +167,12 @@ export default function Select(
                 required={isRequired}
             >
                 <option value="" disabled>Select</option>
-                {data?.map((option, index) => {
-                    return(
-                        <option key={index} value={option}>
-                            {option}
-                        </option>
-                    )
-                })}
+                {data?.map((option, index) => (
+                    <option key={index} value={option}>
+                        {option}
+                    </option>
+                ))}
             </select>
         </div>
     );
 }
-
