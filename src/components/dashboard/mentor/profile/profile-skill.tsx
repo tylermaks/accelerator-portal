@@ -67,9 +67,9 @@ export default function ProfileSkill({ id, data, metaData, title, index }: Profi
         setMetaSkills((prevMetaSkills) => prevMetaSkills.filter((item) => item !== value));
     };
 
-    const handleRemoveSkill = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleRemoveSkill = (event: React.MouseEvent<HTMLDivElement>) => {
         if (!editing) return;
-        const value = (event.target as HTMLInputElement).id;
+        const value = (event.currentTarget as HTMLDivElement).id;
         setMetaSkills((prevMetaSkills) => [...prevMetaSkills, value]);
         setSkills((prevSkills) => prevSkills.filter((item) => item !== value));
     };
@@ -111,10 +111,14 @@ export default function ProfileSkill({ id, data, metaData, title, index }: Profi
                     ) : (
                     skills.map((item: any, index: number) => {
                         return(
-                            <div key={index} className={`text-fsGray flex gap-2 items-center text-sm bg-gray-200 py-1.5 px-3.5 rounded-full ${editing && "cursor-pointer"}`}>
+                            <div 
+                                id={item}
+                                key={index} 
+                                onClick={handleRemoveSkill} 
+                                className={`text-fsGray flex gap-2 items-center text-sm bg-gray-200 py-1.5 px-3.5 rounded-full ${editing && "cursor-pointer"}`}
+                            >
                                 <span 
                                     id={item} 
-                                    onClick={handleRemoveSkill}
                                 >
                                     {item}
                                 </span>
