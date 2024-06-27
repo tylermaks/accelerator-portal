@@ -23,7 +23,7 @@ export default function ProfileAddSkill({ metaData, setSkills, skills } : Profil
             name: data.name,
             options: []
         }
-
+        
         setSkills((prevSkills: any) => [...prevSkills, newSkill]);
         setOpen(false);
     }

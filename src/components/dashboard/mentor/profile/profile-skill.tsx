@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { updateProfile } from "@/lib/actions";
 import Edit from "@/components/ui/edit"
 import Image from "next/image"
-import { revalidateFromClient } from "@/lib/actions"
 
 type ProfileSkillsProps = {
     id: string
@@ -11,55 +11,37 @@ type ProfileSkillsProps = {
     metaData: string[]
     title: string
     index: number
+    updateCategories: React.Dispatch<React.SetStateAction<string[]>>
 }
 
-const updateProfileSkills = async (id: string, fields: any) => {
-    const response = await fetch("/api/updateSkill", {
-        method: "PATCH",
-        headers: {
-            'Content-Type': "application/json",
-        }, 
-        credentials: "include",
-        body: JSON.stringify({
-            recordID: id,
-            fieldData: fields
-        })
-    });
-
-    if (!response.ok) {
-        console.error("Fetch error:", response.statusText);
-        return null;
-    }
-
-    return await response.json();
-}
-
-export default function ProfileSkill({ id, data, metaData, title, index }: ProfileSkillsProps) {
+export default function ProfileSkill({ id, data, metaData, title, index, updateCategories }: ProfileSkillsProps) {
     const [skillsOnLoad, setSkillsOnLoad] = useState<string[]>([]);
     const [skills, setSkills] = useState<string[]>([]);
     const [metaSkills, setMetaSkills] = useState<string[]>([]);
     const [hover, setHover] = useState(false);
     const [editing, setEditing] = useState(false);
 
+
     const toggleEdit = () => {
         setEditing(!editing);
     };
 
     const handleSave = async () => {
+        //Add useOptimistic here?
         setEditing(false);
         setHover(false);
 
         if (skills === skillsOnLoad) return;
 
         let skillsArr = skills.map((item) => item);
-        await updateProfileSkills(id,  { [title]: skillsArr });
+        await updateProfile(id,  { [title]: skillsArr });
     };
 
-    const handleDeleteSkill = (skillToDelete: string) => {
-        updateProfileSkills(id,  { [skillToDelete]: [] });
-        revalidateFromClient(`/mentor/profile`);
+    const handleDeleteCategory = async (categoryToDelete: string) => {
+        updateCategories((prevCategories) => prevCategories.filter((item) => item !== categoryToDelete));
+        updateProfile(id, { [categoryToDelete]: [] });
+        setEditing(false);
     }
-    
 
     const handleAddSkill = (event: React.MouseEvent<HTMLButtonElement>) => {
         const value = (event.target as HTMLInputElement).id;
@@ -68,7 +50,7 @@ export default function ProfileSkill({ id, data, metaData, title, index }: Profi
     };
 
     const handleRemoveSkill = (event: React.MouseEvent<HTMLDivElement>) => {
-        if (!editing) return;
+        if(!editing) return
         const value = (event.currentTarget as HTMLDivElement).id;
         setMetaSkills((prevMetaSkills) => [...prevMetaSkills, value]);
         setSkills((prevSkills) => prevSkills.filter((item) => item !== value));
@@ -80,7 +62,7 @@ export default function ProfileSkill({ id, data, metaData, title, index }: Profi
         setSkillsOnLoad(data)
         setSkills(data);
         setMetaSkills(filteredMetaData);
-    }, []);
+    }, [data]);
 
     return (
         <div 
@@ -97,7 +79,7 @@ export default function ProfileSkill({ id, data, metaData, title, index }: Profi
                     editing && (
                         <div
                             className="cursor-pointer absolute top-0 bottom-0 left-[-22px] flex gap-1 items-center"
-                            onClick={() => handleDeleteSkill(title)}
+                            onClick={() => handleDeleteCategory(title)}
                         >
                             <Image src="/images/remove-icon.svg" alt="remove" width={17} height={17}/>
                         </div>

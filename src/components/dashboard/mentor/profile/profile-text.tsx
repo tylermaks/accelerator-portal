@@ -1,33 +1,12 @@
 "use client"
 
-
 import { useState, useEffect, useRef } from "react"
+import { updateProfile } from "@/lib/actions";
 import Edit from "@/components/ui/edit";
 
 type EditableTextProps = {
     id: string;
     data: string;
-}
-
-async function updateProfileText(id: string, fields: any) {
-    const response = await fetch("/api/updateSkill", {
-        method: "PATCH",
-        headers: {
-            'Content-Type': "application/json",
-        }, 
-        credentials: "include",
-        body: JSON.stringify({
-            recordID: id,
-            fieldData: fields
-        })
-    });
-
-    if (!response.ok) {
-        console.error("Fetch error:", response.statusText);
-        return null;
-    }
-
-    return await response.json();
 }
 
 export default function ProfileEditable({ data, id }: EditableTextProps) {
@@ -50,7 +29,6 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
     }, [editing, value]);
 
 
-    //REPLACE WITH EDIT COMPONENT (WITH SAVE OPTION)
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (textareaRef.current && !textareaRef.current.contains(event.target as Node)) {
@@ -67,7 +45,7 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
     }, [editing]);
 
     const handleSave = async () => {
-        await updateProfileText(dataID, { 'Bio': textareaRef.current?.value });
+        await updateProfile(dataID, { 'Bio': textareaRef.current?.value });
         setEditing(false);
     };
 
@@ -81,7 +59,7 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
     };
 
     const adjustTextareaHeight = (textarea: HTMLTextAreaElement) => {
-        textarea.style.height = 'auto'; // Reset the height to auto
+        textarea.style.height = 'auto'; 
         textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to match the scroll height
     };
 

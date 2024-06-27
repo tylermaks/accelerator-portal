@@ -7,13 +7,12 @@ import MeetingForm from "@/components/dashboard/mentor/meeting-form";
 import MainButton from "@/components/ui/main-button";
 
 export default function TableWrapper({ data }: any) {
-    const [rowData, setRowData] = useState<any>({});
+    // const [rowData, setRowData] = useState<any>({});
     const [showModal, setShowModal] = useState(false);
     const [optimisticRows, addOptimisticRow] = useOptimistic(
         data.records,
         (state, newRow: any) => [newRow, ...state] // Add new row to the beginning
     );
-
 
 
     const toggleModal = () => {
@@ -33,7 +32,6 @@ export default function TableWrapper({ data }: any) {
                     <MeetingForm 
                         addOptimistic={addOptimisticRow}
                         toggleModal={toggleModal}
-
                     />
                 </Modal>
             } 

@@ -67,6 +67,8 @@ const TABLE_ID = process.env.MEETING_TABLE_ID
 const VIEW_ID = process.env.MEETING_VIEW_ID
 const COMPANY_TABLE_ID = process.env.COMPANY_TABLE_ID
 const COMPANY_VIEW_ID = process.env.COMPANY_VIEW_ID
+const SKILLS_TABLE_ID = process.env.SKILLS_TABLE_ID
+const SKILLS_VIEW_ID = process.env.SKILLS_VIEW_ID
 const TEST_EMAIL = process.env.TEST_EMAIL
  // const email = user.email // uncomment later for production
 
@@ -163,4 +165,38 @@ export async function getCompanyList() {
             return { error: "An error occurred" }
         }
     }
+}
+
+export async function updateProfile(recordID: string, fieldData: any) {
+  const supabase = createClient();
+  const user =  await supabase.auth.getUser();
+  
+  if(!recordID || !fieldData) return
+
+  if(user){
+    try{
+      const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}/${recordID}`
+      const response = await fetch(url, {
+        method:'PATCH',
+        headers: {
+            'Authorization': `Bearer ${API_KEY}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({  
+            fields: fieldData
+
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      
+      revalidatePath("/mentor/profile");
+      return { message: "Skill updated successfully" };
+    } catch(error){ 
+        console.error("Error:", error);
+        return null
+    }
+  }
 }

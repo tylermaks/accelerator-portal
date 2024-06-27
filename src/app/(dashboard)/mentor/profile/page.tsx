@@ -60,6 +60,18 @@ export default async function Profile() {
     const { fields } = skillsData.records[0];
     const { id } = skillsData.records[0];
 
+    const skillsArray: { name: string, options: any }[] = [];
+    
+    for (const [key, value] of Object.entries(fields)) {
+        if (key === "Photo") continue;
+    
+        if (Array.isArray(value)) {
+            skillsArray.push({ name: key, options: value });
+        }
+    }
+
+    const sortedSkills = skillsArray.sort((a: any, b: any) => a.name.localeCompare(b.name));
+
  
     return(
        <div className="flex flex-col gap-8 px-24 pb-10 relative bg-white">
@@ -76,7 +88,7 @@ export default async function Profile() {
 
             <ProfileName data={fields}/>
             <ProfileText id={id} data={fields.Bio} /> 
-            <SkillsWrapper id={id} data={fields} metaData={metaData.fields}/>
+            <SkillsWrapper id={id} data={sortedSkills} metaData={metaData.fields}/>
        </div>
     )
 }

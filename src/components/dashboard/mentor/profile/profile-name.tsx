@@ -23,7 +23,7 @@ export default function ProfileName( { data } : ProfileNameProps) {
                     <p className="text-fsGray text-sm">Joined: June 2021</p>
                 </div>
             </div>
-            <StarComponent />
+            {/* <StarComponent /> */}
         </div>
     )
 }

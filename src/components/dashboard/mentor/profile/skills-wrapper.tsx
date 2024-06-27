@@ -1,8 +1,8 @@
 "use client"
 
 import ProfileSkill from "./profile-skill";
-import ProfileAddSkill from "./profile-add-skill";
-import { useState, useEffect } from "react";
+import ProfileAddSkill from "./profile-add-category";
+import { useState, useEffect, useOptimistic } from "react";
 
 type ProfileWrapperProps = { 
     id: string
@@ -11,23 +11,11 @@ type ProfileWrapperProps = {
 }
 
 export default function SkillsWrapper ({ id, data, metaData, }: ProfileWrapperProps) {
-    const [skills, setSkills] = useState<any>([]);
-
+    const [skills, setSkills] = useState<any>([]); // update to cateogories
 
     useEffect(() => {
-        const skillsArray: { name: string, options: any }[] = [];
-
-        for (const [key, value] of Object.entries(data)) {
-            if (key === "Photo") continue;
-        
-            if (Array.isArray(value)) {
-                skillsArray.push({ name: key, options: value });
-            }
-        }
-        const sortedSkills = [...skillsArray].sort((a, b) => a.name.localeCompare(b.name));
-        setSkills(sortedSkills);
+        setSkills(data);
     }, [data])
-
 
     return(
         <div >
@@ -49,6 +37,7 @@ export default function SkillsWrapper ({ id, data, metaData, }: ProfileWrapperPr
                                 data={item.options} 
                                 title={item.name} 
                                 index={index} 
+                                updateCategories={setSkills}
                             />
                         </div>
                     )
