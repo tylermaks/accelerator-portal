@@ -1,12 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { getUserRole } from "@/lib/actions";
+
 
 export default async function Sidebar() {
-    const user = await getUserData();
-    const userName = `${user?.first_name} ${user?.last_name}`
-    const userLinks = sideBarLinks.find(link => link.role === user?.role)
+    const user = await getUserRole();
+    // const userName = `${user?.first_name} ${user?.last_name}`
+    const userLinks = sideBarLinks.find(link => link.role === user)
+
+    console.log("userLinks")
 
     return(
         <nav className="h-screen flex flex-col justify-between p-8 w-1/5 bg-teal text-gray-100 ">
@@ -33,43 +35,44 @@ export default async function Sidebar() {
                 }
             </div>
             <div>
-                <p>{userName}</p>
+                <p>Sign Out</p>
             </div>
         </nav>
     );
 }
 
-async function getUserData() { 
-    const supabase = createClient();
-    const { data: { user }, error } = await supabase.auth.getUser();
+// async function getUserData() { 
+//     await getUserRole()
+//     const supabase = createClient();
+//     const { data: { user }, error } = await supabase.auth.getUser();
 
-    if (error) {
-        console.error('Error fetching user:', error);
-        redirect('/')
-    }
+//     if (error) {
+//         console.error('Error fetching user:', error);
+//         redirect('/')
+//     }
 
-    if (user) {
-        const { data: user_profiles, error } = await supabase
-            .from('user_profiles')
-            .select('role, first_name, last_name')
-            .eq('id', user.id)
-            .single()
+//     if (user) {
+//         const { data: user_profiles, error } = await supabase
+//             .from('user_profiles')
+//             .select('role, first_name, last_name')
+//             .eq('id', user.id)
+//             .single()
         
-        if (error) {
-            console.error('Error fetching user:', error);
-            return null;
-        } 
+//         if (error) {
+//             console.error('Error fetching user:', error);
+//             return null;
+//         } 
         
-        return user_profiles
-    } 
-}
+//         return user_profiles
+//     } 
+// }
 
 const sideBarLinks = [
     {
         role:'mentor',
-        icons: ['/images/calendar-icon.svg', '/images/user-icon.svg', '/images/report-icon.svg', '/images/question-icon.svg',],
-        links: ["Meeting Tracker", "Profile", "Reports", "FAQs"],
-        routes: ['/mentor/meeting-tracker', '/mentor/profile', '/mentor/reports', '/mentor/faqs',],
+        icons: ['/images/calendar-icon.svg', '/images/user-icon.svg', '/images/report-icon.svg', '/images/bolt-icon.svg', '/images/question-icon.svg',],
+        links: ["Meeting Tracker", "Profile", "Reports", "Support Requests", "FAQs"],
+        routes: ['/mentor/meeting-tracker', '/mentor/profile', '/mentor/reports', '/mentor/support-requests', '/mentor/faqs',],
     }, 
     {
         role:'company',

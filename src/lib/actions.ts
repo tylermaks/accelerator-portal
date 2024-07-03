@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
+import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
 const URL = process.env.URL_ROOT
@@ -56,6 +57,13 @@ export async function logout() {
   const { error } = await supabase.auth.signOut()
   revalidatePath('/', 'layout')
   redirect('/')
+}
+
+export async function getUserRole() {
+  const cookiesObject = cookies();
+  const userRole = cookiesObject.get('sessionToken')?.value;
+  console.log("userRole FROM SERVER", userRole)
+  return userRole
 }
 
 

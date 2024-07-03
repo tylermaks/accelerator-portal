@@ -35,7 +35,7 @@ export default async function MeetingTracker() {
                 title="Meeting Tracker"
                 subTitle="View your meeting history"
             />
-            <SummaryChart />
+            {/* <SummaryChart /> */}
             <TableWrapper data={data}/>
         </div>
     )
