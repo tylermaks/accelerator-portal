@@ -24,10 +24,8 @@ export async function middleware(request: NextRequest) {
 
     if (sessionToken) {
         userRole = sessionToken.value;
-        console.log("ROUTING HANDLED HERE")
     } else {
         const { data: { user }, error } = await supabase.auth.getUser();
-
         if (user) {
             const { data: userProfile, error } = await supabase
                 .from('user_profiles')

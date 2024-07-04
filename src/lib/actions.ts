@@ -2,11 +2,9 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { headers } from 'next/headers'
 import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
-const URL = process.env.URL_ROOT
 
 export async function login(formData: FormData) {
     const supabase = createClient()
@@ -48,13 +46,10 @@ export async function signup(formData: FormData) {
   redirect('/')
 }
 
-export async function revalidateFromClient(path: string) {
-  revalidatePath(path)
-}
-
 export async function logout() {
   const supabase = createClient()
   const { error } = await supabase.auth.signOut()
+  cookies().delete('sessionToken')
   revalidatePath('/', 'layout')
   redirect('/')
 }

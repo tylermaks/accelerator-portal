@@ -1,5 +1,5 @@
 import PageHeader from "@/components/ui/page-header";
-import SummaryChart from "@/components/dashboard/mentor/summary-chart";
+// import SummaryChart from "@/components/dashboard/mentor/summary-chart";
 import TableWrapper from "@/components/dashboard/mentor/table-wrapper";
 import { headers } from "next/headers";
 
@@ -10,6 +10,7 @@ const getData = async () => {
             headers: {
                 cookie: headers().get("cookie") as string,
             },
+            cache: "force-cache"
         });
         
         if (!response.ok) {
