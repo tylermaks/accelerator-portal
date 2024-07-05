@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { updateSession } from '@/utils/supabase/middleware';
 import { createClient } from '@/utils/supabase/server';
+import { loginLimiter, forgotPasswordLimiter } from "./utils/rateLimiter";
+
 
 const publicRoutes = ['/', '/reset-password'];
 
@@ -17,6 +19,17 @@ const defaultRoutes: { [key: string]: string } = {
 };
 
 export async function middleware(request: NextRequest) {
+    const { pathname } = request.nextUrl;
+    const ip = (request.headers.get('x-forwarded-for') || request.ip ) as string;
+
+    if (pathname === '/api/auth/login' && !loginLimiter.check(ip)) {
+        return NextResponse.json({ message: 'Too many login attempts, please try again later.' }, { status: 429 });
+    }
+
+    if (pathname === '/api/auth/forgot-password' && !forgotPasswordLimiter.check(ip)) {
+        return NextResponse.json({ message: 'Too many password reset requests, please try again later.' }, { status: 429 });
+    }
+
     const supabase = createClient();
     const sessionToken = request.cookies.get('sessionToken');
 
