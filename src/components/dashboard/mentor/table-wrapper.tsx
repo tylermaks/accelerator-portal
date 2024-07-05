@@ -5,6 +5,7 @@ import Table from "@/components/ui/table";
 import Modal from "@/components/ui/modal";
 import MeetingForm from "@/components/dashboard/mentor/meeting-form";
 import MainButton from "@/components/ui/main-button";
+import SortFilterButton from "@/components/dashboard/mentor/sort-filter-button";
 
 export default function TableWrapper({ data }: any) {
     // const [rowData, setRowData] = useState<any>({});
@@ -17,7 +18,6 @@ export default function TableWrapper({ data }: any) {
 
     const toggleModal = () => {
         setShowModal(!showModal);
-        console.log("SHOW MODAL", showModal);
     }
 
 
@@ -35,17 +35,35 @@ export default function TableWrapper({ data }: any) {
                     />
                 </Modal>
             } 
-            <div className="flex justify-end gap-8 mb-4">
-                <div className="w-1/8">
+            
+            <div className="flex gap-4 mb-3">
+                
+                    <SortFilterButton 
+                        text="Sort"
+                        icon="sort"
+                    />
+
+                    <SortFilterButton 
+                        text="Filter"
+                        icon="filter"
+                    />
+
+                    {/* <MainButton 
+                        id="sort"
+                        text="Sort"
+                        altButton={true}
+                        small={true}
+                        action={toggleModal}
+                    />
                     <MainButton 
                         id="addMeeting"
                         text="+ Add Meeting"
                         action={toggleModal}
                         small={true}
-                    />
-                </div>
-
+                    /> */}
             </div>
+
+            
             <Table 
                 tableHeaders={["Date", "Company Name", "Duration (hrs)", "Support Type", ""]}
                 tableRows={optimisticRows}
