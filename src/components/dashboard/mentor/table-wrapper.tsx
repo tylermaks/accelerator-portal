@@ -1,17 +1,18 @@
 "use client"
 
 import { useState, useOptimistic, useEffect } from "react"
+import { useSortFilter } from "@/context/SortFilterContext"
 import Table from "@/components/ui/table";
 import Modal from "@/components/ui/modal";
 import MeetingForm from "@/components/dashboard/mentor/meeting-form";
 import MainButton from "@/components/ui/main-button";
 import SortFilterButton from "@/components/dashboard/mentor/sort-filter-button";
 
-export default function TableWrapper({ data }: any) {
-    // const [rowData, setRowData] = useState<any>({});
+export default function TableWrapper() {
+    const { tableData } = useSortFilter()
     const [showModal, setShowModal] = useState(false);
     const [optimisticRows, addOptimisticRow] = useOptimistic(
-        data.records,
+        tableData,
         (state, newRow: any) => [newRow, ...state] // Add new row to the beginning
     );
 
@@ -22,7 +23,7 @@ export default function TableWrapper({ data }: any) {
 
 
     return(
-        <div>
+        <div className="flex flex-col">
             {showModal && 
                 <Modal 
                     title="Add Meeting"
@@ -68,6 +69,7 @@ export default function TableWrapper({ data }: any) {
                 tableHeaders={["Date", "Company Name", "Duration (hrs)", "Support Type", ""]}
                 tableRows={optimisticRows}
             />
+            
         </div>
     )
 }

@@ -1,5 +1,5 @@
 import PageHeader from "@/components/ui/page-header";
-// import SummaryChart from "@/components/dashboard/mentor/summary-chart";
+import TableProvider from "@/components/providers";
 import TableWrapper from "@/components/dashboard/mentor/table-wrapper";
 import { headers } from "next/headers";
 
@@ -28,16 +28,16 @@ const getData = async () => {
     }
 };
 export default async function MeetingTracker() {
-    const data = await getData();
-
     return(
         <div className="flex flex-col gap-8">
             <PageHeader 
                 title="Meeting Tracker"
                 subTitle="View your meeting history"
             />
-            {/* <SummaryChart /> */}
-            <TableWrapper data={data}/>
+
+            <TableProvider>
+                <TableWrapper/>
+            </TableProvider>
         </div>
     )
 }
