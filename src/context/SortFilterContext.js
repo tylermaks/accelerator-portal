@@ -13,51 +13,57 @@ export const SortFilterProvider = ({ children }) => {
     const [sort, setSort] = useState([])
     const [filter, setFilter] = useState([])
     const [tableData, setTableData] = useState([])
-    const [offset, setOffset] = useState(0)
+    const [offset, setOffset] = useState(null)
     const [hasMoreData, setHasMoreData] = useState(true)
+    const [resetState, setResetState] = useState(false)
 
     const fetchSortFilteredData = async (reset = false) => {
         if (reset) {
-            setOffset(0)
+            setOffset(null)
             setTableData([])
             setHasMoreData(true)
         }
 
         if (!hasMoreData) return;
 
-        const data = await getTableData(reset ? 0 : offset, sort, filter);
+        const data = await getTableData(offset, sort, filter);
 
         if (data.error) {
             console.error(data.error);
             return;
         }
 
-        setOffset(data.offset || null);
+        if (data.offset) {
+            setOffset(data.offset);
+        } else {
+            setHasMoreData(false);
+        }
 
         if (reset) {
             setTableData(data.records);
         } else {
             setTableData((prevData) => [...prevData, ...data.records]);
         }
-
-        if (!data.offset) {
-            setHasMoreData(false);
-        }
-        
-        return data;
     };
+
+    const toggleState = () => {
+        setResetState(prevState => !prevState)
+    }
+
+    useEffect(() => {
+        setOffset(null)
+        toggleState()
+    }, [sort, filter])
+
 
     useEffect(() => {
         fetchSortFilteredData(true)
-    }, [sort, filter])
+    }, [resetState])
 
-    const appendTableData = (newData) => {
-        setTableData((prevData) => [...prevData, ...newData])
-    }
 
     const addCondition = (modalType, fieldValue ) => { 
         if (modalType === "Sort"){ 
-            const newSortCondition = {field: fieldValue, criteria:"desc"}
+            const newSortCondition = {field: fieldValue, criteria: "asc"}
             setSort(prevData => [...prevData, newSortCondition])
         } else { 
             const newFilterCondition = {field: fieldValue, criteria:""}
@@ -75,7 +81,7 @@ export const SortFilterProvider = ({ children }) => {
 
     const updateCondition = (id, condition, field, value) => {
         let updatedItems
-
+        console.log("value", value, "field", field)
         if(condition === "Sort"){
             updatedItems = [...sort]
             updatedItems[id] = {...updatedItems[id], field: field, criteria: value}
@@ -104,7 +110,6 @@ export const SortFilterProvider = ({ children }) => {
             updateCondition, 
             clearConditions, 
             fetchSortFilteredData,
-            appendTableData,
             tableData,
             hasMoreData 
         }}>

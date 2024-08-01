@@ -4,7 +4,6 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
-import { recordTraceEvents } from 'next/dist/trace'
 
 
 export async function login(formData: FormData) {
@@ -88,7 +87,7 @@ interface FilterCriteria {
 }
 
 export async function getTableData (
-  offset: number | null = null, 
+  offset: string | null = null, 
   sort: SortCriteria[] | null = null,
   filter: FilterCriteria[] | null = null,
   cache: boolean = false,
@@ -115,18 +114,26 @@ export async function getTableData (
 
       const encodedFilter = encodeURIComponent(filterFormula)
 
-      let sortQuery = '&sort[0][field]=date&sort[0][direction]=desc';
+      let sortQuery = "";
       sort?.forEach((sortParam, index) => {
-          let offsetIndex = index
-          let sortField = `sort[${offsetIndex}][field]=${encodeURIComponent(sortParam.field)}`
-          let sortDirection = `sort[${offsetIndex}][direction]=${encodeURIComponent(sortParam.criteria)}`
-          sortQuery += `&${sortField}&${sortDirection}`
+          const field = sortParam.field
+          const direction = sortParam.criteria
+
+          let sortField = encodeURIComponent(`sort[${index}][field]`) + `=${field}`
+          let sortDirection = encodeURIComponent(`sort[${index}][direction]`) + `=${direction}`
+
+          sortQuery += `${sortField}&${sortDirection}&`
       });
 
+
       try {
-        const urlBase = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?view=${VIEW_ID}&filterByFormula=${encodedFilter}${sortQuery}&pageSize=25`
-        const paginatedUrl = offset ? `${urlBase}&offset=${offset}` : urlBase
-        
+        const urlBase = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?filterByFormula=${encodedFilter}&pageSize=25&${sortQuery}view=${VIEW_ID}`
+        const urlOffset = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?offset=${offset}`
+        // const urlBase = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?view=${VIEW_ID}&${sortQuery}filterByFormula=${encodedFilter}`
+        // const paginatedUrl = offset ? `${urlBase}&offset=${offset}` : urlBase
+
+        const paginatedUrl = offset ? urlOffset : urlBase
+
         const response = await fetch(paginatedUrl, {
             headers: {
                 'Authorization': `Bearer ${API_KEY}`,

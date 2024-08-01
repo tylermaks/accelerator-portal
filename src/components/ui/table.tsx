@@ -18,9 +18,9 @@ type TableProps = {
     }[]
 }
 
-export default function Table({ tableHeaders, tableRows }: TableProps) {
+export default function Table({ tableHeaders, tableRows}: TableProps) {
     const [isFetching, setIsFetching] = useState(false)
-    const { fetchSortFilteredData, appendTableData, hasMoreData } = useSortFilter()
+    const { fetchSortFilteredData, hasMoreData } = useSortFilter()
     const scrollRef = useRef<HTMLDivElement>(null)
 
     const headerStyles = "p-3 text-left text-sm font-semibold text-gray-100 bg-teal-md"
@@ -29,7 +29,6 @@ export default function Table({ tableHeaders, tableRows }: TableProps) {
     const handleScroll = () => {
         if (scrollRef.current) {
             const { scrollTop, scrollHeight, clientHeight } = scrollRef.current
-            // Use a fixed threshold for triggering the fetch
             if (scrollHeight - scrollTop - clientHeight < 100 && !isFetching && hasMoreData) {
                 setIsFetching(true)
             }
@@ -46,20 +45,19 @@ export default function Table({ tableHeaders, tableRows }: TableProps) {
 
     useEffect(() => {
         if (isFetching) {
-            fetchSortFilteredData().then((newData: any) => {
-                if (newData && newData.records) {
-                    appendTableData(newData.records)
-                }
-                setIsFetching(false)
-            }).catch(error => {
-                console.error('Error fetching data:', error)
-                setIsFetching(false)
-            })
+            fetchSortFilteredData()
+                .then(() => {
+                    setIsFetching(false);
+                })
+                .catch((error: any) => {
+                    console.error('Error fetching data:', error);
+                    setIsFetching(false);
+                });
         }
-    }, [isFetching, fetchSortFilteredData, appendTableData])
+    }, [isFetching]);
 
     return (
-        <div ref={scrollRef} className="h-[35rem] overflow-y-scroll">
+        <div ref={scrollRef} className="h-[45rem] overflow-y-scroll">
             <table className="w-full table table-compact table-auto rounded-md">
                 <thead>
                     <tr>
@@ -74,7 +72,7 @@ export default function Table({ tableHeaders, tableRows }: TableProps) {
                     </tr>
                 </thead>
                 <tbody>
-                    {tableRows?.map(row => (
+                    {tableRows?.map((row : any) => (
                         <tr key={row.id}>
                             <td className={rowStyles}>{row.fields.date}</td>
                             <td className={rowStyles}>{row.fields.altName ? row.fields.altName : row.fields.companyName}</td>

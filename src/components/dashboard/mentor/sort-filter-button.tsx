@@ -43,15 +43,17 @@ export default function SortFilterButton({ text, icon }: TableButtonProps) {
     };
 
     const handleAddCondition = (condition: string) => {
+        console.log("CONDITION FROM HANDLE ADD CONDITION", condition, text)
         addCondition(text, condition);
         toggleSubMenu();
     };
 
     const handleRemoveCondition = (condition: string) => {
-        removeCondition(text, condition);;
+        removeCondition(text, condition);
     }
 
     const handleUpdateCondition = (id: number, condition: string, field: string, value: string) => {
+        console.log("VALUE FROM HANDLE UPDATE CONDITION", value)
         updateCondition(id, condition, field, value);
     }
 
