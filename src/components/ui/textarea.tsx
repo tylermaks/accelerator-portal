@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 import DOMPurify from "dompurify";
 
@@ -9,9 +9,21 @@ const TextareaSchema = z.object({
   value: z.string().min(1, "This field is required"),
 });
 
-export default function Textarea({ label, name }: { label: string, name: string }) {
+export default function Textarea({ label, name, prepopulate }: { label: string, name: string, prepopulate?: string }) {
     const [value, setValue] = useState("");
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        const sanitizedPrepopulate = prepopulate ? DOMPurify.sanitize(prepopulate) : "";
+        const result = TextareaSchema.safeParse({ value: sanitizedPrepopulate });
+
+        if (result.success) {
+            setValue(result.data.value); // Set the value if validation passes
+        } else {
+            console.error(result.error); // Log or handle validation errors
+            setValue(""); // Optionally set an empty value or handle it differently
+        }
+    }, [prepopulate]);
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const sanitizedValue = DOMPurify.sanitize(e.target.value);

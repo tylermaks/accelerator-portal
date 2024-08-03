@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 import DOMPurify from "dompurify";
 
@@ -13,12 +13,14 @@ export default function Input({
     type, 
     id,
     name,
+    prepopulate,
     isRequired = false
 }: { 
     label: string,
     type: string, 
     id: string,
-    name: string
+    name: string,
+    prepopulate?: string,
     isRequired?: boolean
 }) {
     const [value, setValue] = useState("");
@@ -35,6 +37,18 @@ export default function Input({
             setValue(sanitizedValue);
         }
     };
+
+    useEffect(() => {
+        const sanitizedPrepopulate = prepopulate ? DOMPurify.sanitize(prepopulate) : "";
+        const result = InputSchema.safeParse({ value: sanitizedPrepopulate });
+
+        if (result.success) {
+            setValue(result.data.value); // Set the value if validation passes
+        } else {
+            console.error(result.error); // Log or handle validation errors
+            setValue(""); // Optionally set an empty value or handle it differently
+        }    
+    }, [prepopulate]);
 
     return (
         <div className="w-full">

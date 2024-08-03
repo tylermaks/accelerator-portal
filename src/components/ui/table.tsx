@@ -5,6 +5,7 @@ import { useSortFilter } from "@/context/SortFilterContext"
 import Image from "next/image"
 
 type TableProps = {
+    toggleModal: () => void
     tableHeaders: string[]
     tableRows: {
         id: string;
@@ -18,13 +19,14 @@ type TableProps = {
     }[]
 }
 
-export default function Table({ tableHeaders, tableRows}: TableProps) {
+export default function Table({ tableHeaders, tableRows, toggleModal}: TableProps) {
     const [isFetching, setIsFetching] = useState(false)
     const { fetchSortFilteredData, hasMoreData } = useSortFilter()
     const scrollRef = useRef<HTMLDivElement>(null)
 
     const headerStyles = "p-3 text-left text-sm font-semibold text-gray-100 bg-teal-md"
     const rowStyles = "px-3 py-5 text-sm border-t border-gray-200 text-fsGray"
+
 
     const handleScroll = () => {
         if (scrollRef.current) {
@@ -72,13 +74,25 @@ export default function Table({ tableHeaders, tableRows}: TableProps) {
                     </tr>
                 </thead>
                 <tbody>
-                    {tableRows?.map((row : any) => (
+                    {tableRows?.map((row) => (
                         <tr key={row.id}>
                             <td className={rowStyles}>{row.fields.date}</td>
                             <td className={rowStyles}>{row.fields.altName ? row.fields.altName : row.fields.companyName}</td>
                             <td className={rowStyles}>{row.fields.duration}</td>
                             <td className={rowStyles}>{row.fields.supportType}</td>
-                            <td id={row.id} className={rowStyles}><Image className="cursor-pointer" src="/images/open-icon.svg" alt="Open record" width={20} height={20} /></td>
+                            <td 
+                                id={row.id} 
+                                className={rowStyles}
+                                onClick={() => toggleModal(row)}
+                            >
+                                <Image 
+                                    className="cursor-pointer" 
+                                    src="/images/open-icon.svg" 
+                                    alt="Open record" 
+                                    width={20} 
+                                    height={20}
+                                />
+                            </td>
                         </tr>
                     ))}
                 </tbody>

@@ -18,11 +18,7 @@ export const SortFilterProvider = ({ children }) => {
     const [resetState, setResetState] = useState(false)
 
     const fetchSortFilteredData = async (reset = false) => {
-        if (reset) {
-            setOffset(null)
-            setTableData([])
-            setHasMoreData(true)
-        }
+
 
         if (!hasMoreData) return;
 
@@ -52,6 +48,8 @@ export const SortFilterProvider = ({ children }) => {
 
     useEffect(() => {
         setOffset(null)
+        setTableData([])
+        setHasMoreData(true)
         toggleState()
     }, [sort, filter])
 
@@ -72,7 +70,7 @@ export const SortFilterProvider = ({ children }) => {
     }
 
     const removeCondition = (modalType, field) => {
-        if(modalType === "sort"){
+        if(modalType === "Sort"){
             setSort(prevSort => prevSort.filter(item => item.field !== field))
         } else { 
             setFilter(prevFilter => prevFilter.filter( item => item.field !== field))

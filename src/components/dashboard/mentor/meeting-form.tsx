@@ -9,12 +9,13 @@ import { addMeeting } from "@/lib/actions";
 
 
 
-export default function MeetingForm( { toggleModal, addOptimistic } : any) {
+export default function MeetingForm( { toggleModal, addOptimistic, data } : any) {
     const [companyList, setCompanyList] = useState<any>([]);
     const [clickedButton, setClickedButton] = useState<string>("");
     const [supportType, setSupportType] = useState<string>("");
     const [loading, setLoading] = useState(false);
     const formRef = useRef<HTMLFormElement>(null);
+    const { fields } = data;
 
     const supportOptions: string[] = [
         "Supporting a company", 
@@ -43,7 +44,6 @@ export default function MeetingForm( { toggleModal, addOptimistic } : any) {
         }
         
         const data = await response.json();
-        console.log("COMPANY LIST", data);
         setCompanyList(data);
     }
 
@@ -88,6 +88,13 @@ export default function MeetingForm( { toggleModal, addOptimistic } : any) {
         }
     };
 
+    const shouldRenderInput = (type : string) => {
+        const supportedTypes = ["Content Development", "Other", "Intake", "Program Moderation"];
+        return supportedTypes.includes(type);
+    };
+    
+    const currentSupportType = supportType || fields?.supportType;
+
     return(
         <form 
             onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
@@ -102,16 +109,18 @@ export default function MeetingForm( { toggleModal, addOptimistic } : any) {
                 label="Support Type"
                 id="supportType"
                 name="supportType"
+                prepopulate={fields && fields.supportType} 
                 data={supportOptions}
                 setFormState={setSupportType}
                 isRequired={true}
            />
-           { (supportType === "Content Development" || supportType === "Other" || supportType === "Intake")  ? (
+           { shouldRenderInput(currentSupportType) ? (
                 <Input 
                     label={`Please provide project name:`}
                     type="text"
-                    id="companyName"
-                    name="companyName"
+                    id="altName"
+                    name="altName"
+                    prepopulate={fields && fields.altName}
                     isRequired={true}
                 />
   
@@ -120,6 +129,7 @@ export default function MeetingForm( { toggleModal, addOptimistic } : any) {
                     label="Company Name"
                     id="companyName"
                     name="companyName"
+                    prepopulate={fields && fields.companyName}
                     data={companyList.records}
                     searchable={true}
                     isRequired={true}
@@ -131,6 +141,7 @@ export default function MeetingForm( { toggleModal, addOptimistic } : any) {
                 type="date"
                 id="date"
                 name="date"
+                prepopulate={fields && fields.date}
                 isRequired={true}
             />
             <Input 
@@ -138,13 +149,14 @@ export default function MeetingForm( { toggleModal, addOptimistic } : any) {
                 type="number"
                 id="duration"
                 name="duration"
+                prepopulate={fields && fields.duration}
                 isRequired={true}
             />
-           <Textarea 
+            <Textarea 
                 name="notes" 
                 label="Notes"
+                prepopulate={fields && fields.notes}
             /> 
-
             <div className="flex gap-4">
                 <MainButton 
                     id="submit-meeting"

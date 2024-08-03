@@ -10,35 +10,41 @@ import SortFilterButton from "@/components/dashboard/mentor/sort-filter-button";
 
 export default function TableWrapper() {
     const { tableData } = useSortFilter()
-    const [showModal, setShowModal] = useState(false);
+    const [showModal, setShowModal] = useState({ open: false, data: {} });
     const [optimisticRows, addOptimisticRow] = useOptimistic(
         tableData,
         (state, newRow: any) => [newRow, ...state] // Add new row to the beginning
     );
 
 
-    const toggleModal = () => {
-        setShowModal(!showModal);
+    const toggleModal = ( modalData: {} = {}) => {
+        setShowModal({open: !showModal.open, data: modalData});
     }
+
+
+    useEffect(() => {
+        console.log("MODAL FROM TABLE WRAPPER", showModal)
+    }, [showModal])
 
 
     return(
         <div className="flex flex-col">
-            {showModal && 
+            {showModal.open && 
                 <Modal 
-                    title="Add Meeting"
+                    title={ Object.keys(showModal.data).length > 0 ? "Edit Meeting" : "Add Meeting"}
                     subtitle="Please add your meeting details"
                     action={toggleModal}
                 >
                     <MeetingForm 
                         addOptimistic={addOptimisticRow}
                         toggleModal={toggleModal}
+                        data={ showModal.data }
                     />
                 </Modal>
             } 
             
-            <div className="flex gap-4 mb-3">
-                
+            <div className="flex justify-between mb-3">
+                <div className="flex gap-4">
                     <SortFilterButton 
                         text="Sort"
                         icon="sort"
@@ -48,26 +54,22 @@ export default function TableWrapper() {
                         text="Filter"
                         icon="filter"
                     />
-
-                    {/* <MainButton 
-                        id="sort"
-                        text="Sort"
-                        altButton={true}
-                        small={true}
-                        action={toggleModal}
-                    />
+                </div>
+                <div>
                     <MainButton 
                         id="addMeeting"
                         text="+ Add Meeting"
-                        action={toggleModal}
+                        action={() => toggleModal()}
                         small={true}
-                    /> */}
+                    />
+                </div>
             </div>
 
             
             <Table 
                 tableHeaders={["Date", "Company Name", "Duration (hrs)", "Support Type", ""]}
                 tableRows={optimisticRows}
+                toggleModal={toggleModal}
             />
             
         </div>

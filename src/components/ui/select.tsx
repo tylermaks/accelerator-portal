@@ -9,6 +9,7 @@ type SelectProps = {
     label: string;
     id: string;
     name: string;
+    prepopulate?: string;
     data: string[];
     isRequired?: boolean;
     searchable?: boolean;
@@ -18,9 +19,12 @@ type SelectProps = {
 
 // Define the schema using Zod for allowed options
 const allowedOptionsSchema = z.array(z.string());
+const InputSchema = z.object({
+    value: z.string().min(1, "This field is required"),
+  });
 
 export default function Select(
-    {label, id, name, data, setFormState, closeDropdown, isRequired = false, searchable = false } : SelectProps
+    {label, id, name, prepopulate, data, setFormState, closeDropdown, isRequired = false, searchable = false } : SelectProps
 ) {
     const [dropdown, setDropdown] = useState(false)
     const [search, setSearch] = useState("")
@@ -31,19 +35,32 @@ export default function Select(
     const inputRef = useRef<HTMLInputElement>(null);
     const selectRef = useRef<HTMLSelectElement>(null)
 
+
     // Sanitize and validate the provided options
     useEffect(() => {
         const sanitizedData = data?.map(option => DOMPurify.sanitize(option));
-        const result = allowedOptionsSchema.safeParse(sanitizedData);
-        
-        if (!result.success) {
+        const resultData = allowedOptionsSchema.safeParse(sanitizedData);
+
+        if (!resultData.success) {
             setError("Invalid options provided");
             setFilteredList([]);
         } else {
             setError("");
-            setFilteredList(result.data);
+            setFilteredList(resultData.data);
         }
-    }, [data]);
+        
+        const sanitizedPrepopulate = prepopulate ? DOMPurify.sanitize(prepopulate) : "";
+        const resultPrepopulate = InputSchema.safeParse({ value: sanitizedPrepopulate });
+
+        if (!resultPrepopulate.success) {
+            // Handle the error if prepopulate is invalid
+            console.error(resultPrepopulate.error);
+            setCurrentOption(""); // Optionally set a default value or handle the error
+        } else {
+            setCurrentOption(resultPrepopulate.data.value);
+        }
+
+    }, []);
 
     const toggleDropdown = () => { 
         setDropdown(!dropdown)
