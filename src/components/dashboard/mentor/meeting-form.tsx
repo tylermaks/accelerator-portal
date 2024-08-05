@@ -102,9 +102,10 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
                 const formData = new FormData(e.currentTarget);
                 handleSubmit(formData as unknown as FormData);
             }} 
-            className="flex flex-col gap-6"
+            className="flex flex-col gap-4 h-full pb-4"
             ref={formRef}
-            >
+        >
+
            <Select 
                 label="Support Type"
                 id="supportType"
@@ -152,21 +153,24 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
                 prepopulate={fields && fields.duration}
                 isRequired={true}
             />
+           
             <Textarea 
                 name="notes" 
                 label="Notes"
                 prepopulate={fields && fields.notes}
-            /> 
+            />  
+                                    
             <div className="flex gap-4">
                 <MainButton 
-                    id="submit-meeting"
-                    text="Submit"  
+                    id={fields ? "update-meeting" : "submit-meeting"}
+                    text={fields ? "Update" : "Submit"} 
                     action={getButtonID}
                 />
                 <MainButton 
-                    id="add-another-meeting"
-                    text="Submit and add another" 
+                    id={fields ? "delete-meeting" : "add-another-meeting"}
+                    text={fields ? "Delete" : "Submit and add another"}
                     altButton={true}
+                    warning={fields ? true : false}
                     action={getButtonID}
                 />
             </div>

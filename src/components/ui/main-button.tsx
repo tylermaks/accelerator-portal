@@ -5,6 +5,7 @@ export default function MainButton({
     text,
     action,
     altButton = false,
+    warning = false,
     small = false,
     loading = false,
     width
@@ -13,12 +14,14 @@ export default function MainButton({
     text: string,
     action?: (event: React.MouseEvent<HTMLButtonElement>) => void,
     altButton?: boolean,
+    warning?: boolean,
     small?: boolean, 
     loading?: boolean
     width?: string
 }) {
 
-    const altButtonStyle = altButton ? `border border-orange text-orange hover:bg-orange hover:text-white` : "bg-orange text-white"
+    const warningButtonStyle = warning ? "red-500" : "orange"
+    const altButtonStyle = altButton ? `border border-${warningButtonStyle} text-${warningButtonStyle} hover:bg-${warningButtonStyle} hover:text-white` : "bg-orange text-white"
     const smallButtonStyle = small ? "p-1.5 text-sm" : "p-2"
     const loadingButtonStyle = loading ? "opacity-50 cursor-not-allowed" : ""
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {

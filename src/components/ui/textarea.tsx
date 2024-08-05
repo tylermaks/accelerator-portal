@@ -38,13 +38,12 @@ export default function Textarea({ label, name, prepopulate }: { label: string, 
     };
 
     return (
-        <div className="w-full">
+        <div className="flex flex-col flex-1">
             <label htmlFor={name} className="block mb-1 text-xs text-fsGray">{label}</label>
             <textarea 
-                className="w-full resize-none border bg-gray-50 rounded-lg p-2 text-sm text-fsGray" 
+                className="w-full resize-none border bg-gray-50 rounded-lg p-2 text-sm text-fsGray h-full" 
                 name={name} 
                 id={name}
-                rows={6}
                 value={value}
                 onChange={handleChange}
             />
