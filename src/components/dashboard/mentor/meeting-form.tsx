@@ -5,7 +5,7 @@ import Select from "@/components/ui/select";
 import Textarea from "@/components/ui/textarea";
 import MainButton from "@/components/ui/main-button";
 import { useEffect, useState, useRef } from "react";
-import { addMeeting } from "@/lib/actions";
+import { addMeeting, deleteMeeting, updateMeeting } from "@/lib/meeting-actions"
 
 
 
@@ -16,7 +16,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
     const [loading, setLoading] = useState(false);
     const formRef = useRef<HTMLFormElement>(null);
     const { fields } = data;
-
+    
     const supportOptions: string[] = [
         "Supporting a company", 
         "Program Moderation", 
@@ -88,6 +88,24 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
         }
     };
 
+    const handleDelete = async () => {
+        try {
+            await deleteMeeting(data.id);
+            toggleModal();
+        } catch (error) {
+            console.error('Error deleting meeting:', error);
+        }
+    };
+
+    const handleEdit = async (formData: FormData) => {
+        try {
+            await updateMeeting(data.id, formData);
+            toggleModal();
+        } catch (error) {
+            console.error('Error updating meeting:', error);
+        }
+    };
+
     const shouldRenderInput = (type : string) => {
         const supportedTypes = ["Content Development", "Other", "Intake", "Program Moderation"];
         return supportedTypes.includes(type);
@@ -99,8 +117,23 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
         <form 
             onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                 e.preventDefault();
-                const formData = new FormData(e.currentTarget);
-                handleSubmit(formData as unknown as FormData);
+
+                if (clickedButton === "delete-meeting") {                    
+                    handleDelete();
+                    return;
+                }
+
+                if (clickedButton === "submit-meeting") {
+                    const formData = new FormData(e.currentTarget);
+                    handleSubmit(formData as unknown as FormData);
+                    return;
+                }
+
+                if (clickedButton === "update-meeting") {
+                    const formData = new FormData(e.currentTarget);
+                    handleEdit(formData as unknown as FormData);
+                    return;
+                }
             }} 
             className="flex flex-col gap-4 h-full pb-4"
             ref={formRef}

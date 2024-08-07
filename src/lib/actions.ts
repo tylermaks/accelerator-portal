@@ -114,13 +114,13 @@ export async function getTableData (
 
       const encodedFilter = encodeURIComponent(filterFormula)
 
-      let sortQuery = "";
+      let sortQuery = "sort[0][field]=date&sort[0][direction]=desc&";
       sort?.forEach((sortParam, index) => {
           const field = sortParam.field
           const direction = sortParam.criteria
 
-          let sortField = encodeURIComponent(`sort[${index}][field]`) + `=${field}`
-          let sortDirection = encodeURIComponent(`sort[${index}][direction]`) + `=${direction}`
+          let sortField = encodeURIComponent(`sort[${index + 1 }][field]`) + `=${field}`
+          let sortDirection = encodeURIComponent(`sort[${index + 1}][direction]`) + `=${direction}`
 
           sortQuery += `${sortField}&${sortDirection}&`
       });
@@ -139,7 +139,7 @@ export async function getTableData (
                 'Authorization': `Bearer ${API_KEY}`,
                 'Content-Type': 'application/json',
             },
-            cache: cache ? "force-cache" : "no-store"
+            cache: "force-cache"
         })
 
         if (!response.ok) {
@@ -155,6 +155,7 @@ export async function getTableData (
       }
   }
 }
+
 
 
  export async function addMeeting(formData: FormData) {
@@ -193,6 +194,33 @@ export async function getTableData (
 
       revalidatePath("/mentor/meeting-tracker");
       return { message: "Meeting added successfully" };
+    } catch (error) {
+      console.error('Error:', error);
+      return { error: error };
+    }
+  }
+}
+
+export async function deleteMeeting(id: string) {
+  const supabase = createClient();
+  const user =  await supabase.auth.getUser();
+
+  if(user){
+    try {
+      const response = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json',
+        }
+      }); 
+
+      if(!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      revalidatePath("/mentor/meeting-tracker");
+      return { message: "Meeting deleted successfully" };
     } catch (error) {
       console.error('Error:', error);
       return { error: error };

@@ -1,12 +1,14 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { useSortFilter } from "@/context/SortFilterContext"
+import { getTableData } from "@/lib/meeting-actions"
 import Image from "next/image"
 
 type TableProps = {
     toggleModal: () => void
-    tableHeaders: string[]
+    tableHeaders: string[]  
+    offset?: string  
+    setRows: ({records:[], offset: string}) => void
     tableRows: {
         id: string;
         fields: {
@@ -19,14 +21,10 @@ type TableProps = {
     }[]
 }
 
-export default function Table({ tableHeaders, tableRows, toggleModal}: TableProps) {
+export default function Table({ tableHeaders, tableRows, toggleModal, offset, setRows}: TableProps) {
     const [isFetching, setIsFetching] = useState(false)
-    const { fetchSortFilteredData, hasMoreData } = useSortFilter()
+    const [hasMoreData, setHasMoreData] = useState(true)
     const scrollRef = useRef<HTMLDivElement>(null)
-
-    const headerStyles = "p-3 text-left text-sm font-semibold text-gray-100 bg-teal-md"
-    const rowStyles = "px-3 py-5 text-sm border-t border-gray-200 text-fsGray"
-
 
     const handleScroll = () => {
         if (scrollRef.current) {
@@ -35,6 +33,24 @@ export default function Table({ tableHeaders, tableRows, toggleModal}: TableProp
                 setIsFetching(true)
             }
         }
+    }
+
+    const infiniteScroll = async () => {
+        if (!hasMoreData) return;
+        const additionalRows = await getTableData(offset);
+
+        if (!additionalRows.offset) {
+            setHasMoreData(false);
+        }
+
+        let appendedRows = [...tableRows, ...additionalRows.records];
+
+        setRows({
+            records: appendedRows,
+            offset: additionalRows.offset
+        });
+
+        setIsFetching(false);
     }
 
     useEffect(() => {
@@ -47,16 +63,12 @@ export default function Table({ tableHeaders, tableRows, toggleModal}: TableProp
 
     useEffect(() => {
         if (isFetching) {
-            fetchSortFilteredData()
-                .then(() => {
-                    setIsFetching(false);
-                })
-                .catch((error: any) => {
-                    console.error('Error fetching data:', error);
-                    setIsFetching(false);
-                });
+            infiniteScroll()
         }
     }, [isFetching]);
+
+    const headerStyles = "p-3 text-left text-sm font-semibold text-gray-100 bg-teal-md"
+    const rowStyles = "px-3 py-5 text-sm border-t border-gray-200 text-fsGray"
 
     return (
         <div ref={scrollRef} className="h-[45rem] overflow-y-scroll">

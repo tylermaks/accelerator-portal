@@ -18,8 +18,6 @@ export const SortFilterProvider = ({ children }) => {
     const [resetState, setResetState] = useState(false)
 
     const fetchSortFilteredData = async (reset = false) => {
-
-
         if (!hasMoreData) return;
 
         const data = await getTableData(offset, sort, filter);
