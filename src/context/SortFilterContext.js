@@ -17,44 +17,14 @@ export const SortFilterProvider = ({ children }) => {
     const [hasMoreData, setHasMoreData] = useState(true)
     const [resetState, setResetState] = useState(false)
 
-    const fetchSortFilteredData = async (reset = false) => {
-        if (!hasMoreData) return;
-
-        const data = await getTableData(offset, sort, filter);
-
-        if (data.error) {
-            console.error(data.error);
-            return;
-        }
-
-        if (data.offset) {
-            setOffset(data.offset);
-        } else {
-            setHasMoreData(false);
-        }
-
-        if (reset) {
-            setTableData(data.records);
-        } else {
-            setTableData((prevData) => [...prevData, ...data.records]);
-        }
-    };
-
-    const toggleState = () => {
-        setResetState(prevState => !prevState)
-    }
-
-    useEffect(() => {
-        setOffset(null)
-        setTableData([])
-        setHasMoreData(true)
-        toggleState()
-    }, [sort, filter])
-
+    ///TO DOS: 
+    ///1. UPDATE ACTION TO TAKE SORT AND FILTER PARAMETERS -- DONE 
+    ///2. CREATE SERVER ACTION PASS SORT AND FILTER & REVALIDATE THE PAGE
+    ///3. HOPE THAT THIS WORKS... 
 
     useEffect(() => {
         fetchSortFilteredData(true)
-    }, [resetState])
+    }, [sort, filter])
 
 
     const addCondition = (modalType, fieldValue ) => { 
@@ -77,7 +47,7 @@ export const SortFilterProvider = ({ children }) => {
 
     const updateCondition = (id, condition, field, value) => {
         let updatedItems
-        console.log("value", value, "field", field)
+
         if(condition === "Sort"){
             updatedItems = [...sort]
             updatedItems[id] = {...updatedItems[id], field: field, criteria: value}

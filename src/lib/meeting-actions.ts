@@ -15,9 +15,18 @@ const SKILLS_VIEW_ID = process.env.SKILLS_VIEW_ID
 const TEST_EMAIL = process.env.TEST_EMAIL
  // const email = user.email // uncomment later for production 
 
+ interface SortCriteria {
+  [key: string]: string | string[] | undefined;
+}
+
+interface FilterCriteria {
+  [key: string]: string | string[] | undefined;
+}
 
  export async function getTableData( 
-    offset: string | null = null
+    offset: string | null = null,
+    sort: SortCriteria | null = null,
+    filter: FilterCriteria[] | null = null,
 ) {
     const supabase = createClient();
     const { data: user, error } = await supabase.auth.getUser();
@@ -33,12 +42,30 @@ const TEST_EMAIL = process.env.TEST_EMAIL
 
     if(user) {
         try{
-            let filterFormula = `AND({email} = '${TEST_EMAIL}')` //come back to this to make dynamic     
-            const encodedFilter = encodeURIComponent(filterFormula)
-            const sortParam = `sort[0][field]=date&sort[0][direction]=desc`
+          let filterFormula = `AND({email} = '${TEST_EMAIL}'` //change this in production
+          // filter?.forEach(item => {
+          //   filterFormula += `, FIND('${item.value}', {${item.field}}) > 0`
+          // })
+          filterFormula += ")"
+    
+          const encodedFilter = encodeURIComponent(filterFormula)
+    
+          let sortQuery = "sort[0][field]=date&sort[0][direction]=desc&";
+
+          // sort?.forEach((sortParam, index) => {
+          //     const field = sortParam.field
+          //     const direction = sortParam.value
+    
+          //     let sortField = encodeURIComponent(`sort[${index + 1 }][field]`) + `=${field}`
+          //     let sortDirection = encodeURIComponent(`sort[${index + 1}][direction]`) + `=${direction}`
+    
+          //     sortQuery += `${sortField}&${sortDirection}&`
+          // });
             
-            const urlBase = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?view=${VIEW_ID}&${sortParam}&filterByFormula=${encodedFilter}&pageSize=15`
-            const paginatedUrl = offset ? `${urlBase}&offset=${offset}` : urlBase
+            const urlBase = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?filterByFormula=${encodedFilter}&pageSize=25&${sortQuery}view=${VIEW_ID}`
+            const urlOffset = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?offset=${offset}`
+
+            const paginatedUrl = offset ? urlOffset : urlBase
 
             const response = await fetch(paginatedUrl, {
                 headers: {
