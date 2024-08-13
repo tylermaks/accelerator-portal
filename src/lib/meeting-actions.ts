@@ -42,44 +42,48 @@ interface FilterCriteria {
 
     if(user) {
         try{
-          let filterFormula = `AND({email} = '${TEST_EMAIL}'` //change this in production
-          // filter?.forEach(item => {
-          //   filterFormula += `, FIND('${item.value}', {${item.field}}) > 0`
-          // })
-          filterFormula += ")"
-    
-          const encodedFilter = encodeURIComponent(filterFormula)
-    
-          let sortQuery = "sort[0][field]=date&sort[0][direction]=desc&";
+          let sortField = encodeURIComponent(`sort[0][field]`) + `=date`;
+          let sortDirection = encodeURIComponent(`sort[0][direction]`) + `=desc`;
+          let sortQuery = sort === null || Object.keys(sort).length === 0 ? `${sortField}&${sortDirection}` : "";
 
-          // sort?.forEach((sortParam, index) => {
-          //     const field = sortParam.field
-          //     const direction = sortParam.value
-    
-          //     let sortField = encodeURIComponent(`sort[${index + 1 }][field]`) + `=${field}`
-          //     let sortDirection = encodeURIComponent(`sort[${index + 1}][direction]`) + `=${direction}`
-    
-          //     sortQuery += `${sortField}&${sortDirection}&`
-          // });
-            
-            const urlBase = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?filterByFormula=${encodedFilter}&pageSize=25&${sortQuery}view=${VIEW_ID}`
-            const urlOffset = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?offset=${offset}`
-
-            const paginatedUrl = offset ? urlOffset : urlBase
-
-            const response = await fetch(paginatedUrl, {
-                headers: {
-                    'Authorization': `Bearer ${API_KEY}`,
-                    'Content-Type': 'application/json',
-                },
-            })
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+          let filterFormula = `AND({email} = '${TEST_EMAIL}')`; // change this in production
+          const encodedFilter = encodeURIComponent(filterFormula);
+          
+          let index = 1;
+          
+          for (const key in sort) {
+            if (sort.hasOwnProperty(key)) {
+              const value = sort[key];
+              
+              if (value === "asc" || value === "desc") {
+                let sortField = encodeURIComponent(`sort[${index}][field]`) + `=${key}`;
+                let sortDirection = encodeURIComponent(`sort[${index}][direction]`) + `=${value}`;
+                sortQuery += `&${sortField}&${sortDirection}`; // Note the ampersand at the start
+          
+                index++;
+              } else { 
+                console.log("ADDING TO FILTER");
+              }
             }
+          }
 
-            let records = await response.json()
-            return records
+
+          const urlBase = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?filterByFormula=${encodedFilter}&pageSize=25&${sortQuery}&view=${VIEW_ID}`
+          const urlOffset = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?offset=${offset}`
+          const paginatedUrl = offset ? urlOffset : urlBase
+          const response = await fetch(paginatedUrl, {
+              headers: {
+                  'Authorization': `Bearer ${API_KEY}`,
+                  'Content-Type': 'application/json',
+              },
+          })
+
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+
+          let records = await response.json()
+          return records
         } catch (error) {
             console.error('Error fetching user:', error);
         }
