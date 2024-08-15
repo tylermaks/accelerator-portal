@@ -15,18 +15,18 @@ const SKILLS_VIEW_ID = process.env.SKILLS_VIEW_ID
 const TEST_EMAIL = process.env.TEST_EMAIL
  // const email = user.email // uncomment later for production 
 
- interface SortCriteria {
-  [key: string]: string | string[] | undefined;
+ interface Params {
+  [key: string]: [] | undefined;
 }
 
-interface FilterCriteria {
-  [key: string]: string | string[] | undefined;
-}
+// interface FilterCriteria {
+//   [key: string]: string | string[] | undefined;
+// }
 
  export async function getTableData( 
     offset: string | null = null,
-    sort: SortCriteria | null = null,
-    filter: FilterCriteria[] | null = null,
+    params: Params | null = null,
+    // filter: FilterCriteria[] | null = null,
 ) {
     const supabase = createClient();
     const { data: user, error } = await supabase.auth.getUser();
@@ -42,30 +42,56 @@ interface FilterCriteria {
 
     if(user) {
         try{
-          let sortField = encodeURIComponent(`sort[0][field]`) + `=date`;
-          let sortDirection = encodeURIComponent(`sort[0][direction]`) + `=desc`;
-          let sortQuery = sort === null || Object.keys(sort).length === 0 ? `${sortField}&${sortDirection}` : "";
-
           let filterFormula = `AND({email} = '${TEST_EMAIL}')`; // change this in production
-          const encodedFilter = encodeURIComponent(filterFormula);
+          let sortQuery = ""
+
+          console.log("PARAMS IN MEETING ACTION", params)
           
-          let index = 1;
-          
-          for (const key in sort) {
-            if (sort.hasOwnProperty(key)) {
-              const value = sort[key];
-              
-              if (value === "asc" || value === "desc") {
-                let sortField = encodeURIComponent(`sort[${index}][field]`) + `=${key}`;
-                let sortDirection = encodeURIComponent(`sort[${index}][direction]`) + `=${value}`;
-                sortQuery += `&${sortField}&${sortDirection}`; // Note the ampersand at the start
-          
-                index++;
-              } else { 
-                console.log("ADDING TO FILTER");
-              }
+          if (params?.filter) {
+            // Parse the filter parameter if it's passed as a string
+            const filterArray = typeof params.filter === "string" ? JSON.parse(params.filter) : params.filter;
+        
+            // If there are any valid filters, build the formula
+            if (filterArray.length > 0) {
+                filterFormula = `AND({email} = '${TEST_EMAIL}'`;
+                
+                filterArray.forEach((item: { field: string; value: string }) => {
+                    filterFormula += `, FIND('${item.value}', {${item.field}}) > 0`;
+                });
+                
+                filterFormula += ")";
             }
-          }
+        }
+
+        let encodedFilter = encodeURIComponent(filterFormula);
+
+
+    //       let sortField = encodeURIComponent(`sort[0][field]`) + `=date`;
+    //       let sortDirection = encodeURIComponent(`sort[0][direction]`) + `=desc`;
+    //       let sortQuery = sort === null || Object.keys(sort).length === 0 ? `${sortField}&${sortDirection}` : "";
+
+    //       let filterFormula = `AND({email} = '${TEST_EMAIL}')`; // change this in production
+    //       const encodedFilter = encodeURIComponent(filterFormula);
+          
+    //       let index = 1;
+          
+    //       for (const key in sort) {
+    //         if (sort.hasOwnProperty(key)) {
+    //           const value = sort[key];
+              
+    //           if (value === "asc" || value === "desc") {
+    //             let sortField = encodeURIComponent(`sort[${index}][field]`) + `=${key}`;
+    //             let sortDirection = encodeURIComponent(`sort[${index}][direction]`) + `=${value}`;
+    //             sortQuery += `&${sortField}&${sortDirection}`; // Note the ampersand at the start
+          
+    //             index++;
+    //           } else { 
+    //             console.log("ADDING TO FILTER");
+    //           }
+    //         }
+    //       }
+
+       
 
 
           const urlBase = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?filterByFormula=${encodedFilter}&pageSize=25&${sortQuery}&view=${VIEW_ID}`

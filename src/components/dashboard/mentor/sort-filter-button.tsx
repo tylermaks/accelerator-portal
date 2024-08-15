@@ -1,24 +1,14 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { useDebounce } from "use-debounce"
 import Image from "next/image"
-// import { useSortFilter } from "@/context/SortFilterContext"
 
 type TableButtonProps = {
     text: string
     icon: string
 }
-
-type SortFilterOption = {
-    label: string;
-    value: string;
-};
-  
-type InitialOptionsState = {
-    sortFilterOptions: SortFilterOption[];
-};
 
 type Params = {
     field: string;
@@ -26,18 +16,15 @@ type Params = {
 };
 
 const sortFilterOptions = [
-    { label: "Date", value: "Date" },
+    { label: "Date", value: "date" },
     { label: "Company Name", value: "companyName" },
     { label: "Duration", value: "duration" },
     { label: "Support Type", value: "supportType" },
 ];
 
-export default function SortFilterButton({ text, icon }: TableButtonProps) {
-    // const { sort, filter, addCondition, removeCondition, updateCondition, clearConditions,} = useSortFilter()
-    // const [sortFilterOptions, setSortFilterOptions] = useState<SortFilterOption[]>(initialSortFilterOptions); //Might remove this
-    // const conditions = text == "Sort" ? sort : filter;
-    
+export default function SortFilterButton({ text, icon }: TableButtonProps) {    
     const router = useRouter();
+    const pathname = usePathname();
     const [params, setParams] = useState<Params[]>([]);
     const [value, setValue] = useState("");
     const [showModal, setShowModal] = useState(false);
@@ -46,17 +33,16 @@ export default function SortFilterButton({ text, icon }: TableButtonProps) {
     const sortFilterModal = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const queryParams = new URLSearchParams();
+        console.log("PARAMS FROM SORT FILTER", params)
 
-        params.forEach((param) => {
-            const key = param.field;
-            const value = param.value;
-            queryParams.append(key, text === "Sort" ? value : query);
-        })
-
-        //NEED TO ADD PATH NAME HERE - I THINK THIS WILL HELP WITH OVERWRITING THE URL
-        router.push(`?${queryParams.toString()}`);
-    }, [params, query, router]);
+        if (params && params.length > 0) {
+            const encodedParams = encodeURIComponent(JSON.stringify(params));
+            const fullPath = `${pathname}?${icon}=${encodedParams}`;
+            router.push(fullPath); 
+        } else {
+            router.push(`${pathname}`);
+        }
+    }, [params]);
     
     const toggleModal = () => {
         setShowModal(!showModal);
@@ -78,6 +64,8 @@ export default function SortFilterButton({ text, icon }: TableButtonProps) {
     }
 
     const updateParam = (id: number, field: string, value: string) => { 
+        console.log("UPDATE PARAMS", id, field, value)
+
         let updatedItem
         updatedItem = [...params]
         updatedItem[id] = {...updatedItem[id], field: field, value: value}
@@ -87,19 +75,6 @@ export default function SortFilterButton({ text, icon }: TableButtonProps) {
     const clearParams = () => {
         setParams([])
     }
-
-    // const handleAddCondition = (condition: string) => {
-    //     addCondition(text, condition);
-    //     toggleSubMenu();
-    // };
-
-    // const handleRemoveCondition = (condition: string) => {
-    //     removeCondition(text, condition);
-    // }
-
-    // const handleUpdateCondition = (id: number, condition: string, field: string, value: string) => {
-    //     updateCondition(id, condition, field, value);
-    // }
 
     const handleClickOutside = (event: MouseEvent) => {
         if (sortFilterModal.current && !sortFilterModal.current.contains(event.target as Node)) {
@@ -117,7 +92,6 @@ export default function SortFilterButton({ text, icon }: TableButtonProps) {
 
 
     const clickButtonClass = showModal ? "bg-gray-200" : ""
-    // const activeSortFilter = conditions.length > 0 ? "bg-green-100" : ""
     const active = params.length > 0 ? "bg-green-100" : ""
 
     return (
@@ -146,14 +120,12 @@ export default function SortFilterButton({ text, icon }: TableButtonProps) {
                             <div className="flex flex-col gap-1.5">
                             {
                                 params.map((condition: any, index: number) => (
-                                    
                                     <div key={index} className="flex items-center gap-1">
                                         <select 
                                             className="text-fsGray text-sm p-1.5 bg-gray-50 border rounded" 
                                             name="condition-select" 
                                             id="condition-select"
-                                            // onChange={(e) => handleUpdateCondition(index, text, e.target.value, condition.criteria)}
-                                            onChange={(e) => updateParam(index, text, e.target.value)}
+                                            onChange={(e) => updateParam(index, e.target.value, condition.value)}
                                             value={condition.field}
                                         >
                                             <option value="date">Date</option>
@@ -167,8 +139,7 @@ export default function SortFilterButton({ text, icon }: TableButtonProps) {
                                                     className="text-fsGray text-sm p-1.5 bg-gray-50 border rounded" 
                                                     name="sort-select" 
                                                     id="sort-select"
-                                                    // onChange={(e) => handleUpdateCondition(index, text, condition.field, e.target.value)}
-                                                    onChange={(e) => updateParam(index, text, e.target.value)}
+                                                    onChange={(e) => updateParam(index, condition.field, e.target.value)}
                                                     value={condition.criteria}
                                                 >
                                                     <option value="asc">Ascending</option>
@@ -178,11 +149,10 @@ export default function SortFilterButton({ text, icon }: TableButtonProps) {
                                             ) : (
                                                 <input 
                                                     type="text" 
-                                                    value={value}
+                                                    value={condition.value}
                                                     placeholder="Enter a value"
                                                     className="text-fsGray text-sm p-1.5 bg-gray-50 border rounded"
-                                                    // onChange={(e) => handleUpdateCondition(index, text, condition.field, e.target.value)}
-                                                    onChange={(e) => setValue(e.target.value)}
+                                                    onChange={(e) => updateParam(index, condition.field, e.target.value)}
                                                 />
                                             )
                                         }
@@ -191,7 +161,6 @@ export default function SortFilterButton({ text, icon }: TableButtonProps) {
                                             src="/images/close-icon.svg" 
                                             className="cursor-pointer" 
                                             alt="remove condition"
-                                            // onClick={() => handleRemoveCondition(condition.field)}
                                             onClick={() => removeParam(condition.field)} 
                                             width={10} 
                                             height={10}
