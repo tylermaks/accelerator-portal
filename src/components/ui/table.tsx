@@ -59,13 +59,13 @@ export default function Table({ tableHeaders, tableRows, toggleModal, offset, se
             scrollableElement.addEventListener("scroll", handleScroll)
             return () => scrollableElement.removeEventListener("scroll", handleScroll)
         }
-    }, [])
+    }, [handleScroll])
 
     useEffect(() => {
         if (isFetching) {
             infiniteScroll()
         }
-    }, [isFetching]);
+    }, [isFetching, infiniteScroll]);
 
     const headerStyles = "p-3 text-left text-sm font-semibold text-gray-100 bg-teal-md"
     const rowStyles = "px-3 py-5 text-sm border-t border-gray-200 text-fsGray"

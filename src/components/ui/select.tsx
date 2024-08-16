@@ -112,7 +112,7 @@ export default function Select(
 
     useEffect(() => { 
         filterCompanyList()
-    }, [search])
+    }, [search, filterCompanyList])
 
     useEffect(() => { 
         if(data){

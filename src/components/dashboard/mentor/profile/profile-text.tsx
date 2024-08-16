@@ -61,7 +61,7 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [editing]);
+    }, [editing, handleSave]);
 
     return (
         <div
