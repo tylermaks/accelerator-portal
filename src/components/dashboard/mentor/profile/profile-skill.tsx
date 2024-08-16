@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { updateProfile } from "@/lib/actions";
+import { updateProfile } from "@/lib/profile-actions";
 import Edit from "@/components/ui/edit"
 import Image from "next/image"
 
