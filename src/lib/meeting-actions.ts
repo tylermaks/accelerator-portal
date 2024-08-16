@@ -8,25 +8,20 @@ const API_KEY = process.env.AIRTABLE_API_KEY
 const BASE_ID = process.env.BASE_ID
 const TABLE_ID = process.env.MEETING_TABLE_ID
 const VIEW_ID = process.env.MEETING_VIEW_ID
-const COMPANY_TABLE_ID = process.env.COMPANY_TABLE_ID
-const COMPANY_VIEW_ID = process.env.COMPANY_VIEW_ID
-const SKILLS_TABLE_ID = process.env.SKILLS_TABLE_ID
-const SKILLS_VIEW_ID = process.env.SKILLS_VIEW_ID
 const TEST_EMAIL = process.env.TEST_EMAIL
+// const COMPANY_TABLE_ID = process.env.COMPANY_TABLE_ID
+// const COMPANY_VIEW_ID = process.env.COMPANY_VIEW_ID
+// const SKILLS_TABLE_ID = process.env.SKILLS_TABLE_ID
+// const SKILLS_VIEW_ID = process.env.SKILLS_VIEW_ID
  // const email = user.email // uncomment later for production 
 
  interface Params {
-  [key: string]: [] | undefined;
+  [key: string]: string | undefined;
 }
-
-// interface FilterCriteria {
-//   [key: string]: string | string[] | undefined;
-// }
 
  export async function getTableData( 
     offset: string | null = null,
     params: Params | null = null,
-    // filter: FilterCriteria[] | null = null,
 ) {
     const supabase = createClient();
     const { data: user, error } = await supabase.auth.getUser();
@@ -40,18 +35,17 @@ const TEST_EMAIL = process.env.TEST_EMAIL
         return { error: "No user found" , status: 401 };
     }
 
+    console.log("PARAMS", params)
+  
+
     if(user) {
         try{
           let filterFormula = `AND({email} = '${TEST_EMAIL}')`; // change this in production
-          let sortQuery = ""
-
-          console.log("PARAMS IN MEETING ACTION", params)
           
           if (params?.filter) {
-            // Parse the filter parameter if it's passed as a string
-            const filterArray = typeof params.filter === "string" ? JSON.parse(params.filter) : params.filter;
-        
-            // If there are any valid filters, build the formula
+            const decodedFilter = decodeURIComponent(params.filter);
+            const filterArray = typeof decodedFilter === "string" ? JSON.parse(decodedFilter) : decodedFilter; //parse param
+
             if (filterArray.length > 0) {
                 filterFormula = `AND({email} = '${TEST_EMAIL}'`;
                 
@@ -61,38 +55,29 @@ const TEST_EMAIL = process.env.TEST_EMAIL
                 
                 filterFormula += ")";
             }
-        }
+          }
 
-        let encodedFilter = encodeURIComponent(filterFormula);
+          let encodedFilter = encodeURIComponent(filterFormula);
+          let sortField = encodeURIComponent(`sort[0][field]`) + `=date`;
+          let sortDirection = encodeURIComponent(`sort[0][direction]`) + `=desc`;
+          let sortQuery = !params?.sort || params.sort.length === 0 
+            ? `${sortField}&${sortDirection}` 
+            : "";
 
+          if (params?.sort) {
+            const decodedSort = decodeURIComponent(params.sort);
+            const sortArray = typeof decodedSort === "string" ? JSON.parse(decodedSort) : decodedSort; //parse param
+            let index = 1
 
-    //       let sortField = encodeURIComponent(`sort[0][field]`) + `=date`;
-    //       let sortDirection = encodeURIComponent(`sort[0][direction]`) + `=desc`;
-    //       let sortQuery = sort === null || Object.keys(sort).length === 0 ? `${sortField}&${sortDirection}` : "";
-
-    //       let filterFormula = `AND({email} = '${TEST_EMAIL}')`; // change this in production
-    //       const encodedFilter = encodeURIComponent(filterFormula);
-          
-    //       let index = 1;
-          
-    //       for (const key in sort) {
-    //         if (sort.hasOwnProperty(key)) {
-    //           const value = sort[key];
-              
-    //           if (value === "asc" || value === "desc") {
-    //             let sortField = encodeURIComponent(`sort[${index}][field]`) + `=${key}`;
-    //             let sortDirection = encodeURIComponent(`sort[${index}][direction]`) + `=${value}`;
-    //             sortQuery += `&${sortField}&${sortDirection}`; // Note the ampersand at the start
-          
-    //             index++;
-    //           } else { 
-    //             console.log("ADDING TO FILTER");
-    //           }
-    //         }
-    //       }
-
-       
-
+            if (sortArray && sortArray.length > 0) {
+              sortArray.forEach((item: { field: string; value: string }) => {
+                let sortField = encodeURIComponent(`sort[${index}][field]`) + `=${item.field}`;
+                let sortDirection = encodeURIComponent(`sort[${index}][direction]`) + `=${item.value}`;
+                sortQuery += `&${sortField}&${sortDirection}`; 
+                index++
+              });
+            }
+          }
 
           const urlBase = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?filterByFormula=${encodedFilter}&pageSize=25&${sortQuery}&view=${VIEW_ID}`
           const urlOffset = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?offset=${offset}`

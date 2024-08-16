@@ -29,20 +29,22 @@ export default function SortFilterButton({ text, icon }: TableButtonProps) {
     const [value, setValue] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [showSubMenu, setShowSubMenu] = useState(false);
-    const [query] = useDebounce(value, 500);
+    const [query] = useDebounce(params, 500);
     const sortFilterModal = useRef<HTMLDivElement>(null);
-
+  
     useEffect(() => {
-        console.log("PARAMS FROM SORT FILTER", params)
-
         if (params && params.length > 0) {
+            const currentParams = new URLSearchParams(window.location.search);
             const encodedParams = encodeURIComponent(JSON.stringify(params));
-            const fullPath = `${pathname}?${icon}=${encodedParams}`;
+            currentParams.set(icon, encodedParams);
+            const fullPath = `${pathname}?${currentParams.toString()}`;
+            // const encodedParams = encodeURIComponent(JSON.stringify(params));
+            // const fullPath = `${pathname}?${icon}=${encodedParams}`;
             router.push(fullPath); 
         } else {
             router.push(`${pathname}`);
         }
-    }, [params]);
+    }, [query]);
     
     const toggleModal = () => {
         setShowModal(!showModal);
@@ -64,8 +66,6 @@ export default function SortFilterButton({ text, icon }: TableButtonProps) {
     }
 
     const updateParam = (id: number, field: string, value: string) => { 
-        console.log("UPDATE PARAMS", id, field, value)
-
         let updatedItem
         updatedItem = [...params]
         updatedItem[id] = {...updatedItem[id], field: field, value: value}

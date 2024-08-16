@@ -5,7 +5,7 @@ import { getTableData } from "@/lib/meeting-actions";
 export default async function MeetingTracker({
     searchParams
   }: {
-    searchParams: { [key: string]: [] | undefined }
+    searchParams: { [key: string]: string | undefined }
   }) {
     const initialData = await getTableData( null, searchParams );
   
