@@ -35,9 +35,6 @@ const TEST_EMAIL = process.env.TEST_EMAIL
         return { error: "No user found" , status: 401 };
     }
 
-    console.log("PARAMS", params)
-  
-
     if(user) {
         try{
           let filterFormula = `AND({email} = '${TEST_EMAIL}')`; // change this in production

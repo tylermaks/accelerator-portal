@@ -33,18 +33,29 @@ export default function SortFilterButton({ text, icon }: TableButtonProps) {
     const sortFilterModal = useRef<HTMLDivElement>(null);
   
     useEffect(() => {
-        if (params && params.length > 0) {
             const currentParams = new URLSearchParams(window.location.search);
             const encodedParams = encodeURIComponent(JSON.stringify(params));
-            currentParams.set(icon, encodedParams);
-            const fullPath = `${pathname}?${currentParams.toString()}`;
-            // const encodedParams = encodeURIComponent(JSON.stringify(params));
-            // const fullPath = `${pathname}?${icon}=${encodedParams}`;
-            router.push(fullPath); 
-        } else {
-            router.push(`${pathname}`);
-        }
+            const paramExists = currentParams.has("sort") || currentParams.has("filter");
+            const paramKeys = Array.from(currentParams.keys());
+
+            if (paramExists && params.length === 0) {
+                currentParams.delete(icon); // Remove the parameter
+                console.log("DELETE URL COMPONENT");
+                const fullPath = `${pathname}?${currentParams.toString()}`;
+                router.push(fullPath);
+            }
+            
+            if (params && params.length > 0) {
+                currentParams.set(icon, encodedParams); // Add or update the parameter
+                const fullPath = `${pathname}?${currentParams.toString()}`;
+                router.push(fullPath);
+            } 
+
+            if (paramKeys.length === 0) {
+                router.push(`${pathname}`);
+            }
     }, [query]);
+    
     
     const toggleModal = () => {
         setShowModal(!showModal);

@@ -5,10 +5,10 @@ import { getTableData } from "@/lib/meeting-actions"
 import Image from "next/image"
 
 type TableProps = {
-    toggleModal: () => void
-    tableHeaders: string[]  
-    offset?: string  
-    setRows: ({records:[], offset: string}) => void
+    toggleModal: (row: { id: string; fields: { date: string; altName?: string; companyName: string; duration: string; supportType: string; } } ) => void;
+    tableHeaders: string[];
+    offset?: string;
+    setRows: (params: {records:any[], offset: string}) => void;
     tableRows: {
         id: string;
         fields: {
