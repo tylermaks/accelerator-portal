@@ -29,8 +29,6 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
     }, [editing, value]);
 
 
- 
-
     const handleSave = async () => {
         await updateProfile(dataID, { 'Bio': textareaRef.current?.value });
         setEditing(false);
@@ -63,7 +61,7 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [editing, handleSave]);
+    }, [editing]);
 
     return (
         <div
