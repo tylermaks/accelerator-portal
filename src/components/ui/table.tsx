@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { getTableData } from "@/lib/meeting-actions"
 import Image from "next/image"
 
@@ -26,16 +26,16 @@ export default function Table({ tableHeaders, tableRows, toggleModal, offset, se
     const [hasMoreData, setHasMoreData] = useState(true)
     const scrollRef = useRef<HTMLDivElement>(null)
 
-    const handleScroll = () => {
+    const handleScroll = useCallback( () => {
         if (scrollRef.current) {
             const { scrollTop, scrollHeight, clientHeight } = scrollRef.current
             if (scrollHeight - scrollTop - clientHeight < 100 && !isFetching && hasMoreData) {
                 setIsFetching(true)
             }
         }
-    }
+    }, [isFetching, hasMoreData]);
 
-    const infiniteScroll = async () => {
+    const infiniteScroll = useCallback( async () => {
         if (!hasMoreData) return;
         const additionalRows = await getTableData(offset);
 
@@ -51,7 +51,7 @@ export default function Table({ tableHeaders, tableRows, toggleModal, offset, se
         });
 
         setIsFetching(false);
-    }
+    }, [offset, tableRows, setRows, hasMoreData]);
 
     useEffect(() => {
         const scrollableElement = scrollRef.current

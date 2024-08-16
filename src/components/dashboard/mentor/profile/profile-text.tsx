@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { updateProfile } from "@/lib/actions";
 import Edit from "@/components/ui/edit";
 
@@ -29,10 +29,10 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
     }, [editing, value]);
 
 
-    const handleSave = async () => {
+    const handleSave = useCallback(async () => {
         await updateProfile(dataID, { 'Bio': textareaRef.current?.value });
         setEditing(false);
-    };
+    }, [dataID]);
 
     const toggleEdit = () => {
         setEditing(true);

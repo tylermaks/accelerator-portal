@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import Image from "next/image"
 import DOMPurify from "dompurify"
 import { z } from "zod"
@@ -90,12 +90,12 @@ export default function Select(
         setSearch(newValue)
     }
 
-    const filterCompanyList = () => { 
+    const filterCompanyList = useCallback(() => { 
         const filteredOptions = filteredList.filter(item => 
             item.toLowerCase().includes(search.toLowerCase())
         );
         setFilteredList(filteredOptions)
-    }
+    },[filteredList, search])
 
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
