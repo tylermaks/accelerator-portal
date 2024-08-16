@@ -54,7 +54,7 @@ export default function SortFilterButton({ text, icon }: TableButtonProps) {
             if (paramKeys.length === 0) {
                 router.push(`${pathname}`);
             }
-    }, [query]);
+    }, [query, icon, params, pathname, router]);
     
     
     const toggleModal = () => {

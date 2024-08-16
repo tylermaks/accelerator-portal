@@ -19,7 +19,7 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
     useEffect(() => {
         setDataID(id);
         setValue(data);
-    }, [data]);
+    }, [data, id]);
 
     useEffect(() => {
         if (editing && textareaRef.current) {
@@ -29,20 +29,7 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
     }, [editing, value]);
 
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (textareaRef.current && !textareaRef.current.contains(event.target as Node)) {
-                if (editing) {
-                    handleSave();
-                }
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [editing]);
+ 
 
     const handleSave = async () => {
         await updateProfile(dataID, { 'Bio': textareaRef.current?.value });
@@ -62,6 +49,21 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
         textarea.style.height = 'auto'; 
         textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to match the scroll height
     };
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (textareaRef.current && !textareaRef.current.contains(event.target as Node)) {
+                if (editing) {
+                    handleSave();
+                }
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [editing, handleSave]);
 
     return (
         <div

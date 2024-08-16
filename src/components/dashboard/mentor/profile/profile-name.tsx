@@ -4,11 +4,13 @@ type ProfileNameProps = {
 }
 
 export default function ProfileName( { data } : ProfileNameProps) {
+    const profilePic = data.Photo[0].url
+
     return(
         <div className="flex flex-col gap-4 pt-24 relative">
-            <img 
+            <Image 
                 className="rounded-full bg-white z-10 mb-2"
-                src={data.Photo[0].url}
+                src={profilePic}
                 alt="Profile Image"
                 width={175}
                 height={175}    

@@ -60,7 +60,7 @@ export default function Select(
             setCurrentOption(resultPrepopulate.data.value);
         }
 
-    }, []);
+    }, [data, prepopulate]);
 
     const toggleDropdown = () => { 
         setDropdown(!dropdown)
@@ -112,7 +112,7 @@ export default function Select(
 
     useEffect(() => { 
         filterCompanyList()
-    }, [search])
+    }, [search, filterCompanyList])
 
     useEffect(() => { 
         if(data){

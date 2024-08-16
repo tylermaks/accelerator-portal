@@ -35,7 +35,7 @@ export default function ProfileAddSkill({ metaData, setSkills, skills } : Profil
         const metaDataOptions = metaDataArray.filter((item: any) => !skillsArray.includes(item));
  
         setMetaDataOptions(metaDataOptions);
-    }, [skills])
+    }, [skills, metaData])
 
     return(
         <div className="w-full mt-8 cursor-pointer">

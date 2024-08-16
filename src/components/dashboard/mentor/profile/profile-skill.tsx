@@ -62,7 +62,7 @@ export default function ProfileSkill({ id, data, metaData, title, index, updateC
         setSkillsOnLoad(data)
         setSkills(data);
         setMetaSkills(filteredMetaData);
-    }, [data]);
+    }, [data, metaData]);
 
     return (
         <div 
