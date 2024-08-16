@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
-import { updateProfile } from "@/lib/actions";
+import { updateProfile } from "@/lib/profile-actions";
 import Edit from "@/components/ui/edit";
 
 type EditableTextProps = {

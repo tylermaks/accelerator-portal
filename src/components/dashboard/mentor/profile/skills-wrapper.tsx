@@ -2,7 +2,7 @@
 
 import ProfileSkill from "./profile-skill";
 import ProfileAddSkill from "./profile-add-category";
-import { useState, useEffect, useOptimistic } from "react";
+import { useState, useEffect } from "react";
 
 type ProfileWrapperProps = { 
     id: string
