@@ -9,17 +9,13 @@ const BASE_ID = process.env.BASE_ID
 const TABLE_ID = process.env.MEETING_TABLE_ID
 const VIEW_ID = process.env.MEETING_VIEW_ID
 const TEST_EMAIL = process.env.TEST_EMAIL
-// const COMPANY_TABLE_ID = process.env.COMPANY_TABLE_ID
-// const COMPANY_VIEW_ID = process.env.COMPANY_VIEW_ID
-// const SKILLS_TABLE_ID = process.env.SKILLS_TABLE_ID
-// const SKILLS_VIEW_ID = process.env.SKILLS_VIEW_ID
  // const email = user.email // uncomment later for production 
 
  interface Params {
   [key: string]: string | undefined;
 }
 
- export async function getTableData( 
+export async function getTableData( 
     offset: string | null = null,
     params: Params | null = null,
 ) {
