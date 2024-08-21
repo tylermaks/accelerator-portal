@@ -31,6 +31,7 @@ const months = [
     "December",
 ]
 
+
 export default function ReportWrapper() {
     const currentMonth = new Date().getMonth() + 1;
     const currentYear = new Date().getFullYear();
@@ -67,50 +68,72 @@ export default function ReportWrapper() {
 
     return (
         <div>
-            <div className="flex justify-end mb-4">
-                <div className="flex gap-2">
-                    <select
-                        className="border border-gray-300 rounded-md p-0.5"
-                        value={month}
-                        onChange={(e) => setMonth(parseInt(e.target.value))}
-                    >
-                        { months.map((month, index) => (
-                            <option key={month} value={index + 1}>{month}</option>
-                        ))}   
-                    </select>
-
-                    <select
-                        className="border border-gray-300 rounded-md p-1.5"
-                        value={year}
-                        onChange={(e) => setYear(parseInt(e.target.value))}
-                    >
-                        {yearsSince2022.map((year) => (
-                            <option key={year} value={year}>{year}</option>
-                        ))}
-                    </select>
-                </div>
+            <div className="flex justify-between mb-4">
             </div>
             <div className="flex bg-white rounded-md">
                 <div className="w-2/3 p-4">
-                    <p className="text-fsGray mb-4">{months[month - 1]} {year} EIR Hour Report</p>
+                    <div className="flex justify-between mb-6">
+                        <p className="text-xl font-bold text-fsGray">{months[month - 1]} {year} EIR Hour Report</p>
+                        <div className="flex gap-2">
+                            <select
+                                className="border border-gray-300 rounded-md px-2 py-1"
+                                value={month}
+                                onChange={(e) => setMonth(parseInt(e.target.value))}
+                            >
+                                { months.map((month, index) => (
+                                    <option key={month} value={index + 1}>{month}</option>
+                                ))}   
+                            </select>
+
+                            <select
+                                className="border border-gray-300 rounded-md"
+                                value={year}
+                                onChange={(e) => setYear(parseInt(e.target.value))}
+                            >
+                                {yearsSince2022.map((year) => (
+                                    <option key={year} value={year}>{year}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    
                     <ReportTable data={reportData} />
                 </div>
-                <div className="w-1/3 p-4 bg-gray-100 flex flex-col items-center justify-center">
-                
-                    <p className="text-fsGray mb-4">Total EIR Hours</p>
-                    <p className="text-4xl font-bold">{total}</p>
-                    <p className="text-fsGray">Hours</p>
-                    <hr />
+                <div className="w-1/3 p-4 bg-blue-50 flex flex-col">
+                    <div className="flex flex-col items-center justify-center p-8 border-b border-gray-300">
+                        <p className="text-fsGray mb-4 text-sm">Total EIR Hours</p>
+                        <p className="text-4xl text-fsGray font-bold">{total}</p>
+                        <p className="text-fsGray text-sm">Hours</p>
+                    </div>
 
-                    <p className="text-fsGray mt-4">Due Date</p>
-                    <p className="text-xl font-bold">{new Date(year, month, 10).toDateString()}</p>
-  
+                    <div className="flex flex-col flex-1 justify-between py-4">
+                        <div>
+                            <p className="text-fsGray text-sm py-4 font-semibold">Estimated Invoice Total*</p>
+                            <div className="flex justify-between py-2">
+                                <p className="text-fsGray text-sm">EIR Coaching Hours</p>
+                                <p className="text-fsGray text-sm">${total * 100}.00</p>
+                            </div>
+                            <div className="flex justify-between pb-2">
+                                <p className="text-fsGray text-sm">GST (5%)</p>
+                                <p className="text-fsGray text-sm">${(total * 1.05).toFixed(2)}</p>
+                            </div>
+                            <div className="flex justify-between pb-2">
+                                <p className="text-fsGray text-sm">Total</p>
+                                <p className="text-fsGray text-sm">${total + (total * 1.05).toFixed(2)}</p>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-between">
+                            <p className="text-fsGray text-sm">Please submit invoice by:</p>
+                            <p className="text-fsGray text-sm">{new Date(year, month, 10).toDateString()}</p>
+                        </div>
+                    </div>
                 </div>
-
+            </div> 
+            <div className="flex justify-end mt-4">
+                <p className="text-fsGray text-[10px]">*This is an estimate. Actual invoice amount may vary.</p>
             </div>
-           
-            
         </div>
-    
     )
 }
