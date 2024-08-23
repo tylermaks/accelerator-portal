@@ -132,7 +132,7 @@ export default function ReportWrapper() {
                 </div>
             </div> 
             <div className="flex justify-end mt-4">
-                <p className="text-fsGray text-[10px]">*This is an estimate. Actual invoice amount may vary.</p>
+                <p className="text-fsGray text-[10px]">*This is an estimate only, not a valid invoice.</p>
             </div>
         </div>
     )

@@ -8,7 +8,6 @@ import { createClient } from '@/utils/supabase/server'
 
 export async function login(formData: FormData) {
     const supabase = createClient()
-
     // type-casting here for convenience
     // in practice, you should validate your inputs
     const data = {
@@ -17,13 +16,24 @@ export async function login(formData: FormData) {
     }
 
     const { error } = await supabase.auth.signInWithPassword(data)
+    const { data: {user} } = await supabase.auth.getUser();
+
 
     if (error) {
-        redirect('/error')
+      redirect('/error')
     }
 
-    revalidatePath('/', 'layout')
-    redirect('/')
+    if (!user) {
+        console.log("user not found")
+        redirect('/')
+    }
+
+    if (user) {
+        console.log("user found")
+        console.log("USER FROM SIGNIN", user?.user_metadata.user_type)
+        revalidatePath('/', 'layout')
+        redirect('/' + user?.user_metadata.user_type + '/meeting-tracker')
+    }
 }
 
 export async function signup(formData: FormData) {
@@ -34,6 +44,15 @@ export async function signup(formData: FormData) {
   const data = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
+    options: {
+      data:{
+        firstName: formData.get('firstName') as string,
+        lastName: formData.get('lastName') as string,
+        company_name: formData.get('companyName') as string,
+        user_type: formData.get('userType') as string,
+        is_super_admin: true,
+      }
+    }
   }
 
   const { error } = await supabase.auth.signUp(data)
@@ -42,7 +61,7 @@ export async function signup(formData: FormData) {
     redirect('/error')
   }
 
-  revalidatePath('/', 'layout')
+  revalidatePath('/signup', 'layout')
   redirect('/')
 }
 

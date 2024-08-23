@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { updateSession } from '@/utils/supabase/middleware';
-import { createClient } from '@/utils/supabase/server';
-import { loginLimiter, forgotPasswordLimiter } from "./utils/rateLimiter";
+import { jwtDecode } from "jwt-decode";
 
 
-const publicRoutes = ['/', '/reset-password'];
+const publicRoutes = ['/', '/forgotpassword', '/signup', '/error'];
 
 const roleRoutes: { [key: string]: string[] } = {
     admin: ['/admin/dashboard', '/admin/members', '/admin/controls'],
@@ -18,91 +16,39 @@ const defaultRoutes: { [key: string]: string } = {
     company: '/company/dashboard',
 };
 
+
+
 export async function middleware(request: NextRequest) {
-    const { pathname } = request.nextUrl;
-    const ip = (request.headers.get('x-forwarded-for') || request.ip ) as string;
+    const pathName = request.nextUrl.pathname;
 
-    if (pathname === '/api/auth/login' && !loginLimiter.check(ip)) {
-        return NextResponse.json({ message: 'Too many login attempts, please try again later.' }, { status: 429 });
+    if (publicRoutes.includes(pathName)) {
+        return NextResponse.next();
     }
 
-    if (pathname === '/api/auth/forgot-password' && !forgotPasswordLimiter.check(ip)) {
-        return NextResponse.json({ message: 'Too many password reset requests, please try again later.' }, { status: 429 });
+    const SB_TOKEN = process.env.SB_TOKEN;
+    const cookie = SB_TOKEN && request.cookies.get(SB_TOKEN);
+
+    if (!cookie) {
+        return NextResponse.redirect(new URL('/error', request.url));
     }
+    
+    const token = cookie && cookie.value;
 
-    const supabase = createClient();
-    const sessionToken = request.cookies.get('sessionToken');
+    if(token){
+        const decoded = jwtDecode<{ user_metadata?: { user_type?: string } }>(token);
+        const userRole = decoded.user_metadata?.user_type;
 
-    let userRole: string | undefined;
-
-    if (sessionToken) {
-        userRole = sessionToken.value;
-    } else {
-        const { data: { user }, error } = await supabase.auth.getUser();
-        if (user) {
-            const { data: userProfile, error } = await supabase
-                .from('user_profiles')
-                .select('role')
-                .eq('id', user.id)
-                .single();
-
-            if (error) {
-                return NextResponse.redirect(new URL('/', request.url));
+        if(userRole && roleRoutes[userRole] && roleRoutes[userRole].includes(pathName)){
+            return NextResponse.next();
+        } else { 
+            if (userRole) {
+                return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
+            } else {
+                // Handle the case where userRole is undefined (e.g., return an error response or a default redirect)
+                return NextResponse.redirect(new URL('/error', request.url));
             }
-
-            // Set user role
-            userRole = userProfile?.role;
-            // Store role in a cookie
-            const sessionToken = userProfile?.role;
-
-            const response = NextResponse.next();
-            response.cookies.set('sessionToken', sessionToken, {
-                httpOnly: true,
-                secure: true,
-                maxAge: 60 * 60 * 24, // 1 day
-                path: '/',
-            });
-
-            // Continue with routing logic after setting the cookie
-            const routingResponse = await handleRouting(request, userRole);
-            if (routingResponse) {
-                return routingResponse;
-            }
-
-            return response;
         }
     }
-
-    // Handle routing logic
-    const routingResponse = await handleRouting(request, userRole);
-    if (routingResponse) {
-        return routingResponse;
-    }
-
-    return await updateSession(request);
-}
-
-async function handleRouting(request: NextRequest, userRole: string | undefined) {
-    const { pathname } = request.nextUrl;
-
-    if (userRole) {
-        // Redirect to default route if accessing base route
-        if (pathname === `/${userRole}`) {
-            return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
-        }
-
-        // Redirect to default route if accessing unauthorized route
-        if (!roleRoutes[userRole].includes(pathname)) {
-            return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
-        }
-    } else {
-        // Avoid redirect loop if already on the login page
-        if (!publicRoutes.includes(pathname)) {
-            return NextResponse.redirect(new URL('/', request.url));
-        }
-    }
-
-    return null;
 }
 
 export const config = {
@@ -110,3 +56,4 @@ export const config = {
         '/((?!api|_next/static|_next/image|favicon.ico|images).*)'
     ]
 };
+

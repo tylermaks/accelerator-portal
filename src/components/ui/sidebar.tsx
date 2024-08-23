@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react"; 
-import { getUserRole } from "@/lib/actions";
 import { logout } from "@/lib/actions";
 
 const sideBarLinks = [
@@ -30,17 +28,8 @@ const sideBarLinks = [
 
 
 export default function Sidebar() {
-    const [userRole, setUserRole] = useState<string | undefined>();
-
-    const handleUserRole = async () => {
-        const role = await getUserRole();
-        setUserRole(role);
-    }
-
-    useEffect(() => {
-        handleUserRole();
-    }, [])
-    
+    const pathName = window.location.pathname
+    const userRole = pathName.split('/')[1]
     const userLinks = sideBarLinks.find(link => link.role === userRole)
 
     return(
