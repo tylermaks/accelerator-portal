@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { logout } from "@/lib/supabase-actions";
@@ -25,19 +26,37 @@ const sideBarLinks = [
     }, 
 ]
 
+interface Link {
+    role: string;
+    icons: string[];
+    links: string[];
+    routes: string[];
+}
+
+const defaultLink: Link = {
+    role: '',
+    icons: [],
+    links: [],
+    routes: []
+  };
 
 
 export default function Sidebar() {
-    const pathName = window.location.pathname
-    const userRole = pathName.split('/')[1]
-    const userLinks = sideBarLinks.find(link => link.role === userRole)
+    const [userLinks, setUserLinks] = useState<Link>(defaultLink)
+
+    useEffect(() => {
+        const pathName = window.location.pathname
+        const userRole = pathName.split('/')[1]
+        const roleLinks = sideBarLinks.find(link => link.role === userRole)
+        roleLinks && setUserLinks(roleLinks)
+    }, [])
 
     return(
         <nav className="h-screen flex flex-col justify-between p-8 w-1/5 bg-teal text-gray-100 ">
             <div className="flex flex-col gap-8">
                 <Image src="/images/logo-secondary.png" width={125} height={100} alt="logo" />
                 {
-                    userLinks?.links.map((link, index) => (
+                    userLinks?.links.map((link: string, index: number) => (
                         <div key={index} className="flex items-center gap-3.5">
                             <Image
                                 className="filter invert"
