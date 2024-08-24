@@ -27,11 +27,6 @@ export async function middleware(request: NextRequest) {
 
     const SB_TOKEN = process.env.SB_TOKEN;
     const cookie = SB_TOKEN && request.cookies.get(SB_TOKEN);
-
-    if (!cookie) {
-        return NextResponse.redirect(new URL('/error', request.url));
-    }
-    
     const token = cookie && cookie.value;
 
     if(token){
@@ -45,10 +40,10 @@ export async function middleware(request: NextRequest) {
                 return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
             } else {
                 // Handle the case where userRole is undefined (e.g., return an error response or a default redirect)
-                return NextResponse.redirect(new URL('/error', request.url));
+                return NextResponse.redirect(new URL('/no-token', request.url));
             }
         }
-    }
+    } 
 }
 
 export const config = {
