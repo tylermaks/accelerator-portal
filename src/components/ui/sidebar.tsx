@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { logout } from "@/lib/actions";
+import { logout } from "@/lib/supabase-actions";
 
 const sideBarLinks = [
     {

@@ -1,13 +1,12 @@
-import SignIn from "@/components/home/signin";
+import HomeForm from "@/components/home/home-form";
 import Image from "next/image";
-import Link from "next/link";
+
 
 export default function Home() {
   return (
     <main className="flex h-screen">
       <div className="flex flex-col items-center w-1/2 p-8">
-        <SignIn />
-        <Link href="/forgotpassword" className="text-fsGray text-sm hover:underline">Forgot password?</Link>
+        <HomeForm />
       </div>
    
       <div className="relative w-1/2">
