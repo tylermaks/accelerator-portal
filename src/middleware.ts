@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtDecode } from "jwt-decode";
 
 
-const publicRoutes = ['/', '/reset-password', '/signup', '/error'];
+const publicRoutes = ['/', '/reset-password', '/error']; // add 'signup' in dev env
 
 const roleRoutes: { [key: string]: string[] } = {
     admin: ['/admin/dashboard', '/admin/members', '/admin/controls'],
