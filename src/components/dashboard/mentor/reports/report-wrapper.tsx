@@ -1,6 +1,6 @@
 "use client"
 
-import { useState,  useEffect } from "react";
+import { useState,  useEffect, useCallback } from "react";
 import { getReportData } from "@/lib/report-actions";
 import ReportTable from "@/components/dashboard/mentor/reports/report-table";
 
@@ -46,17 +46,17 @@ export default function ReportWrapper() {
         yearsSince2022.push(year);
     }
 
-    const getData =  async () => {
+    const getData = useCallback( async () => {
         const data = await getReportData({month, year});
         const { records } = data;
         setReportData(records);
-    }
+    }, [month, year])
 
-    const calculateTotal = () => {
+    const calculateTotal = useCallback ( () => {
         const totalHours = reportData.reduce((sum, record) => sum + record.fields.duration, 0);
         console.log(totalHours)
         setTotal(totalHours);
-    }
+    }, [reportData])
 
     useEffect(() => {   
         getData()
