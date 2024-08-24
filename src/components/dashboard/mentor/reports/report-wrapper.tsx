@@ -60,11 +60,11 @@ export default function ReportWrapper() {
 
     useEffect(() => {   
         getData()
-    }, [month, year])
+    }, [getData])
 
     useEffect(() => {
         calculateTotal()
-    },[reportData])
+    },[calculateTotal])
 
     return (
         <div>
