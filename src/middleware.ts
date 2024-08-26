@@ -40,10 +40,14 @@ export async function middleware(request: NextRequest) {
                 return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
             } else {
                 // Handle the case where userRole is undefined (e.g., return an error response or a default redirect)
-                return NextResponse.redirect(new URL('/no-token', request.url));
+                return NextResponse.redirect(new URL('/', request.url));
             }
         }
     } 
+
+    if (!token) {
+        return NextResponse.redirect(new URL('/', request.url));
+    }
 }
 
 export const config = {

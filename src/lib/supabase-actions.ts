@@ -18,9 +18,8 @@ export async function login(formData: FormData) {
     const { error } = await supabase.auth.signInWithPassword(data)
     const { data: {user} } = await supabase.auth.getUser();
 
-
     if (error) {
-      redirect('/error')
+      return { status: error?.status }
     }
 
     if (!user) {
@@ -80,19 +79,21 @@ export async function sendPasswordReset(formData: FormData) {
     redirectTo: redirectURL,
   })
 
-  console.log("SENDING PASSWORD RESET", data, error)
-
-  return {data, error}
+  return {data: data, status: error?.status}
 }
 
-export async function updatePassword(formData: FormData) {
-  const supabase = createClient()
-  const { data, error } = await supabase.auth.updateUser({
-    password: formData.get('password') as string
-  })
+// export async function updatePassword(formData: FormData) {
+//   const passwordConfirmed = formData.get('password') as string
+//   const supabase = createClient()
+//   const { data: resetData, error } = await supabase.auth.updateUser({
+//     password: passwordConfirmed
+//   })
 
-  redirect("/")
-}
+//   console.log("DATA FROM UPDATE PASSWORD", resetData)
+//   console.log("ERROR FROM UPDATE PASSWORD", error)
+
+//   redirect("/")
+// }
 
 // export async function getCompanyList() {
 //   const supabase = createClient();

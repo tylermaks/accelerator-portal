@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import DOMPurify from "dompurify";
+import Image from "next/image";
 
 const InputSchema = z.object({
-  value: z.string().min(1, "This field is required"),
+  value: z.string().min(0, "This field is required"),
 });
 
 export default function Input({ 
@@ -13,6 +14,7 @@ export default function Input({
     type, 
     id,
     name,
+    updateExternalState,
     prepopulate,
     isRequired = false
 }: { 
@@ -20,11 +22,13 @@ export default function Input({
     type: string, 
     id: string,
     name: string,
+    updateExternalState?: (value: string) => void,
     prepopulate?: string,
     isRequired?: boolean
 }) {
     const [value, setValue] = useState("");
     const [error, setError] = useState("");
+    const [isPassword, setIsPassword] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const sanitizedValue = DOMPurify.sanitize(e.target.value);
@@ -35,7 +39,12 @@ export default function Input({
         } else {
             setError("");
             setValue(sanitizedValue);
+            updateExternalState && updateExternalState(sanitizedValue);
         }
+    };
+
+    const togglePassword = () => {
+        setIsPassword(!isPassword);
     };
 
     useEffect(() => {
@@ -51,20 +60,32 @@ export default function Input({
     }, [prepopulate]);
 
     return (
-        <div className="w-full">
+        <div className="w-full relative">
             <label htmlFor={id} className="block mb-1 text-xs text-gray-700">
                 {label}
             </label>
             <input
                 id={id}
                 name={name}
-                type={type}
+                type={isPassword ? (type === "password" ? "text" : type) : type}
                 value={value}
                 onChange={handleChange}
                 className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                 required={isRequired}
                 autoComplete="off"
             />
+            {
+                type === "password" && (
+                    <Image 
+                        className="absolute right-3 top-[45%] bottom-[55%] cursor-pointer"
+                        src="/images/show-icon.svg" 
+                        alt="Show password" 
+                        width={23} 
+                        height={23} 
+                        onClick={togglePassword} 
+                    />
+                )  
+            }
             {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
         </div>
     );
