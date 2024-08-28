@@ -13,7 +13,7 @@ type SelectProps = {
     data: string[];
     isRequired?: boolean;
     searchable?: boolean;
-    setFormState?: React.Dispatch<React.SetStateAction<string>>;
+    setFormState?: (currentOption: string) => void;
     closeDropdown?: (currentOption: string) => void;
 }
 
@@ -73,9 +73,6 @@ export default function Select(
     };
 
     const updateOption = (item: string) => {
-        if (setFormState) {
-            setFormState(item)
-        }
         setCurrentOption(item)
         setDropdown(false)
         closeDropdown && closeDropdown(item)
