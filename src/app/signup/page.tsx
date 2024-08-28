@@ -3,7 +3,7 @@ import { signup } from "@/lib/supabase-actions";
 export default function SignUp() {
     return (
         <div className="h-screen px-[450px] flex flex-col justify-center items-center">
-            <form action={signup} className="w-full flex flex-col gap-6 border p-4">
+            {/* <form action={signup} className="w-full flex flex-col gap-6 border p-4">
                 <h1 className="text-3xl">Sign Up</h1>
 
                 <div className="flex gap-4">
@@ -43,7 +43,7 @@ export default function SignUp() {
                 </div>
 
                 <button className="bg-orange p-2 text-white" type="submit">Sign Up</button>
-            </form>
+            </form> */}
         </div>
     );
 }

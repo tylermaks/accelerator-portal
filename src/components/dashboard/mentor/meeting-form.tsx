@@ -4,9 +4,8 @@ import Input from "@/components/ui/input";
 import Select from "@/components/ui/select";
 import Textarea from "@/components/ui/textarea";
 import MainButton from "@/components/ui/main-button";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, } from "react";
 import { addMeeting, deleteMeeting, updateMeeting } from "@/lib/meeting-actions"
-
 
 
 export default function MeetingForm( { toggleModal, addOptimistic, data } : any) {
@@ -38,7 +37,6 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
         });
 
         if (!response.ok) {
-            // Handle response errors
             console.error("Fetch error:", response.statusText);
             return null;
         }

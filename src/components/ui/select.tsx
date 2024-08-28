@@ -87,6 +87,8 @@ export default function Select(
         setSearch(newValue)
     }
 
+
+    //FIX THIS HERE - INFINITE LOOP!
     const filterCompanyList = useCallback(() => { 
         const filteredOptions = filteredList.filter(item => 
             item.toLowerCase().includes(search.toLowerCase())
