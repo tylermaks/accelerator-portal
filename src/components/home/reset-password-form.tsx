@@ -28,9 +28,10 @@ export default function ResetPasswordForm() {
             return
           }
 
-          if (resetData) {
-            useRouter().push("/")
-          }
+          //RETURN TO FIX THIS LINE
+          // if (resetData) {
+          //   useRouter().push("/")
+          // }
         }
     }
 
