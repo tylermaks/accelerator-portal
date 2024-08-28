@@ -45,9 +45,10 @@ export async function middleware(request: NextRequest) {
         }
     } 
 
-    if (!token) {
-        return NextResponse.redirect(new URL('/', request.url));
-    }
+    //FIX THIS LINE LATER   
+    // if (!token) {
+    //     return NextResponse.redirect(new URL('/', request.url));
+    // }
 }
 
 export const config = {

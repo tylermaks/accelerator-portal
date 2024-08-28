@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Input from "@/components/ui/input";
 import MainButton from "@/components/ui/main-button";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 
 export default function ResetPasswordForm() {
     const [password, setPassword] = useState("");
