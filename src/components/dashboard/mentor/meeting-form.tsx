@@ -4,60 +4,35 @@ import Input from "@/components/ui/input";
 import Select from "@/components/ui/select";
 import Textarea from "@/components/ui/textarea";
 import MainButton from "@/components/ui/main-button";
+import { getCompanyList, getSupportTypeList } from "@/lib/list-actions";
 import { useEffect, useState, useRef, useCallback, } from "react";
 import { addMeeting, deleteMeeting, updateMeeting } from "@/lib/meeting-actions"
 
-//MAKE THIS DYNAMIC
-const supportOptions: string[] = [
-    "Supporting a company", 
-    "Program Moderation", 
-    "Goodwill Advising", 
-    "Access to Capital", 
-    "Advisory Board", 
-    "Content Development", 
-    "Intake", 
-    "Other"
-]
 
 export default function MeetingForm( { toggleModal, addOptimistic, data } : any) {
     const [companyList, setCompanyList] = useState<any>([]);
+    const [supportTypeDropdown, setSupportTypeDropdown] = useState<string[]>([])
     const [clickedButton, setClickedButton] = useState<string>("");
     const [supportType, setSupportType] = useState<string>("");
-    // const [loading, setLoading] = useState(false);
     const formRef = useRef<HTMLFormElement>(null);
     const { fields } = data;
-    
-    //COME BACK HERE TO FIX
-    const getCompanyData = async () => {
-        const response = await fetch("/api/getCompanyList", { 
-            headers: {
-                contentType: "application/json",
-                credentials: "include",
-            },
-            cache: "force-cache"
-        });
 
-        if (!response.ok) {
-            console.error("Fetch error:", response.statusText);
-            return null;
-        }
-        
-        const data = await response.json();
-        setCompanyList(data);
+    const getListOptions = async () => { 
+        const companyListData = await getCompanyList()
+        const supportTypeListData = await getSupportTypeList()
+        companyListData && setCompanyList(companyListData)
+        supportTypeListData && setSupportTypeDropdown(supportTypeListData)
     }
 
-    useEffect(() => {
-        getCompanyData();
+    useEffect(() => { 
+        getListOptions()
     }, [])
-
- 
-    
+        
     const getButtonID = (event: React.MouseEvent<HTMLButtonElement>) => {
         setClickedButton(event.currentTarget.id);
     };
   
     const handleSubmit = async (formData: FormData) => {
-        // setLoading(true);
         const newMeeting = {
             date: formData.get("date"),
             companyName: formData.get("companyName"),
@@ -81,9 +56,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
             await addMeeting(formData); 
         } catch (error) {
             console.error('Error adding meeting:', error);
-        } finally {
-            // setLoading(false);
-        }
+        } 
     };
 
     const handleDelete = async () => {
@@ -104,8 +77,8 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
         }
     };
 
-    const handleUpdateSupportType = useCallback( () => { 
-        setSupportType(currentSupportType);
+    const handleUpdateSupportType = useCallback( (currentSupportOption: string) => { 
+        setSupportType(currentSupportOption);
     }, [supportType])
 
 
@@ -148,13 +121,13 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
                 id="supportType"
                 name="supportType"
                 prepopulate={fields && fields.supportType} 
-                data={supportOptions}
+                data={supportTypeDropdown}
                 setFormState={handleUpdateSupportType}
                 isRequired={true}
            />
            { shouldRenderInput(currentSupportType) ? (
                 <Input 
-                    label={`Please provide project name:`}
+                    label={`Please provide details:`}
                     type="text"
                     id="altName"
                     name="altName"
@@ -168,7 +141,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
                     id="companyName"
                     name="companyName"
                     prepopulate={fields && fields.companyName}
-                    data={companyList.records}
+                    data={companyList}
                     searchable={true}
                     isRequired={true}
                 />

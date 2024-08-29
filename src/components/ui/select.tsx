@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef, useCallback } from "react"
 import Image from "next/image"
-import DOMPurify from "dompurify"
 
 type SelectProps = {
     label: string;
@@ -46,7 +45,6 @@ export default function Select(
     };
 
     const updateOption = (item: string) => {
-        console.log("ITEM FROM SELECT", item)
         setCurrentOption(item)
         setFormState && setFormState(item)
         setDropdown(false)
@@ -130,7 +128,7 @@ export default function Select(
                     )}
 
                     <div aria-hidden="true">
-                        {filteredList.length > 0 ? (
+                        {filteredList && filteredList.length > 0 ? (
                             filteredList.map((item: string, index: number) => (
                                 <div 
                                     key={index} 
@@ -157,7 +155,7 @@ export default function Select(
                 required={isRequired}
             >
                 <option value="" disabled>Select</option>
-                {data?.map((option, index) => (
+                {data && data?.map((option, index) => (
                     <option key={index} value={option}>
                         {option}
                     </option>
