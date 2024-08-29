@@ -3,7 +3,6 @@
 import { useEffect, useState, useRef, useCallback } from "react"
 import Image from "next/image"
 import DOMPurify from "dompurify"
-import { z } from "zod"
 
 type SelectProps = {
     label: string;
@@ -16,12 +15,6 @@ type SelectProps = {
     setFormState?: (currentOption: string) => void;
     closeDropdown?: (currentOption: string) => void;
 }
-
-// Define the schema using Zod for allowed options
-const allowedOptionsSchema = z.array(z.string());
-const InputSchema = z.object({
-    value: z.string().min(1, "This field is required"),
-  });
 
 export default function Select(
     {label, id, name, prepopulate, data, setFormState, closeDropdown, isRequired = false, searchable = false } : SelectProps
@@ -36,30 +29,10 @@ export default function Select(
     const selectRef = useRef<HTMLSelectElement>(null)
 
 
-    // Sanitize and validate the provided options
+    
     useEffect(() => {
-        const sanitizedData = data?.map(option => DOMPurify.sanitize(option));
-        const resultData = allowedOptionsSchema.safeParse(sanitizedData);
-
-        if (!resultData.success) {
-            setError("Invalid options provided");
-            setFilteredList([]);
-        } else {
-            setError("");
-            setFilteredList(resultData.data);
-        }
-        
-        const sanitizedPrepopulate = prepopulate ? DOMPurify.sanitize(prepopulate) : "";
-        const resultPrepopulate = InputSchema.safeParse({ value: sanitizedPrepopulate });
-
-        if (!resultPrepopulate.success) {
-            // Handle the error if prepopulate is invalid
-            console.error(resultPrepopulate.error);
-            setCurrentOption(""); // Optionally set a default value or handle the error
-        } else {
-            setCurrentOption(resultPrepopulate.data.value);
-        }
-
+        setFilteredList(data);
+        prepopulate && setCurrentOption(prepopulate);
     }, [data, prepopulate]);
 
     const toggleDropdown = () => { 
@@ -73,7 +46,9 @@ export default function Select(
     };
 
     const updateOption = (item: string) => {
+        console.log("ITEM FROM SELECT", item)
         setCurrentOption(item)
+        setFormState && setFormState(item)
         setDropdown(false)
         closeDropdown && closeDropdown(item)
       
@@ -83,18 +58,17 @@ export default function Select(
     }
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => { 
-        const newValue = DOMPurify.sanitize(event.target.value);
+        const newValue = event.target.value;
         setSearch(newValue)
     }
 
-
-    //FIX THIS HERE - INFINITE LOOP!
     const filterCompanyList = useCallback(() => { 
-        const filteredOptions = filteredList.filter(item => 
+        const searchResults = data?.filter(item => 
             item.toLowerCase().includes(search.toLowerCase())
         );
-        setFilteredList(filteredOptions)
-    },[filteredList, search])
+
+        setFilteredList(searchResults)
+    },[search])
 
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
@@ -111,7 +85,7 @@ export default function Select(
 
     useEffect(() => { 
         filterCompanyList()
-    }, [search, filterCompanyList])
+    }, [filterCompanyList])
 
     useEffect(() => { 
         if(data){
@@ -157,9 +131,9 @@ export default function Select(
 
                     <div aria-hidden="true">
                         {filteredList.length > 0 ? (
-                            filteredList.map(item => (
+                            filteredList.map((item: string, index: number) => (
                                 <div 
-                                    key={item} 
+                                    key={index} 
                                     onClick={() => updateOption(item)} 
                                     className={dropdownOptionClass} 
                                 >

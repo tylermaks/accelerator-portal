@@ -4,29 +4,30 @@ import Input from "@/components/ui/input";
 import Select from "@/components/ui/select";
 import Textarea from "@/components/ui/textarea";
 import MainButton from "@/components/ui/main-button";
-import { useEffect, useState, useRef, } from "react";
+import { useEffect, useState, useRef, useCallback, } from "react";
 import { addMeeting, deleteMeeting, updateMeeting } from "@/lib/meeting-actions"
 
+//MAKE THIS DYNAMIC
+const supportOptions: string[] = [
+    "Supporting a company", 
+    "Program Moderation", 
+    "Goodwill Advising", 
+    "Access to Capital", 
+    "Advisory Board", 
+    "Content Development", 
+    "Intake", 
+    "Other"
+]
 
 export default function MeetingForm( { toggleModal, addOptimistic, data } : any) {
     const [companyList, setCompanyList] = useState<any>([]);
     const [clickedButton, setClickedButton] = useState<string>("");
     const [supportType, setSupportType] = useState<string>("");
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false);
     const formRef = useRef<HTMLFormElement>(null);
     const { fields } = data;
     
-    const supportOptions: string[] = [
-        "Supporting a company", 
-        "Program Moderation", 
-        "Goodwill Advising", 
-        "Access to Capital", 
-        "Advisory Board", 
-        "Content Development", 
-        "Intake", 
-        "Other"
-    ]
-
+    //COME BACK HERE TO FIX
     const getCompanyData = async () => {
         const response = await fetch("/api/getCompanyList", { 
             headers: {
@@ -54,10 +55,9 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
     const getButtonID = (event: React.MouseEvent<HTMLButtonElement>) => {
         setClickedButton(event.currentTarget.id);
     };
-
   
     const handleSubmit = async (formData: FormData) => {
-        setLoading(true);
+        // setLoading(true);
         const newMeeting = {
             date: formData.get("date"),
             companyName: formData.get("companyName"),
@@ -82,7 +82,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
         } catch (error) {
             console.error('Error adding meeting:', error);
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
     };
 
@@ -104,7 +104,12 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
         }
     };
 
+    const handleUpdateSupportType = useCallback( () => { 
+        setSupportType(currentSupportType);
+    }, [supportType])
 
+
+    //COME BACK TO FIX
     const shouldRenderInput = (type : string) => {
         const supportedTypes = ["Content Development", "Other", "Intake", "Program Moderation"];
         return supportedTypes.includes(type);
@@ -144,7 +149,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
                 name="supportType"
                 prepopulate={fields && fields.supportType} 
                 data={supportOptions}
-                // setFormState={setSupportType}
+                setFormState={handleUpdateSupportType}
                 isRequired={true}
            />
            { shouldRenderInput(currentSupportType) ? (
