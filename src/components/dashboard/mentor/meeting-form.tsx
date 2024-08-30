@@ -1,33 +1,27 @@
-"use client"
-
 import Input from "@/components/ui/input";
 import Select from "@/components/ui/select";
 import Textarea from "@/components/ui/textarea";
 import MainButton from "@/components/ui/main-button";
-import { getCompanyList, getSupportTypeList } from "@/lib/list-actions";
 import { useEffect, useState, useRef, useCallback, } from "react";
 import { addMeeting, deleteMeeting, updateMeeting } from "@/lib/meeting-actions"
 
 
-export default function MeetingForm( { toggleModal, addOptimistic, data } : any) {
-    const [companyList, setCompanyList] = useState<any>([]);
-    const [supportTypeDropdown, setSupportTypeDropdown] = useState<string[]>([])
-    const [clickedButton, setClickedButton] = useState<string>("");
-    const [supportType, setSupportType] = useState<string>("");
-    const formRef = useRef<HTMLFormElement>(null);
-    const { fields } = data;
+type MeetingFormProps = { 
+    toggleModal: (modalData: {}) => void ;
+    addOptimistic: (newRow: any) => void;
+    supportTypeOptions: string[];
+    companyOptions: string[];
+    data: any;
+}
 
-    const getListOptions = async () => { 
-        const companyListData = await getCompanyList()
-        const supportTypeListData = await getSupportTypeList()
-        companyListData && setCompanyList(companyListData)
-        supportTypeListData && setSupportTypeDropdown(supportTypeListData)
-    }
 
-    useEffect(() => { 
-        getListOptions()
-    }, [])
-        
+export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOptions, companyOptions, data } : MeetingFormProps) {
+    const [clickedButton, setClickedButton] = useState<string>(""); 
+    const [supportType, setSupportType] = useState<string>(""); 
+    const formRef = useRef<HTMLFormElement>(null); 
+    const { fields } = data
+  
+
     const getButtonID = (event: React.MouseEvent<HTMLButtonElement>) => {
         setClickedButton(event.currentTarget.id);
     };
@@ -47,7 +41,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
         });
 
         if (clickedButton === "submit-meeting"){
-            await toggleModal();
+            await toggleModal({});
         } else { 
             formRef.current?.reset();
         }
@@ -62,7 +56,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
     const handleDelete = async () => {
         try {
             await deleteMeeting(data.id);
-            toggleModal();
+            toggleModal({});
         } catch (error) {
             console.error('Error deleting meeting:', error);
         }
@@ -71,7 +65,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
     const handleEdit = async (formData: FormData) => {
         try {
             await updateMeeting(data.id, formData);
-            toggleModal();
+            toggleModal({});
         } catch (error) {
             console.error('Error updating meeting:', error);
         }
@@ -121,7 +115,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
                 id="supportType"
                 name="supportType"
                 prepopulate={fields && fields.supportType} 
-                data={supportTypeDropdown}
+                optionList={supportTypeOptions}
                 setFormState={handleUpdateSupportType}
                 isRequired={true}
            />
@@ -141,8 +135,8 @@ export default function MeetingForm( { toggleModal, addOptimistic, data } : any)
                     id="companyName"
                     name="companyName"
                     prepopulate={fields && fields.companyName}
-                    data={companyList}
-                    searchable={true}
+                    optionList={companyOptions}
+                    isSearchable={true}
                     isRequired={true}
                 />
            )}

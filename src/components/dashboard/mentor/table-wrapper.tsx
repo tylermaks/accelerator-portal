@@ -7,24 +7,32 @@ import MeetingForm from "@/components/dashboard/mentor/meeting-form";
 import MainButton from "@/components/ui/main-button";
 import SortFilterButton from "@/components/dashboard/mentor/sort-filter-button";
 
-interface Row {
-    id: string;
+type Record = { 
+    id: string,
+    createdTime: string;
     fields: {
         date: string;
         altName?: string;
         companyName: string;
         duration: string;
         supportType: string;
-    }
+    }    
 }
-  
-interface RowsState {
-    records: Row[];
+
+type TableData = { 
+    records: Record[],
     offset: string;
 }
 
-export default function TableWrapper({ initialData }: any) { 
-    const [rows, setRows] = useState<RowsState>({records: [], offset: ""});
+type TableProps = {
+    tableData: TableData;
+    supportTypeList: string[];
+    companyList: string[] 
+}
+
+
+export default function TableWrapper( {tableData, supportTypeList, companyList } : TableProps) { 
+    const [rows, setRows] = useState<TableData>(tableData);
     const [showModal, setShowModal] = useState({ open: false, data: {} });
     const [optimisticRows, addOptimisticRow] = useOptimistic(
         rows?.records,
@@ -32,10 +40,10 @@ export default function TableWrapper({ initialData }: any) {
     );
 
     useEffect(() => {
-        if (initialData) {
-            setRows(initialData)
+        if (tableData) {
+            setRows(tableData)
         }
-    }, [initialData])
+    }, [tableData])
 
     const toggleModal = ( modalData: {} = {}) => {
         setShowModal({open: !showModal.open, data: modalData});
@@ -52,10 +60,14 @@ export default function TableWrapper({ initialData }: any) {
                     <MeetingForm 
                         addOptimistic={addOptimisticRow}
                         toggleModal={toggleModal}
+                        supportTypeOptions= {supportTypeList}
+                        companyOptions={companyList}
                         data={ showModal.data }
                     />
+
                 </Modal>
             } 
+
             
             <div className="flex justify-between mb-3">
                 <div className="flex gap-4">

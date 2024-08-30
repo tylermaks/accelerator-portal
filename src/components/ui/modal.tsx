@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+
 interface ModalProps {
     title: string
     subtitle: string

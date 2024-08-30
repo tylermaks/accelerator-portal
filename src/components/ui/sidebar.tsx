@@ -76,11 +76,10 @@ export default function Sidebar() {
                 }
             </div>
         
-            <form className="flex items-center gap-3.5 cursor-pointer" action={logout} method="POST">
+            <form className="flex items-center gap-3.5 cursor-pointer" action={logout}>
                 <Image className="filter invert" src="/images/cog-icon.svg" width={15} height={15} alt="cog"/>
                 <button type='submit' className="text-sm">Sign Out</button>
             </form>
-            
         </nav>
     );
 }

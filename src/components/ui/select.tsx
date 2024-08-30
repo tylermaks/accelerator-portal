@@ -8,15 +8,15 @@ type SelectProps = {
     id: string;
     name: string;
     prepopulate?: string;
-    data: string[];
+    optionList: string[];
     isRequired?: boolean;
-    searchable?: boolean;
+    isSearchable?: boolean;
     setFormState?: (currentOption: string) => void;
     closeDropdown?: (currentOption: string) => void;
 }
 
 export default function Select(
-    {label, id, name, prepopulate, data, setFormState, closeDropdown, isRequired = false, searchable = false } : SelectProps
+    {label, id, name, prepopulate, optionList, setFormState, closeDropdown, isRequired = false, isSearchable = false } : SelectProps
 ) {
     const [dropdown, setDropdown] = useState(false)
     const [search, setSearch] = useState("")
@@ -27,12 +27,11 @@ export default function Select(
     const inputRef = useRef<HTMLInputElement>(null);
     const selectRef = useRef<HTMLSelectElement>(null)
 
-
     
     useEffect(() => {
-        setFilteredList(data);
+        setFilteredList(optionList);
         prepopulate && setCurrentOption(prepopulate);
-    }, [data, prepopulate]);
+    }, [optionList, prepopulate]);
 
     const toggleDropdown = () => { 
         setDropdown(!dropdown)
@@ -61,7 +60,7 @@ export default function Select(
     }
 
     const filterCompanyList = useCallback(() => { 
-        const searchResults = data?.filter(item => 
+        const searchResults = optionList?.filter(item => 
             item.toLowerCase().includes(search.toLowerCase())
         );
 
@@ -86,10 +85,10 @@ export default function Select(
     }, [filterCompanyList])
 
     useEffect(() => { 
-        if(data){
-            setFilteredList(data)
+        if(optionList){
+            setFilteredList(optionList)
         }
-    }, [data])
+    }, [optionList])
 
     const selectClass = "cursor-pointer flex flex-row justify-between p-2.5 border border-gray-300 rounded-lg"
     const dropdownClass = dropdown ? "max-h-64 bg-gray-50 px-1 overflow-scroll absolute top-5 left-0 right-0 border border-2 border-blue-700 rounded-lg z-10" : "hidden"
@@ -115,7 +114,7 @@ export default function Select(
 
             {dropdown && (
                 <div ref={dropdownRef} className={dropdownClass}>
-                    {searchable && (
+                    {isSearchable && (
                         <input 
                             ref={inputRef}
                             className="w-full p-2.5 text-sm text-fsGray bg-gray-50 focus:outline-none" 
@@ -155,7 +154,7 @@ export default function Select(
                 required={isRequired}
             >
                 <option value="" disabled>Select</option>
-                {data && data?.map((option, index) => (
+                {optionList && optionList?.map((option, index) => (
                     <option key={index} value={option}>
                         {option}
                     </option>
