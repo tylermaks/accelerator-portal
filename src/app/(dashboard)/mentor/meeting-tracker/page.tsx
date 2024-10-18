@@ -1,11 +1,11 @@
 import PageHeader from "@/components/ui/page-header";
-import TableWrapper from "@/components/dashboard/mentor/table-wrapper";
-import { createClient } from "@/utils/supabase/server";
-import { getTableData } from "@/lib/meeting-actions";
+import TableWrapper from "@/components/dashboard/mentor/meeting-tracker/table-wrapper"
+import getSupportTypeList from "@/components/dashboard/mentor/meeting-tracker/support-type-list";
+import getCompanyList from "@/components/dashboard/mentor/meeting-tracker/company-list"
+import getTableData from "@/components/dashboard/mentor/meeting-tracker/table-data"
 
-
-async function getSupportTypeList() { 
-  const url = `https://api.airtable.com/v0/${process.env.BASE_ID}/${process.env.SUPPORT_TYPE_TABLE_ID}?sort[0][field]=Name&sort[0][direction]=asc`
+const getProgramOptionsList = async () => { 
+  const url = `https://api.airtable.com/v0/${process.env.BASE_ID}/${process.env.PROGRAM_OPTIONS_TABLE_ID}?sort[0][field]=Name&sort[0][direction]=asc`
   const res = await fetch(url, { 
     headers: {
       'Authorization': `Bearer ${process.env.AIRTABLE_API_KEY}`,
@@ -14,41 +14,18 @@ async function getSupportTypeList() {
     cache: "force-cache"
   })
 
-  const supportTypeList = await res.json();
-  return supportTypeList
-}
-
-async function getCompanyList(){ 
-  const supabase = createClient();
-  const { data: user } = await supabase.auth.getUser();
-
-  if(user){ 
-      let allRecords: any[] = [];
-      let offset = null;
-
-      do{ 
-          const url = `https://api.airtable.com/v0/${process.env.BASE_ID}/${process.env.COMPANY_TABLE_ID}?view=${process.env.COMPANY_VIEW_ID}&pageSize=50&fields%5B%5D=companyName`
-          const paginatedUrl : string = offset ? `${url}&offset=${offset}` : url
-          
-          const response = await fetch(paginatedUrl, {
-              headers: {
-                  'Authorization': `Bearer ${process.env.AIRTABLE_API_KEY}`,
-                  'Content-Type': 'application/json'
-              }, 
-              cache: "force-cache"
-          });
-
-          const data = await response.json()
-          allRecords = allRecords.concat(data.records)
-          offset = data.offset
-
-      } while (offset)
-      
-      return allRecords
-  } else{ 
-    console.error("User not found")
-    return []
+  type Fields = {
+    Name: string;
+    program_name: string;
   }
+
+  type ProgramOption = {
+      fields: Fields;
+  }
+
+  const programData = await res.json();
+  const programOptionsList = programData.records.map((option: ProgramOption) => { return option.fields.program_name})  
+  return programOptionsList
 }
 
 
@@ -77,13 +54,11 @@ export default async function MeetingTracker({
     searchParams: { [key: string]: string | undefined }
   }) {
     const initialTableData = await getTableData( null, searchParams );
-
     const supportTypeOptions = await getSupportTypeList()
     const supportTypeList = supportTypeOptions && supportTypeOptions.records.map((item:SupportType ) => item.fields['Dropdown Item Name'])
-
     const companyListOptions = await getCompanyList()
     const companyList = companyListOptions?.map((item: Company) => item.fields.companyName)
-
+    const programOptionsList = await getProgramOptionsList()
 
     return (
       <div className="flex flex-col gap-8">
@@ -95,6 +70,7 @@ export default async function MeetingTracker({
           tableData={initialTableData}
           supportTypeList={supportTypeList}
           companyList={companyList}
+          programList={programOptionsList}
         />      
       </div>
     );

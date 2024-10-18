@@ -54,7 +54,6 @@ export default function ReportWrapper() {
 
     const calculateTotal = useCallback ( () => {
         const totalHours = reportData.reduce((sum, record) => sum + record.fields.duration, 0);
-        console.log(totalHours)
         setTotal(totalHours);
     }, [reportData])
 

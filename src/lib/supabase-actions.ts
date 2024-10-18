@@ -31,7 +31,7 @@ export async function login(formData: FormData) {
         console.log("user found")
         console.log("USER FROM SIGNIN", user?.user_metadata.user_type)
         revalidatePath('/', 'layout')
-        redirect('/' + user?.user_metadata.user_type + '/meeting-tracker')
+        redirect('/' + user?.user_metadata.user_type)
     }
 }
 
@@ -45,19 +45,22 @@ export async function signup(formData: FormData) {
     password: formData.get('password') as string,
     options: {
       data:{
-        firstName: formData.get('firstName') as string,
-        lastName: formData.get('lastName') as string,
+        first_name: formData.get('firstName') as string,
+        last_name: formData.get('lastName') as string,
         company_name: formData.get('companyName') as string,
         user_type: formData.get('userType') as string,
-        is_super_admin: true,
       }
     }
   }
 
+  console.log("DATA FROM SIGN IN: ", data)
+
   const { error } = await supabase.auth.signUp(data)
 
+  console.log("ERROR FROM SIGN IN: ", error)
+
   if (error) {
-    redirect('/error')
+    redirect('/')
   }
 
   revalidatePath('/signup', 'layout')

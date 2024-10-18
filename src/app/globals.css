@@ -31,3 +31,7 @@ body {
     text-wrap: balance;
   }
 } */
+
+span, p { 
+  color: #4D4D4D;
+}

@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useOptimistic, useEffect } from "react"
-import Table from "@/components/ui/table";
+import Table from "@/components/dashboard/mentor/meeting-tracker/table";
 import Modal from "@/components/ui/modal";
-import MeetingForm from "@/components/dashboard/mentor/meeting-form";
+import MeetingForm from "@/components/dashboard/mentor/meeting-tracker/meeting-form";
 import MainButton from "@/components/ui/main-button";
 import SortFilterButton from "@/components/dashboard/mentor/sort-filter-button";
 
@@ -27,11 +27,12 @@ type TableData = {
 type TableProps = {
     tableData: TableData;
     supportTypeList: string[];
-    companyList: string[] 
+    companyList: string[];
+    programList: string[];
 }
 
 
-export default function TableWrapper( {tableData, supportTypeList, companyList } : TableProps) { 
+export default function TableWrapper( {tableData, supportTypeList, companyList, programList } : TableProps) { 
     const [rows, setRows] = useState<TableData>(tableData);
     const [showModal, setShowModal] = useState({ open: false, data: {} });
     const [optimisticRows, addOptimisticRow] = useOptimistic(
@@ -62,6 +63,7 @@ export default function TableWrapper( {tableData, supportTypeList, companyList }
                         toggleModal={toggleModal}
                         supportTypeOptions= {supportTypeList}
                         companyOptions={companyList}
+                        programOptions={programList}
                         data={ showModal.data }
                     />
 

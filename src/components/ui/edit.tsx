@@ -2,12 +2,11 @@ import Image from "next/image";
 
 type EditProps = {
     title: string
-    save?: boolean
-    toggleEdit: () => void
+    toggleEdit?: () => void
 }
-export default function Edit({ title, toggleEdit, save=false }: EditProps) {
+export default function Edit({ title, toggleEdit }: EditProps) {
     return (
-        <div
+        <button
             className="flex items-end gap-1 absolute bottom-0 right-0 cursor-pointer"
             onClick={toggleEdit}
         >
@@ -18,6 +17,6 @@ export default function Edit({ title, toggleEdit, save=false }: EditProps) {
                 height={20}
             />
             <p className="text-fsGray text-xs">{title}</p>
-        </div>
+        </button>
     )   
 }

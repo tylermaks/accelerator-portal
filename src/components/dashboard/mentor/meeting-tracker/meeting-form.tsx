@@ -2,20 +2,20 @@ import Input from "@/components/ui/input";
 import Select from "@/components/ui/select";
 import Textarea from "@/components/ui/textarea";
 import MainButton from "@/components/ui/main-button";
-import { useEffect, useState, useRef, useCallback, } from "react";
+import { useState, useRef, useCallback, } from "react";
 import { addMeeting, deleteMeeting, updateMeeting } from "@/lib/meeting-actions"
-
 
 type MeetingFormProps = { 
     toggleModal: (modalData: {}) => void ;
     addOptimistic: (newRow: any) => void;
     supportTypeOptions: string[];
     companyOptions: string[];
+    programOptions: string[];
     data: any;
 }
 
 
-export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOptions, companyOptions, data } : MeetingFormProps) {
+export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOptions, companyOptions, programOptions, data } : MeetingFormProps) {
     const [clickedButton, setClickedButton] = useState<string>(""); 
     const [supportType, setSupportType] = useState<string>(""); 
     const formRef = useRef<HTMLFormElement>(null); 
@@ -30,6 +30,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOp
         const newMeeting = {
             date: formData.get("date"),
             companyName: formData.get("companyName"),
+            altName: formData.get("altName"),
             duration: formData.get("duration"),
             supportType: formData.get("supportType"),
             notes: formData.get("notes")
@@ -76,10 +77,46 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOp
     }, [supportType])
 
 
-    //COME BACK TO FIX
-    const shouldRenderInput = (type : string) => {
-        const supportedTypes = ["Content Development", "Other", "Intake", "Program Moderation"];
-        return supportedTypes.includes(type);
+    const renderConditionalInput = (type : string) => {
+        console.log("INPUT TYPE", type)
+        const requireCompanyList = ["Supporting a Company", "Advisory Board Meeting", "Access to Capital", "Goodwill Advising"]
+
+        if(requireCompanyList.includes(type)){ 
+            return ( 
+                <Select 
+                    label="Company Name"
+                    id="companyName"
+                    name="companyName"
+                    prepopulate={fields && fields.companyName}
+                    optionList={companyOptions}
+                    isSearchable={true}
+                    isRequired={true}
+                />
+            )
+        } else if (type === "Program Moderation") { 
+            return ( 
+                <Select 
+                    label="Program Name"
+                    id="altName"
+                    name="altName"
+                    prepopulate={fields && fields.altName}
+                    optionList={programOptions}
+                    isSearchable={false}
+                    isRequired={true}
+                />
+            )
+        } else { 
+            return (
+                <Input 
+                    label={`Please provide details:`}
+                    type="text"
+                    id="altName"
+                    name="altName"
+                    prepopulate={fields && fields.altName}
+                    isRequired={true}
+                />
+            )
+        }
     };
     
     const currentSupportType = supportType || fields?.supportType;
@@ -119,27 +156,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOp
                 setFormState={handleUpdateSupportType}
                 isRequired={true}
            />
-           { shouldRenderInput(currentSupportType) ? (
-                <Input 
-                    label={`Please provide details:`}
-                    type="text"
-                    id="altName"
-                    name="altName"
-                    prepopulate={fields && fields.altName}
-                    isRequired={true}
-                />
-  
-           ) : (
-                <Select 
-                    label="Company Name"
-                    id="companyName"
-                    name="companyName"
-                    prepopulate={fields && fields.companyName}
-                    optionList={companyOptions}
-                    isSearchable={true}
-                    isRequired={true}
-                />
-           )}
+           { renderConditionalInput(currentSupportType) }
            
             <Input 
                 label="Date"

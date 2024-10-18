@@ -1,6 +1,9 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
+import React from 'react'
+
+import DOMPurify from 'dompurify';
+import { useState, useEffect, useRef, useCallback, } from "react"
 import { updateProfile } from "@/lib/profile-actions";
 import Edit from "@/components/ui/edit";
 
@@ -13,13 +16,20 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
     const [dataID, setDataID] = useState("");
     const [hover, setHover] = useState(false);
     const [editing, setEditing] = useState(false);
-    const [value, setValue] = useState(data);
+    const [value, setValue] = useState("");
+    const [truncation, setTruncation] = useState(true)
+    const [lineCount, setLineCount] = useState(0)
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+
 
     useEffect(() => {
         setDataID(id);
         setValue(data);
     }, [data, id]);
+
+    useEffect(() => { 
+        countLines()
+    }, [])
 
     useEffect(() => {
         if (editing && textareaRef.current) {
@@ -28,9 +38,42 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
         }
     }, [editing, value]);
 
+    // useEffect(() => {
+    //     const cancelEditingOnOutsideClick = ( event: MouseEvent) => { 
+    //         if (textareaRef.current && !textareaRef.current.contains(event.target as Node)) { 
+    //             if(editing){ 
+    //                 setEditing(false)
+    //             }
+    //         }
+    //     }
+        
+    //     document.addEventListener("mousedown", cancelEditingOnOutsideClick);
+    //     return () => {
+    //         document.removeEventListener("mousedown", cancelEditingOnOutsideClick);
+    //     };
+    // }, [editing]);
 
-    const handleSave = useCallback(async () => {
-        await updateProfile(dataID, { 'Bio': textareaRef.current?.value });
+
+    const toggleTruncation = () =>  {
+        setTruncation(!truncation)
+    }
+
+    const countLines = () => {
+        const el = document.getElementById('bio');
+        const divHeight = el ? el.offsetHeight : 0;
+        const lineHeight = el ? parseInt(window.getComputedStyle(el).lineHeight, 10) : 1;
+        const lines = divHeight / lineHeight;
+
+        setLineCount(Math.floor(lines));
+    };
+
+    const handleSave = useCallback(async (formData: FormData) => {
+        const bioText = formData.get("profileBio") as string
+        const sanitizedBioText = DOMPurify.sanitize(bioText)
+
+        await updateProfile(dataID, { "Bio": sanitizedBioText });
+
+        setValue(sanitizedBioText)
         setEditing(false);
     }, [dataID]);
 
@@ -38,30 +81,7 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
         setEditing(true);
     };
 
-    const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setValue(event.target.value);
-        adjustTextareaHeight(event.target);
-    };
-
-    const adjustTextareaHeight = (textarea: HTMLTextAreaElement) => {
-        textarea.style.height = 'auto'; 
-        textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to match the scroll height
-    };
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (textareaRef.current && !textareaRef.current.contains(event.target as Node)) {
-                if (editing) {
-                    handleSave();
-                }
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [editing, handleSave]);
+    
 
     return (
         <div
@@ -71,26 +91,35 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
         >
          
             {editing ? (
-                <div>
+                <form action={handleSave}>
                     <textarea
                         ref={textareaRef}
-                        name="profileTextInput"
-                        id="profileTextInput"
-                        className="text-fsGray w-5/6 resize-none border border-fsGray rounded-md p-2"
-                        onChange={handleTextChange}
-                        value={value}
+                        name="profileBio"
+                        id="profileBio"
+                        className="text-fsGray w-5/6 resize-none border border-fsGray rounded-md p-2 h-60"
+                        defaultValue={value}
                     />
                     <div
-                    className="flex items-end gap-1 absolute bottom-0 right-0 cursor-pointer"
-                    onClick={toggleEdit}
-                >
-                    <Edit title="Save" save={true} toggleEdit={handleSave} />
-                </div>
-
-                </div>
+                        className="flex items-end gap-1 absolute bottom-0 right-0 cursor-pointer p-5"
+                        onClick={toggleEdit}
+                    >
+                        <Edit title="Save"/>
+                    </div>
+                </form>
                 
             ) : (
-                <p className="text-fsGray w-5/6">{value}</p>
+                <div>
+                    <p id="bio" className={truncation ? "w-5/6 line-clamp-6" : "w-5/6"}>
+                        {value.split('\n').map((item, index) => (
+                            <React.Fragment key={index}>
+                                {item}
+                                {index < value.split('\n').length - 1 && <br />}
+                            </React.Fragment>
+                        ))}
+                    </p>
+                    {lineCount === 6 && <span className="text-xs underline cursor-pointer" onClick={toggleTruncation}>{truncation ? "Read more" : "Show less"}</span>}
+                </div>
+                
             )}
               
             {hover && !editing && (
@@ -98,7 +127,7 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
                     className="flex items-end gap-1 absolute bottom-0 right-0 cursor-pointer"
                     onClick={toggleEdit}
                 >
-                    <Edit title="Edit" toggleEdit={toggleEdit} />
+                    <Edit title="Edit" />
                 </div>
             )}
         </div>

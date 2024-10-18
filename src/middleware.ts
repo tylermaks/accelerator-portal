@@ -2,16 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtDecode } from "jwt-decode";
 
 
-const publicRoutes = ['/', '/reset-password', '/error']; // add 'signup' in dev env
+const publicRoutes = ['/', '/reset-password', '/error']; 
 
 const roleRoutes: { [key: string]: string[] } = {
-    admin: ['/admin/dashboard', '/admin/members', '/admin/controls'],
+    admin: ['/admin', '/admin/dashboard', '/admin/members', '/admin/controls', '/mentor/meeting-tracker', '/mentor/profile', '/mentor/reports', '/mentor/support-requests', '/mentor/faqs'],
     mentor: ['/mentor/meeting-tracker', '/mentor/profile', '/mentor/reports', '/mentor/support-requests', '/mentor/faqs'],
     company: ['/company/dashboard', '/company/mentors', '/company/faqs'],
 };
 
 const defaultRoutes: { [key: string]: string } = {
-    admin: '/admin/dashboard',
+    admin: '/admin/members',
     mentor: '/mentor/meeting-tracker',
     company: '/company/dashboard',
 };
@@ -20,11 +20,6 @@ const defaultRoutes: { [key: string]: string } = {
 
 export async function middleware(request: NextRequest) {
     const pathName = request.nextUrl.pathname;
-
-    if (publicRoutes.includes(pathName)) {
-        return NextResponse.next();
-    }
-
     const SB_TOKEN = process.env.SB_TOKEN;
     const cookie = SB_TOKEN && request.cookies.get(SB_TOKEN);
     const token = cookie && cookie.value;
@@ -32,11 +27,11 @@ export async function middleware(request: NextRequest) {
     if(token){
         const decoded = jwtDecode<{ user_metadata?: { user_type?: string } }>(token);
         const userRole = decoded.user_metadata?.user_type;
-
+         
         if(userRole && roleRoutes[userRole] && roleRoutes[userRole].includes(pathName)){
             return NextResponse.next();
         } else { 
-            if (userRole) {
+            if (userRole && publicRoutes.includes(pathName)) {
                 return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
             } else {
                 // Handle the case where userRole is undefined (e.g., return an error response or a default redirect)
@@ -45,10 +40,9 @@ export async function middleware(request: NextRequest) {
         }
     } 
 
-    //FIX THIS LINE LATER   
-    // if (!token) {
-    //     return NextResponse.redirect(new URL('/', request.url));
-    // }
+    if (publicRoutes.includes(pathName)) {
+        return NextResponse.next();
+    }
 }
 
 export const config = {

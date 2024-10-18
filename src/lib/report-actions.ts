@@ -34,9 +34,6 @@ export async function getReportData({month, year, offset= null} : ReportDataProp
         const sortQuery = "sort[0][field]=date&sort[0][direction]=asc";
         const fields = ["companyName", "altName", "supportType", "date", "duration"]
         const fieldQuery = fields.map(field => `fields=${field}`).join("&")
-
-        console.log("FIELD QUERY", fieldQuery)
-
         const urlBase = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?filterByFormula=${filterFormula}&${sortQuery}&${fieldQuery}&view=${VIEW_ID}`
         const urlOffset = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?offset=${offset}`
         const paginatedUrl = offset ? urlOffset : urlBase

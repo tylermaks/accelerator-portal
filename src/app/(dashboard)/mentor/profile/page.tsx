@@ -2,26 +2,122 @@ import Image from "next/image";
 import ProfileText from "@/components/dashboard/mentor/profile/profile-text";
 import ProfileName from "@/components/dashboard/mentor/profile/profile-name";
 import SkillsWrapper from "@/components/dashboard/mentor/profile/skills-wrapper";
-import { getSkillData, getMetaData } from "@/lib/profile-actions";
+import { createClient } from "@/utils/supabase/server";
+
+const API_KEY = process.env.AIRTABLE_API_KEY
+const BASE_ID = process.env.EIR_BASE_ID
+const TABLE_ID = process.env.EIR_PROFILE_TABLE_ID
+const VIEW_ID = process.env.EIR_PROFILE_VIEW_ID
+const TEST_EMAIL = process.env.OTHER_TEST_EMAIL
+
+
+async function getSkillData() {
+    const supabase = createClient();
+    const { data: user, error } = await supabase.auth.getUser();
+
+    if (error) {
+        console.error('Error fetching user:', error);
+        return { error: 'Error fetching user', status: 500 }
+    }
+  
+    if (!user) {
+        return { error: "No user found" , status: 401 };
+    }
+    
+    if(user) {
+        const filterFormula = `AND({Email_Text} = '${TEST_EMAIL}')`;
+        const encodedFilter = encodeURIComponent(filterFormula);
+
+        try {
+            const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?view=${VIEW_ID}&filterByFormula=${encodedFilter}`
+            const response = await fetch(url, {
+                method:'GET',
+                headers: {
+                    'Authorization': `Bearer ${API_KEY}`,
+                    'Content-Type': 'application/json',
+                }, 
+                cache: 'force-cache',
+            })
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            let  { records } = await response.json()
+            return records
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+}
+
+
+async function getMetaData() {
+    try {
+        const url = `https://api.airtable.com/v0/meta/bases/${BASE_ID}/tables`
+        const response = await fetch(url, {
+            method:'GET',
+            headers: {
+                'Authorization': `Bearer ${API_KEY}`,
+                'Content-Type': 'application/json',
+            }, 
+            cache: 'force-cache',
+        })
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        let records = await response.json()
+        const table = records.tables.find((table: any) => table.id === TABLE_ID)
+
+        return table
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
 
 export default async function Profile() {
     const skillsData = await getSkillData();
     const metaData = await getMetaData();
-    const { fields } = skillsData.records[0];
-    const { id } = skillsData.records[0];
-
+    const { fields } = skillsData[0];
+    const { id } = skillsData[0];
     const skillsArray: { name: string, options: any }[] = [];
+    const includedArrayKeys=[ 
+        "Primary Skill Set", 
+        "Industry Sector", 
+        "WaterTech expertise", 
+        "AgTech expertise", 
+        "Built Environment expertise", 
+        "CCUS expertise", 
+        "Forestry expertise", 
+        "Mining expertise", 
+        "Oil & Gas expertise",
+        "Renewable Energy expertise",
+        "Power expertise",
+        "Bio-circular Economy",
+        "CEO skills",
+        "CFO skills",
+        "CTO skills",
+        "COO skills",
+        "Leadership skills",
+        "Engineering skills",
+        "Funding skills",
+        "Human Resources skills",
+        "IT & Programming skills",
+        "Legal skills",
+        "Marketing skills",
+        "Sales skills"
+    ]
     
-    for (const [key, value] of Object.entries(fields)) {
-        if (key === "Photo") continue;
-    
-        if (Array.isArray(value)) {
+    for (const [key, value] of Object.entries(fields)) {    
+        if (includedArrayKeys.includes(key)) {
             skillsArray.push({ name: key, options: value });
         }
     }
 
-    const sortedSkills = skillsArray.sort((a: any, b: any) => a.name.localeCompare(b.name));
-
+    // const sortedSkills = skillsArray.sort((a: any, b: any) => a.name.localeCompare(b.name));
  
     return(
        <div className="flex flex-col gap-8 px-24 pb-10 relative bg-white">
@@ -38,7 +134,7 @@ export default async function Profile() {
 
             <ProfileName data={fields}/>
             <ProfileText id={id} data={fields.Bio} /> 
-            <SkillsWrapper id={id} data={sortedSkills} metaData={metaData.fields}/>
+            <SkillsWrapper id={id} data={skillsArray} metaData={metaData.fields}/>
        </div>
     )
 }

@@ -8,9 +8,9 @@ import { logout } from "@/lib/supabase-actions";
 const sideBarLinks = [
     {
         role:'mentor',
-        icons: ['/images/calendar-icon.svg', '/images/user-icon.svg', '/images/report-icon.svg', '/images/bolt-icon.svg', '/images/question-icon.svg',],
-        links: ["Meeting Tracker", "Profile", "Reports", "Support Requests", "FAQs"],
-        routes: ['/mentor/meeting-tracker', '/mentor/profile', '/mentor/reports', '/mentor/support-requests', '/mentor/faqs',],
+        icons: ['/images/calendar-icon.svg', '/images/user-icon.svg', '/images/report-icon.svg', '/images/question-icon.svg',], //Add when ready '/images/bolt-icon.svg',
+        links: ["Meeting Tracker", "Profile", "Reports", "FAQs"], // Add Support Requests when ready
+        routes: ['/mentor/meeting-tracker', '/mentor/profile', '/mentor/reports','/mentor/faqs',], //Add when ready '/mentor/support-requests'
     }, 
     {
         role:'company',
@@ -20,9 +20,9 @@ const sideBarLinks = [
     }, 
     {
         role:'admin',
-        icons: ['/images/calendar-icon.svg', '/images/user-icon.svg', '/images/report-icon.svg', '/images/question-icon.svg',],
-        links: ["Dashboard", "Members", "Controls"],
-        routes: ['/admin/dashboard', '/admin/members', '/admin/controls'],
+        icons: [ '/images/user-icon.svg', ], //Add when ready: '/images/calendar-icon.svg', '/images/report-icon.svg', '/images/question-icon.svg',
+        links: ["Members"], //Add when ready: "Dashboard", "Controls"
+        routes: ['/admin/members',], //Add when ready: '/admin/dashboard',  '/admin/controls'
     }, 
 ]
 

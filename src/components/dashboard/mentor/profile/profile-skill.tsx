@@ -21,13 +21,11 @@ export default function ProfileSkill({ id, data, metaData, title, index, updateC
     const [hover, setHover] = useState(false);
     const [editing, setEditing] = useState(false);
 
-
     const toggleEdit = () => {
         setEditing(!editing);
     };
 
     const handleSave = async () => {
-        //Add useOptimistic here?
         setEditing(false);
         setHover(false);
 
@@ -57,8 +55,8 @@ export default function ProfileSkill({ id, data, metaData, title, index, updateC
     };
 
     useEffect(() => {
-        const metaDataArray = metaData.map((item: any) => item.name);
-        const filteredMetaData = metaDataArray.filter((item: any) => !data.includes(item));
+        const metaDataArray = metaData && metaData.map((item: any) => item.name);
+        const filteredMetaData = metaData && metaDataArray.filter((item: any) => !data.includes(item));
         setSkillsOnLoad(data)
         setSkills(data);
         setMetaSkills(filteredMetaData);
@@ -139,7 +137,6 @@ export default function ProfileSkill({ id, data, metaData, title, index, updateC
                         </div>
                         <Edit 
                             toggleEdit={() => handleSave()}
-                            save={true}
                             title="Save"
                         />
                     </div>

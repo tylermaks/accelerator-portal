@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
-import { getTableData } from "@/lib/meeting-actions"
+// import getTableData from "@/components/dashboard/mentor/meeting-tracker/table-data"
+import { infiniteScrollData } from "@/lib/meeting-actions"
 import Image from "next/image"
 
 type TableProps = {
@@ -37,7 +38,7 @@ export default function Table({ tableHeaders, tableRows, toggleModal, offset, se
 
     const infiniteScroll = useCallback( async () => {
         if (!hasMoreData) return;
-        const additionalRows = await getTableData(offset);
+        const additionalRows = await infiniteScrollData(offset);
 
         if (!additionalRows.offset) {
             setHasMoreData(false);
