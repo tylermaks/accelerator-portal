@@ -32,6 +32,37 @@ body {
   }
 } */
 
-span, p { 
+span, p, li, h1, h2, h3, h4, td{ 
   color: #4D4D4D;
+}
+
+h1{ 
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-weight: bold;
+}
+
+h2{ 
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+}
+
+h3{ 
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: semi-bold;
+  margin-bottom: 0.75rem;
+}
+
+h4{ 
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+}
+
+p{ 
+  margin-bottom: 0.5rem;
 }
