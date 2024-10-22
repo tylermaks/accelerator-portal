@@ -78,7 +78,6 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOp
 
 
     const renderConditionalInput = (type : string) => {
-        console.log("INPUT TYPE", type)
         const requireCompanyList = ["Supporting a Company", "Advisory Board Meeting", "Access to Capital", "Goodwill Advising"]
 
         if(requireCompanyList.includes(type)){ 
@@ -108,7 +107,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOp
         } else { 
             return (
                 <Input 
-                    label={`Please provide details:`}
+                    label={"Please provide details:"}
                     type="text"
                     id="altName"
                     name="altName"

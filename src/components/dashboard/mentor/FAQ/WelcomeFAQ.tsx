@@ -11,7 +11,7 @@ export default function WelcomeFAQ(){
             </p>
             <p>
                 The purpose of this FAQ is to equip you with the knowledge you need to effectively utilize these tools. 
-                Throughout the text, you’ll find highlighted links that will guide you to relevant sections for easy navigation.
+                Throughout the text, you will find highlighted links that will guide you to relevant sections for easy navigation.
             </p>
         </FAQSection>
     )

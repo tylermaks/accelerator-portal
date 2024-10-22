@@ -21,7 +21,7 @@ export default function MainButton({
 }) {
 
     const warningButtonStyle = warning ? "red-500" : "orange"
-    const altButtonStyle = altButton ? `border border-${warningButtonStyle} text-${warningButtonStyle} hover:bg-${warningButtonStyle} hover:text-white` : "bg-orange text-white"
+    const altButtonStyle = altButton ? `border border-${warningButtonStyle} text-${warningButtonStyle} hover:bg-${warningButtonStyle}` : "bg-orange text-white"
     const smallButtonStyle = small ? "p-1.5 text-sm" : "p-2"
     const loadingButtonStyle = loading ? "opacity-50 cursor-not-allowed" : ""
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {

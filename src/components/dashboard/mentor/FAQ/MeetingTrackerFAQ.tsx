@@ -70,7 +70,7 @@ export default function MeetingTrackerFAQ() {
                 </FAQDetails>
                 <FAQDetails title="Meeting Notes" id="meeting-notes">
                     <p>
-                        When you’re logging your hours you’ll be asked to provide some notes on the meeting. 
+                        When you are logging your hours you will be asked to provide some notes on the meeting. 
                         <strong>Please keep your notes brief and do not include any sensitive information. </strong>
                     </p>
                 </FAQDetails>
@@ -79,7 +79,7 @@ export default function MeetingTrackerFAQ() {
             <FAQSubSection title="Editing and Deleting Records" id="editing-deleting-records">
                 <p>
                     In the event that you want to update or remove one of the meetings that you have logged in the Meeting Tracker, you can click the <Image className="inline" src="/images/open-icon.svg" alt="Open icon" height={20} width={20} />
-                    icon located on the right-hand side of the row of data that you’d like to update. 
+                    icon located on the right-hand side of the row of data that you would like to update. 
                 </p>
                 <div>
                     ADD GIF HERE

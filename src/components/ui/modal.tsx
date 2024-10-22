@@ -20,7 +20,7 @@ export default function Modal(
     return(
         <div className=" w-2/5 shadow-2xl bg-gray-50 absolute right-0 top-0 bottom-0 z-10 flex flex-col">
             <div className="flex justify-between items-center px-6 py-8 mb-6 bg-gradient-to-r from-teal-md to-teal-lt text-gray-50">
-                <h2 className="text-xl font-bold">{title}</h2>
+                <h2 className="text-xl font-bold text-gray-100">{title}</h2>
                 <Image 
                     src="/images/close-icon.svg"
                     alt="Close Icon"
