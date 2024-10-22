@@ -10,7 +10,7 @@ export default function MeetingTrackerFAQ() {
     return(
         <FAQSection title={"Tracking Your Billable Hours with Foresight"} id={"meeting-tracking-section"}>
             <p className="mb-8">
-                One of the main features of the Foresight Advisor Portal is tracking the support you provide to the ventures in Foresight's programs. 
+                One of the main features of the Foresight Advisor Portal is tracking the support you provide to the ventures in Foresight&rsquo;s programs. 
                 The meeting data you provide allows our program managers to accurately track venture participation in programs, enhance our programs overtime, and efficiently allocate our funding to the various programs. 
                 Therefore, your support in providing you meeting data is greatly appreciated, please record your meetings on a regular basis.
             </p>

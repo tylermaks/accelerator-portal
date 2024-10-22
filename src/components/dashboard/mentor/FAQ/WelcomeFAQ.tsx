@@ -5,7 +5,7 @@ export default function WelcomeFAQ(){
     return ( 
         <FAQSection title={"Welcome!"} id={"welcome"}>
             <p>
-                Welcome to the Foresight Advisor Portal! As a Foresight advisor, this platform offers you the opportunity to engage with the ventures within Foresight's program. 
+                Welcome to the Foresight Advisor Portal! As a Foresight advisor, this platform offers you the opportunity to engage with the ventures within Foresight&rsquo;s program. 
                 You will have access to a range of key features designed to facilitate collaboration and enhance your experience. 
                 This includes: 
             </p>

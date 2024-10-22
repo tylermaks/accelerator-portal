@@ -74,7 +74,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOp
 
     const handleUpdateSupportType = useCallback( (currentSupportOption: string) => { 
         setSupportType(currentSupportOption);
-    }, [supportType])
+    }, [])
 
 
     const renderConditionalInput = (type : string) => {

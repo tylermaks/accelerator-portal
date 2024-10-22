@@ -65,7 +65,7 @@ export default function Select(
         );
 
         setFilteredList(searchResults)
-    },[search])
+    },[search, optionList])
 
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
@@ -101,7 +101,7 @@ export default function Select(
             </label>
 
             <div className={selectClass} onClick={toggleDropdown}>
-                <p className="text-sm">
+                <p className="text-sm mb-0">
                     {currentOption}
                 </p>
                 <Image 
@@ -134,7 +134,7 @@ export default function Select(
                                     onClick={() => updateOption(item)} 
                                     className={dropdownOptionClass} 
                                 >
-                                    <p>{item}</p>
+                                    <p className="mb-0">{item}</p>
                                 </div>
                             ))
                         ) : (
