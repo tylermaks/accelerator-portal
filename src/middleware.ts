@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode";
 const publicRoutes = ['/', '/reset-password', '/error']; 
 
 const roleRoutes: { [key: string]: string[] } = {
-    admin: ['/admin', '/admin/dashboard', '/admin/members', '/admin/controls', '/mentor/meeting-tracker', '/mentor/profile', '/mentor/reports', '/mentor/support-requests', '/mentor/faqs'],
+    admin: ['/admin/dashboard', '/admin/members', '/admin/controls', '/mentor/meeting-tracker', '/mentor/profile', '/mentor/reports', '/mentor/support-requests', '/mentor/faqs'],
     mentor: ['/mentor/meeting-tracker', '/mentor/profile', '/mentor/reports', '/mentor/support-requests', '/mentor/faqs'],
     company: ['/company/dashboard', '/company/mentors', '/company/faqs'],
 };

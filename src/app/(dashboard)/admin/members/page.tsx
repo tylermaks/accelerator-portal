@@ -10,7 +10,7 @@ const getUserList = async () => {
 
     if (error) {
         console.log("User not found")
-        return { error: error.message }; 
+        return [];
     }
 
     if (user?.user_metadata.user_type === "admin"){ 
@@ -19,14 +19,15 @@ const getUserList = async () => {
         .select("*");
 
         if (userListError) {
-            console.log("error", userListError)
-            return { error: userListError.message }; 
+            console.log("error", userListError);
+            return [];
         };
 
         return userList;
     };
 
-    return { error: "Access denied: user is not an admin."};
+    console.log("Access denied: user is not an admin.");
+    return []
 }
 
 export default async function Members() {
