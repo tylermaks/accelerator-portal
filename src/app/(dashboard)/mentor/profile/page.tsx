@@ -141,7 +141,7 @@ export default async function Profile() {
                     <SkillsWrapper id={id} data={skillsArray} metaData={metaData.fields}/>
                 </>
             ) : (
-                <h2 className="mt-72">It appears you haven't filed out your EIR Entry Form</h2>
+                <h2 className="mt-72">It appears you need to fill out your EIR Entry Form</h2>
             )}
        </div>
     )
