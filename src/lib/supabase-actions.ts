@@ -31,7 +31,13 @@ export async function login(formData: FormData) {
         console.log("user found")
         console.log("USER FROM SIGNIN", user?.user_metadata.user_type)
         revalidatePath('/', 'layout')
-        redirect('/' + user?.user_metadata.user_type)
+        if ( user?.user_metadata.user_type === "mentor"){ 
+          redirect('/mentor/meeting-tracker')
+        }
+
+        if( user?.user_metadata.user_type === "admin"){ 
+          redirect('/admin/members')
+        }
     }
 }
 

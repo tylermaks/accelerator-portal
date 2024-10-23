@@ -37,11 +37,7 @@ export async function middleware(request: NextRequest) {
         } else { 
             if (userRole && !publicRoutes.includes(pathName)) {
                 return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
-            } else {
-                // Handle the case where userRole is undefined 
-                console.log("User role undefined")
-                return NextResponse.redirect(new URL('/', request.url));
-            }
+            } 
         }
     } 
 }

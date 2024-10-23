@@ -55,9 +55,9 @@ export default async function MeetingTracker({
   }) {
     const initialTableData = await getTableData( null, searchParams );
     const supportTypeOptions = await getSupportTypeList()
-    const supportTypeList = supportTypeOptions && supportTypeOptions.records.map((item:SupportType ) => item.fields['Dropdown Item Name'])
+    const supportTypeList = supportTypeOptions && supportTypeOptions?.records?.map((item:SupportType ) => item.fields['Dropdown Item Name'])
     const companyListOptions = await getCompanyList()
-    const companyList = companyListOptions?.map((item: Company) => item.fields.companyName)
+    const companyList = companyListOptions?.map((item: Company) => item?.fields.companyName)
     const programOptionsList = await getProgramOptionsList()
 
     return (
