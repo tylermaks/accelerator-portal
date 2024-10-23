@@ -110,10 +110,10 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
             ) : (
                 <div>
                     <p id="bio" className={truncation ? "w-5/6 line-clamp-6" : "w-5/6"}>
-                        {value.split('\n').map((item, index) => (
+                        {value?.split('\n').map((item, index) => (
                             <React.Fragment key={index}>
                                 {item}
-                                {index < value.split('\n').length - 1 && <br />}
+                                {index < value?.split('\n').length - 1 && <br />}
                             </React.Fragment>
                         ))}
                     </p>

@@ -17,7 +17,6 @@ const defaultRoutes: { [key: string]: string } = {
 };
 
 
-
 export async function middleware(request: NextRequest) {
     const pathName = request.nextUrl.pathname;
     const SB_TOKEN = process.env.SB_TOKEN;
@@ -30,11 +29,12 @@ export async function middleware(request: NextRequest) {
          
         if(userRole && roleRoutes[userRole] && roleRoutes[userRole].includes(pathName)){
             return NextResponse.next();
-        } else { 
-            if (userRole && !publicRoutes.includes(pathName)) {
-                return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
-            } 
         }
+
+
+        if (userRole && publicRoutes.includes(pathName)) {
+            return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
+        } 
     } 
 
     if(!token && !publicRoutes.includes(pathName)){ 

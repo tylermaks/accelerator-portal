@@ -29,17 +29,18 @@ export default function ProfileName( { data } : ProfileNameProps) {
                     />
                 </div>
             )}
-            
-            <div className="flex flex-col gap-2 z-10">
-                <p className="text-fsGray">{data['Advisor Type']}</p>
-                <h1 className ="text-4xl font-bold text-fsGray">
-                    {data['Record_EIR/Mentor Name']}
-                </h1>
-                <div className="flex  gap-4 w-full">
-                    <p className="text-fsGray text-sm">{data.Location}</p>
-                    <p className="text-fsGray text-sm">Joined: {data.Joined}</p>
+            { data &&
+                <div className="flex flex-col gap-2 z-10">
+                    <p className="text-fsGray">{data['Advisor Type']}</p>
+                    <h1 className ="text-4xl font-bold text-fsGray">
+                        {data['Record_EIR/Mentor Name']}
+                    </h1>
+                    <div className="flex  gap-4 w-full">
+                        <p className="text-fsGray text-sm">{data?.Location}</p>
+                        <p className="text-fsGray text-sm">Joined: {data?.Joined}</p>
+                    </div>
                 </div>
-            </div>
+            }
         </div>
     )
 }

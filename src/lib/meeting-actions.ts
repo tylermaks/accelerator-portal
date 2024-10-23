@@ -8,9 +8,6 @@ import getTableData from '@/components/dashboard/mentor/meeting-tracker/table-da
 const API_KEY = process.env.AIRTABLE_API_KEY
 const BASE_ID = process.env.BASE_ID
 const TABLE_ID = process.env.MEETING_TABLE_ID
-const VIEW_ID = process.env.MEETING_VIEW_ID
-const TEST_EMAIL = process.env.TEST_EMAIL
- // const email = user.email // uncomment later for production 
 
 
 export async function infiniteScrollData(offset: string | undefined) { 
@@ -20,19 +17,31 @@ export async function infiniteScrollData(offset: string | undefined) {
 
 export async function addMeeting(formData: FormData) {
   const supabase = createClient();
-  const user =  await supabase.auth.getUser();
+  const { data: user, error} =  await supabase.auth.getUser();
 
-  const meetingRecord = {
-    "companyName": formData.get('companyName') ? formData.get('companyName') as string : "Foresight",
-    "altName": formData.get('altName') as string,
-    "supportType": formData.get('supportType') as string,
-    "email": TEST_EMAIL as string, // add user email here
-    "date": formData.get('date') as string,
-    "duration": Number(formData.get('duration')) as number,
-    "notes": formData.get('notes') as string
-  };
+  if (error) {
+    console.error('Error fetching user:', error);
+    return { error: 'Error fetching user', status: 500 }
+  }
+
+  if (!user) {
+      return { error: "No user found" , status: 401 };
+  }
+
 
   if(user){
+    const userEmail = user.user.email
+
+    const meetingRecord = {
+      "companyName": formData.get('companyName') ? formData.get('companyName') as string : "Foresight",
+      "altName": formData.get('altName') as string,
+      "supportType": formData.get('supportType') as string,
+      "email": userEmail as string, // add user email here
+      "date": formData.get('date') as string,
+      "duration": Number(formData.get('duration')) as number,
+      "notes": formData.get('notes') as string
+    };
+
     try {
       const response = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}`, {
         method: 'POST',

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Input from "../ui/input";
 import MainButton from "../ui/main-button";
 import { sendPasswordReset } from "@/lib/supabase-actions";

@@ -6,7 +6,6 @@ const API_KEY = process.env.AIRTABLE_API_KEY
 const BASE_ID = process.env.BASE_ID
 const TABLE_ID = process.env.MEETING_TABLE_ID
 const VIEW_ID = process.env.MEETING_VIEW_ID
-const TEST_EMAIL = process.env.TEST_EMAIL
 
 type ReportDataProps = {
     month: number;
@@ -28,9 +27,10 @@ export async function getReportData({month, year, offset= null} : ReportDataProp
     }
 
     if (user) {
+        const userEmail = user.user.email
         const startDate = new Date(year, month -1, 1);
         const endDate = new Date(year, month, 0); // get the last day of the month
-        const filterFormula = `AND({email} = '${TEST_EMAIL}', {date} >= '${startDate.toISOString()}', {date} <= '${endDate.toISOString()}')`;
+        const filterFormula = `AND({email} = '${userEmail}', {date} >= '${startDate.toISOString()}', {date} <= '${endDate.toISOString()}')`;
         const sortQuery = "sort[0][field]=date&sort[0][direction]=asc";
         const fields = ["companyName", "altName", "supportType", "date", "duration"]
         const fieldQuery = fields.map(field => `fields=${field}`).join("&")

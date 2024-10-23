@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 type ReportDataProps = {
     id: string;
     createdTime: string;
@@ -35,9 +33,7 @@ export default function ReportTable({data}: {data: ReportDataProps[]}) {
                             <td className={`${rowClass} text-center`}>{item.fields.duration}</td>
                         </tr>
                     ))) : (
-                        
                         <p className="mt-4 text-fsGray text-sm">No meetings found</p>
-                        
                     )
                 }
             </tbody>

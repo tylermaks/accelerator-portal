@@ -8,12 +8,12 @@ const API_KEY = process.env.AIRTABLE_API_KEY
 const BASE_ID = process.env.EIR_BASE_ID
 const TABLE_ID = process.env.EIR_PROFILE_TABLE_ID
 const VIEW_ID = process.env.EIR_PROFILE_VIEW_ID
-const TEST_EMAIL = process.env.OTHER_TEST_EMAIL
 
 
 async function getSkillData() {
     const supabase = createClient();
     const { data: user, error } = await supabase.auth.getUser();
+
 
     if (error) {
         console.error('Error fetching user:', error);
@@ -25,9 +25,10 @@ async function getSkillData() {
     }
     
     if(user) {
-        const filterFormula = `AND({Email_Text} = '${TEST_EMAIL}')`;
+        const userEmail = user.user.email
+        const filterFormula = `AND({Email_Text} = '${userEmail}')`;
         const encodedFilter = encodeURIComponent(filterFormula);
-
+        
         try {
             const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?view=${VIEW_ID}&filterByFormula=${encodedFilter}`
             const response = await fetch(url, {
@@ -81,9 +82,10 @@ async function getMetaData() {
 export default async function Profile() {
     const skillsData = await getSkillData();
     const metaData = await getMetaData();
-    const { fields } = skillsData[0];
-    const { id } = skillsData[0];
+    const fields = skillsData?.length ? skillsData[0].fields : []
+    const id = skillsData?.length ? skillsData[0].id : []
     const skillsArray: { name: string, options: any }[] = [];
+    
     const includedArrayKeys=[ 
         "Primary Skill Set", 
         "Industry Sector", 
@@ -132,9 +134,15 @@ export default async function Profile() {
                 />
             </div>
 
-            <ProfileName data={fields}/>
-            <ProfileText id={id} data={fields.Bio} /> 
-            <SkillsWrapper id={id} data={skillsArray} metaData={metaData.fields}/>
+            { skillsData.length > 0  ? (
+                <>
+                    <ProfileName data={fields}/>
+                    <ProfileText id={id} data={fields.Bio} /> 
+                    <SkillsWrapper id={id} data={skillsArray} metaData={metaData.fields}/>
+                </>
+            ) : (
+                <h2 className="mt-72">It appears you haven't filed out your EIR Entry Form</h2>
+            )}
        </div>
     )
 }

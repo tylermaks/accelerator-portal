@@ -24,7 +24,7 @@ const getProgramOptionsList = async () => {
   }
 
   const programData = await res.json();
-  const programOptionsList = programData.records.map((option: ProgramOption) => { return option.fields.program_name})  
+  const programOptionsList = programData?.records?.map((option: ProgramOption) => { return option.fields.program_name})  
   return programOptionsList
 }
 

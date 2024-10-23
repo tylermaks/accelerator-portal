@@ -19,12 +19,8 @@ export default function SkillsWrapper ({ id, data, metaData, }: ProfileWrapperPr
 
     return(
         <div >
-            <h2 className="text-2xl font-bold text-fsGray mb-4">
-                Skills and Expertise
-            </h2>
-            <div 
-                className="flex flex-col gap-8"
-            >
+            <h2 className="text-2xl font-bold text-fsGray mb-4">Skills and Expertise</h2>
+            <div className="flex flex-col gap-8">
             {
                 skills && skills.map((item: any, index: number) => {
                     const meta = metaData.find((meta: any) => meta.name === item.name);
@@ -48,7 +44,7 @@ export default function SkillsWrapper ({ id, data, metaData, }: ProfileWrapperPr
                 metaData={metaData}
                 setSkills={setSkills}
                 skills={skills}
-            />
+            />         
         </div>
     )
 }
