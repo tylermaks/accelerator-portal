@@ -26,7 +26,7 @@ const getUserList = async () => {
         return userList;
     };
 
-    console.log("Access denied: user is not an admin.");
+    console.log("Access denied.");
     return []
 }
 

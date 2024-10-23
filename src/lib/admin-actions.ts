@@ -12,7 +12,7 @@ export async function deleteUser (formData: FormData){
         return { error: "User not found"}
     }
 
-    if (user?.user_metadata.user_type === "admin"){ 
+    if (user && user?.user_metadata.user_type === "admin"){ 
         const userID = formData.get('userID') as string
         console.log("USERID FROM ADMIN ACTIONS", userID)
         const { data, error } = await supabase

@@ -31,6 +31,10 @@ export async function middleware(request: NextRequest) {
             return NextResponse.next();
         }
 
+        if(userRole && !roleRoutes[userRole].includes(pathName)){ 
+            return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
+        }
+
 
         if (userRole && publicRoutes.includes(pathName)) {
             return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
