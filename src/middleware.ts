@@ -24,10 +24,6 @@ export async function middleware(request: NextRequest) {
     const cookie = SB_TOKEN && request.cookies.get(SB_TOKEN);
     const token = cookie && cookie.value;
 
-    if(!token && !publicRoutes.includes(pathName)){ 
-        return NextResponse.redirect(new URL('/', request.url));
-    }
-
     if(token){
         const decoded = jwtDecode<{ user_metadata?: { user_type?: string } }>(token);
         const userRole = decoded.user_metadata?.user_type;
@@ -40,6 +36,10 @@ export async function middleware(request: NextRequest) {
             } 
         }
     } 
+
+    if(!token && !publicRoutes.includes(pathName)){ 
+        return NextResponse.redirect(new URL('/', request.url));
+    }
 }
 
 export const config = {
