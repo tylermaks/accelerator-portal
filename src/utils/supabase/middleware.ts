@@ -8,6 +8,18 @@ export async function updateSession(request: NextRequest) {
     },
   })
 
+  const customOptions = {
+    path:"/",
+    sameSite: 'lax',
+    httpOnly: false,
+    maxAge: 31536000000,
+    secure: true
+  }
+
+
+  console.log("CALLED UPDATE SESSION")
+
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

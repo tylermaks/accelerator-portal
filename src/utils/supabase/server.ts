@@ -4,6 +4,14 @@ import { cookies } from 'next/headers'
 export function createClient() {
   const cookieStore = cookies()
 
+  type customCookieOptions = { 
+    httpOnly: false, 
+    SameSite: "none",
+    Secure: true
+  }
+
+
+
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -14,7 +22,8 @@ export function createClient() {
         },
         set(name: string, value: string, options: CookieOptions) {
           try {
-            cookieStore.set({ name, value, ...options })
+            const secureOptions = {...options, secure: true}
+            cookieStore.set({ name, value, ...secureOptions })
           } catch (error) {
             // The `set` method was called from a Server Component.
             // This can be ignored if you have middleware refreshing

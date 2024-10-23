@@ -24,6 +24,10 @@ export async function middleware(request: NextRequest) {
     const cookie = SB_TOKEN && request.cookies.get(SB_TOKEN);
     const token = cookie && cookie.value;
 
+    if(!token && !publicRoutes.includes(pathName)){ 
+        return NextResponse.redirect(new URL('/', request.url));
+    }
+
     if(token){
         const decoded = jwtDecode<{ user_metadata?: { user_type?: string } }>(token);
         const userRole = decoded.user_metadata?.user_type;
@@ -31,18 +35,15 @@ export async function middleware(request: NextRequest) {
         if(userRole && roleRoutes[userRole] && roleRoutes[userRole].includes(pathName)){
             return NextResponse.next();
         } else { 
-            if (userRole && publicRoutes.includes(pathName)) {
+            if (userRole && !publicRoutes.includes(pathName)) {
                 return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
             } else {
-                // Handle the case where userRole is undefined (e.g., return an error response or a default redirect)
+                // Handle the case where userRole is undefined 
+                console.log("User role undefined")
                 return NextResponse.redirect(new URL('/', request.url));
             }
         }
     } 
-
-    if (publicRoutes.includes(pathName)) {
-        return NextResponse.next();
-    }
 }
 
 export const config = {
