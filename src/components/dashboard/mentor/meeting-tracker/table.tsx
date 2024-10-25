@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
-// import getTableData from "@/components/dashboard/mentor/meeting-tracker/table-data"
 import { infiniteScrollData } from "@/lib/meeting-actions"
 import Image from "next/image"
 

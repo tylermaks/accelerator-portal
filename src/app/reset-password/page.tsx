@@ -1,5 +1,3 @@
-"use client"
-
 import Image from "next/image";
 import ResetPasswordForm from "@/components/home/reset-password-form";
 

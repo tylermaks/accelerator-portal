@@ -13,8 +13,8 @@ export default function Home() {
         <Image 
           src="/images/wind-turbine.jpg" 
           alt="Wind Turbine" 
-          layout="fill"
-          objectFit="cover"
+          fill={true}
+          style={{objectFit: "cover"}}
           className="opacity-80"
         />
       </div>

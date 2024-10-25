@@ -1,46 +1,61 @@
 "use client"
 
-import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import { useState, useEffect, FormEvent } from "react";
 import Input from "@/components/ui/input";
 import MainButton from "@/components/ui/main-button";
-// import { useRouter } from "next/router";
+
 
 export default function ResetPasswordForm() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false)
+    const router = useRouter()
 
-    const handleSubmit = async () => {
-        if (password !== confirmPassword) {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        setIsLoading(true)
+
+        try {
+          if (password !== confirmPassword) {
             setError("Passwords do not match")
-            return
-        }
-
-        if (password === confirmPassword) {
-          const supabase = createClient()
-          const { data: resetData, error } = await supabase.auth.updateUser({
-            password: confirmPassword
-          })
-          
-          if (error) {
-            setError("There was an issue resetting your password. Please contact the Foresight team.")
+            setIsLoading(false)
             return
           }
 
-          //RETURN TO FIX THIS LINE
-          // if (resetData) {
-          //   useRouter().push("/")
-          // }
-        }
+          if (password === confirmPassword) {
+            const supabase = createClient()
+            const { data: resetData, error } = await supabase.auth.updateUser({
+              password: confirmPassword
+          })
+
+            if (error) {
+              setError("There was an issue resetting your password. Please contact the Foresight team.")
+              setIsLoading(false)
+              return
+            }
+
+            if (resetData) {
+              router.push("/")
+            }
+          }
+
+        } catch(error) {
+          console.error(error)
+          setError("A server error occurred, please try again")
+          setIsLoading(false)
+        } 
     }
+
 
     useEffect(() => {
         setError("")
     }, [password, confirmPassword])
 
     return (
-        <form className="flex flex-col gap-4 py-16 w-1/3" action={handleSubmit}>
+        <form className="flex flex-col gap-4 py-16 w-1/3" onSubmit={handleSubmit}>
             <div>
              
               <h1 className="text-xl font-semibold text-fsGray mb-2 ">Reset your password</h1>
@@ -66,6 +81,7 @@ export default function ResetPasswordForm() {
               {error && <p className="text-red-500 text-xs">{error}</p>}
             </>
             <MainButton 
+              loading={isLoading}
               id='reset-password'
               text="Submit"
             />

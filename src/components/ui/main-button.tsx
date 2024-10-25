@@ -1,15 +1,4 @@
-"use client"
-
-export default function MainButton({ 
-    id,
-    text,
-    action,
-    altButton = false,
-    warning = false,
-    small = false,
-    loading = false,
-    width
-}: { 
+type MainButtonProps =  { 
     id: string,
     text: string,
     action?: (event: React.MouseEvent<HTMLButtonElement>) => void,
@@ -18,8 +7,10 @@ export default function MainButton({
     small?: boolean, 
     loading?: boolean
     width?: string
-}) {
+}
 
+
+export default function MainButton({ id, text, action, altButton = false, warning = false, small = false, loading = false, width} : MainButtonProps ) {
     const warningButtonStyle = warning ? "red-500" : "orange"
     const altButtonStyle = altButton ? `border border-${warningButtonStyle} text-${warningButtonStyle} hover:bg-${warningButtonStyle}` : "bg-orange text-white"
     const smallButtonStyle = small ? "p-1.5 text-sm" : "p-2"

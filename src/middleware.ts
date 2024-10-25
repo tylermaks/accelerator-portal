@@ -24,9 +24,15 @@ export async function middleware(request: NextRequest) {
     const token = cookie && cookie.value;
 
     if(token){
-        const decoded = jwtDecode<{ user_metadata?: { user_type?: string } }>(token);
+        const decoded = jwtDecode<{ exp?: number; user_metadata?: { user_type?: string } }>(token);
         const userRole = decoded.user_metadata?.user_type;
-         
+
+        // check if token is expired and redirect to home 
+        if (decoded.exp && Date.now() >= decoded.exp * 1000) {
+            return NextResponse.redirect(new URL('/', request.url));
+        }
+        
+        //if token is NOT expired then check the route and make a decision on where to go next
         if(userRole && roleRoutes[userRole] && roleRoutes[userRole].includes(pathName)){
             return NextResponse.next();
         }
