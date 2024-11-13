@@ -135,11 +135,11 @@ export default async function Profile() {
             </div>
 
             { skillsData.length > 0  ? (
-                <>
+                <div className="px-28">
                     <ProfileName data={fields}/>
                     <ProfileText id={id} data={fields.Bio} /> 
                     <SkillsWrapper id={id} data={skillsArray} metaData={metaData.fields}/>
-                </>
+                </div>
             ) : (
                 <h2 className="mt-72">It appears you need to fill out your EIR Entry Form</h2>
             )}
