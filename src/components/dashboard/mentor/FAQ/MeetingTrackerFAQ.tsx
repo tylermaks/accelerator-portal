@@ -39,9 +39,9 @@ export default function MeetingTrackerFAQ() {
                     so it is important that you understand when it is appropriate to use each type.
                 </p>
                 <p>
-                    <strong>Example:</strong> If you have been assigned a new venture currently enrolled in Foresight's Launch & Deliver program. 
-                    Any time that you spend working 1-on-1 coaching the founders of your assigned venture should be billed under 'Supporting a Company' and <strong>not</strong> under
-                    'Program Moderation'. 
+                    <strong>Example:</strong> If you have been assigned a new venture currently enrolled in Foresight&rsquo;s Launch & Deliver program. 
+                    Any time that you spend working 1-on-1 coaching the founders of your assigned venture should be billed under &rsquo;Supporting a Company&rsquo; and <strong>not</strong> under
+                    &rsquo;Program Moderation&rsquo;. 
                 </p>
                 <SupportTypeTable />
             </FAQSubSection>
