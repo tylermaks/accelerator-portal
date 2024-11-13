@@ -9,14 +9,14 @@ import FAQDirectoryList from "@/components/dashboard/mentor/FAQ/FAQDirectoryList
 export default async function FAQ() {
     return ( 
         <main className="flex relative">
-            <div className="w-[325px] sticky top-0 h-screen overflow-y-auto">
+            <div className="w-[500px] sticky top-0 h-screen overflow-y-auto px-8 py-10">
                 <h2>
                     Quick Links
                 </h2>
                 <FAQDirectoryList />
             </div>
 
-            <div className="w-3/4 mx-auto px-16">
+            <div className="w-full mx-auto px-16 shadow-inner-left py-10">
                 <PageHeader 
                     title= {"Foresight Advisor Portal Handbook"}
                     subTitle=""

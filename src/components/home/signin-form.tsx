@@ -21,6 +21,8 @@ export default function SignInForm() {
             const formData = new FormData(event.currentTarget)
             const result = await login(formData);
 
+            console.log("RESULT FROM SIGNIN", result)
+
             if (result?.status === 400) {
                 setError("Invalid email or password");
                 setIsLoading(false)

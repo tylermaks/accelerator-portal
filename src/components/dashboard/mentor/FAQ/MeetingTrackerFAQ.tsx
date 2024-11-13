@@ -21,11 +21,9 @@ export default function MeetingTrackerFAQ() {
                     The invoice must be sent to accounting@foresightcac.com.
                 </p>
                 <FAQHighlight>
-                    <p>
-                        Invoices are due by the 10th of each month for work completed in the previous month. 
-                        All invoices submitted after the 10th of the month will be deferred to the following month. 
-                        Invoices submitted on time will be paid out on the last business day of the month.
-                    </p>   
+                    Invoices are due by the 10th of each month for work completed in the previous month. 
+                    All invoices submitted after the 10th of the month will be deferred to the following month. 
+                    Invoices submitted on time will be paid out on the last business day of the month.
                 </FAQHighlight>
                 <p>
                     <strong>The hours on your invoice must match the hours that are logged in Meeting Tracker.</strong>
@@ -39,6 +37,11 @@ export default function MeetingTrackerFAQ() {
                     Support Types are the categories of EIR work at Foresight. 
                     You will be required to provide the Support Type while logging your work in the Meeting Tracker, 
                     so it is important that you understand when it is appropriate to use each type.
+                </p>
+                <p>
+                    <strong>Example:</strong> If you have been assigned a new venture currently enrolled in Foresight's Launch & Deliver program. 
+                    Any time that you spend working 1-on-1 coaching the founders of your assigned venture should be billed under 'Supporting a Company' and <strong>not</strong> under
+                    'Program Moderation'. 
                 </p>
                 <SupportTypeTable />
             </FAQSubSection>
@@ -62,10 +65,8 @@ export default function MeetingTrackerFAQ() {
                         This is intentional to ensure that we do not allocate funds towards companies no longer in our programs. 
                     </p>
                     <FAQHighlight>
-                        <p>
-                            If you believe that a company is missing from our company dropdown list, please try using the search bar using the companies legal name. 
-                            If you are certain you cannot find the company please contact a program manager for more information as there may be a reason they are not included in the list.
-                        </p>
+                        If you believe that a company is missing from our company dropdown list, please try using the search bar using the companies legal name. 
+                        If you are certain you cannot find the company please contact a program manager for more information as there may be a reason they are not included in the list.
                     </FAQHighlight>
                 </FAQDetails>
                 <FAQDetails title="Meeting Notes" id="meeting-notes">

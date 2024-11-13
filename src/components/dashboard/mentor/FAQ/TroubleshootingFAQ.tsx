@@ -27,8 +27,8 @@ export default function TroubleshootingFAQ() {
                     The intent is to include all active companies in our program, and exclude companies that are inactive and have left the program. 
                     Therefore, if a company is missing it might be intentional. 
                     Here are some troubleshooting steps:
-                    <FAQList list={missingVentureBullets}/>
                 </p>
+                <FAQList list={missingVentureBullets}/>
             </FAQSubSection>
 
             <FAQSubSection title="The Support Type I'm looking for doesn't exist" id="missing-support-type">
@@ -36,8 +36,8 @@ export default function TroubleshootingFAQ() {
                     The Support Types listed in the Meeting Tracker are intentionally defined. 
                     They reflect the various categories of funding buckets available to our programs. 
                     Therefore, if the Support Type doesn’t exist in the Meeting Track here are some troubleshooting steps: 
-                    <FAQList list={missingSupportType} />
                 </p>
+                <FAQList list={missingSupportType} />
             </FAQSubSection>
 
             <FAQSubSection title="I've found a bug while using the Foresight Advisor Portal" id="found-bug">

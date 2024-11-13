@@ -37,9 +37,7 @@ export default function ProfileFAQ() {
             </FAQSubSection>
 
             <FAQHighlight>
-                <p>
-                    At this time you are unable to update your profile photo in the Foresight Advisor Portal, please contact a program manager if you’d like to submit a new profile photo.
-                </p>
+                At this time you are unable to update your profile photo in the Foresight Advisor Portal, please contact a program manager if you’d like to submit a new profile photo.
             </FAQHighlight>
         </FAQSection>
     )

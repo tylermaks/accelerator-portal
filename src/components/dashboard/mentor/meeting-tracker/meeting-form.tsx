@@ -6,7 +6,7 @@ import { useState, useRef, useCallback, } from "react";
 import { addMeeting, deleteMeeting, updateMeeting } from "@/lib/meeting-actions"
 
 type MeetingFormProps = { 
-    toggleModal: (modalData: {}) => void ;
+    toggleModal: (modalData: {}) => void;
     addOptimistic: (newRow: any) => void;
     supportTypeOptions: string[];
     companyOptions: string[];

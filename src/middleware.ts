@@ -22,33 +22,35 @@ export async function middleware(request: NextRequest) {
     const SB_TOKEN = process.env.SB_TOKEN;
     const cookie = SB_TOKEN && request.cookies.get(SB_TOKEN);
     const token = cookie && cookie.value;
+   
 
+    //if token is NOT expired then check the route and make a decision on where to go next
     if(token){
         const decoded = jwtDecode<{ exp?: number; user_metadata?: { user_type?: string } }>(token);
-        const userRole = decoded.user_metadata?.user_type;
+        const isTokenExpired = decoded.exp && Date.now() >= decoded.exp * 1000
+        const userRole = decoded.user_metadata?.user_type
 
-        // check if token is expired and redirect to home 
-        if (decoded.exp && Date.now() >= decoded.exp * 1000) {
-            return NextResponse.redirect(new URL('/', request.url));
-        }
-        
-        //if token is NOT expired then check the route and make a decision on where to go next
+    
         if(userRole && roleRoutes[userRole] && roleRoutes[userRole].includes(pathName)){
             return NextResponse.next();
         }
 
         if(userRole && !roleRoutes[userRole].includes(pathName)){ 
             return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
-        }
-
+        } 
 
         if (userRole && publicRoutes.includes(pathName)) {
             return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
         } 
+
+        if(isTokenExpired && !publicRoutes.includes(pathName)){ 
+            return NextResponse.redirect(new URL('/', request.url))
+        }
     } 
 
+    //If token is expired and user is trying to reach protected route, redirect to home
     if(!token && !publicRoutes.includes(pathName)){ 
-        return NextResponse.redirect(new URL('/', request.url));
+        return NextResponse.redirect(new URL('/', request.url))
     }
 }
 

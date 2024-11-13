@@ -5,16 +5,6 @@ import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
-
-function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
-
-
 export async function login(formData: FormData) {
     const supabase = createClient()
 
@@ -27,6 +17,7 @@ export async function login(formData: FormData) {
     const { data: {user} } = await supabase.auth.getUser();
 
     if (error) {
+      console.error(error)
       return { status: error?.status }
     }
 
@@ -49,7 +40,7 @@ export async function login(formData: FormData) {
     }
 }
 
-export async function signup(formData: FormData) {
+export async function createUser(formData: FormData) {
   const supabase = createClient()
   const { data: user, error } = await supabase.auth.getUser()
   const userRole = user.user?.user_metadata.user_type
@@ -71,40 +62,34 @@ export async function signup(formData: FormData) {
 
 
   if(user && userRole === "admin"){ 
-    const newUserData = {
-      email: formData.get('email') as string,
-      password: formData.get('password') as string,
-      options: {
-        data:{
-          first_name: formData.get('firstName') as string,
-          last_name: formData.get('lastName') as string,
-          company_name: formData.get('companyName') as string,
-          user_type: formData.get('userType') as string,
-        }
-      }
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+    const first_name = formData.get('firstName') as string
+    const last_name = formData.get('lastName') as string
+    const user_type_titlecase = formData.get('userType') as string
+
+    const company_name = formData.get('companyName') as string
+    const user_type = user_type_titlecase.toLowerCase() as string
+
+
+
+    let { data, error } = await supabase
+      .rpc('create_user', {
+        email, 
+        password, 
+        first_name, 
+        last_name, 
+        user_type,
+        company_name,
+      })
+
+    if(error) { 
+      console.log("ERROR", error)
+      console.error("An error has occurred, please try again")
+      return 
     }
 
-    const { error } = await supabase.auth.signUp(newUserData)
-
-    // const uuid = generateUUID()
-    // console.log(uuid)
-
-    // const { error } = await supabase
-    //   .from ("profiles")
-    //   .insert({ 
-    //       user_id: uuid,
-    //       first_name: formData.get('firstName') as string,
-    //       last_name: formData.get('lastName') as string,
-    //       company_name: formData.get('companyName') as string,
-    //       user_type: formData.get('userType') as string,
-    //   })
-
-    // if (error) {
-    //   console.log(error)
-    //   return
-    // }
-  
-    revalidatePath('/admin/members', 'layout')
+    revalidatePath('/admin/members')
   }
 }
 
@@ -126,3 +111,5 @@ export async function sendPasswordReset(formData: FormData) {
 
   return {data: data, status: error?.status}
 }
+
+

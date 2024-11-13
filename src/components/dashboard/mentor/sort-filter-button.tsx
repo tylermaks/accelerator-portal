@@ -108,7 +108,7 @@ export default function SortFilterButton({ text, icon }: TableButtonProps) {
                     width={20}
                     height={20}
                 />
-                <p className="text-fsGray text-sm">{text} {params.length > 0 ? `(${params.length})` : ""}</p>
+                <p className="text-fsGray text-sm mb-0">{text} {params.length > 0 ? `(${params.length})` : ""}</p>
             </div>
 
             {

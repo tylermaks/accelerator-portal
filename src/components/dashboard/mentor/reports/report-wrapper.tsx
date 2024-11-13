@@ -121,18 +121,17 @@ export default function ReportWrapper() {
                                 <p className="text-fsGray text-sm">Total</p>
                                 <p className="text-fsGray text-sm">${total + (total * 1.05).toFixed(2)}</p>
                             </div>
+                            <div className="flex justify-between">
+                                <p className="text-fsGray text-sm">Please submit invoice by:</p>
+                                <p className="text-fsGray text-sm">{new Date(year, month, 10).toDateString()}</p>
+                            </div>
                         </div>
-
-                        <div className="flex justify-between">
-                            <p className="text-fsGray text-sm">Please submit invoice by:</p>
-                            <p className="text-fsGray text-sm">{new Date(year, month, 10).toDateString()}</p>
+                        <div className="flex justify-end mt-4">
+                            <p className="text-fsGray text-[10px] m0">*This is an estimate only, not a valid invoice.</p>
                         </div>
                     </div>
                 </div>
             </div> 
-            <div className="flex justify-end mt-4">
-                <p className="text-fsGray text-[10px]">*This is an estimate only, not a valid invoice.</p>
-            </div>
         </div>
     )
 }

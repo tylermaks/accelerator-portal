@@ -122,8 +122,8 @@ export default async function Profile() {
     // const sortedSkills = skillsArray.sort((a: any, b: any) => a.name.localeCompare(b.name));
  
     return(
-       <div className="flex flex-col gap-8 px-24 pb-10 relative bg-white">
-            <div className="absolute top-0 left-0 right-0 h-48">
+       <div className="flex flex-col gap-8 px-24 pb-10 relative bg-white py-10 px-8">
+            <div className="absolute top-10 left-8 right-8 h-48">
                 <Image 
                     className="absolute top-0 left-0 right-0 z-0 rounded-md"
                     src="/images/solar-panels.jpg"

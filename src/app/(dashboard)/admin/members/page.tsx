@@ -23,7 +23,8 @@ const getUserList = async () => {
             return [];
         };
 
-        return userList;
+        const sortedUserList = userList.sort((a, b) => a.first_name.localeCompare(b.first_name))
+        return sortedUserList;
     };
 
     console.log("Access denied.");
@@ -34,7 +35,7 @@ export default async function Members() {
     const userData = await getUserList();
 
     return (
-        <main>
+        <main className="py-10 px-8">
             <PageHeader
                 title="Members"
                 subTitle="Add and remove EIRs and Mentors"

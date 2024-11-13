@@ -14,7 +14,7 @@ export async function deleteUser (formData: FormData){
 
     if (user && user?.user_metadata.user_type === "admin"){ 
         const userID = formData.get('userID') as string
-        console.log("USERID FROM ADMIN ACTIONS", userID)
+
         const { data, error } = await supabase
             .from("profiles")
             .delete()
@@ -26,7 +26,6 @@ export async function deleteUser (formData: FormData){
             return null; 
         }
 
-        console.log("FROM DELETE USER", data, error)
         data && revalidatePath("/admin/members")
     }
 }

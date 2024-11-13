@@ -61,7 +61,7 @@ export default async function MeetingTracker({
     const programOptionsList = await getProgramOptionsList()
 
     return (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 py-10 px-8">
         <PageHeader 
           title="Meeting Tracker"
           subTitle="View your meeting history"
