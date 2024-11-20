@@ -43,7 +43,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
         } else{ 
             setCurrentSupportType(supportTypeList[0]['Dropdown Item Name'])
         }
-    }, [])
+    }, [fields, supportTypeList])
 
     const getButtonID = (event: React.MouseEvent<HTMLButtonElement>) => {
         setClickedButton(event.currentTarget.id);
