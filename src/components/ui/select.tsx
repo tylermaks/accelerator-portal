@@ -13,10 +13,11 @@ type SelectProps = {
     isSearchable?: boolean;
     setFormState?: (currentOption: string) => void;
     closeDropdown?: (currentOption: string) => void;
+    resetKey?: number
 }
 
 export default function Select(
-    {label, id, name, prepopulate, optionList, setFormState, closeDropdown, isRequired = false, isSearchable = false } : SelectProps
+    {label, id, name, prepopulate, optionList, setFormState, closeDropdown, isRequired = false, isSearchable = false, resetKey } : SelectProps
 ) {
     const [dropdown, setDropdown] = useState(false)
     const [search, setSearch] = useState("")
@@ -89,6 +90,10 @@ export default function Select(
             setFilteredList(optionList)
         }
     }, [optionList])
+
+    useEffect(() => {
+        setCurrentOption("")
+    },[resetKey])
 
     const selectClass = "cursor-pointer flex flex-row justify-between p-2.5 border border-gray-300 rounded-lg"
     const dropdownClass = dropdown ? "max-h-64 bg-gray-50 px-1 overflow-scroll absolute top-5 left-0 right-0 border border-2 border-blue-700 rounded-lg z-10" : "hidden"

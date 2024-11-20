@@ -16,7 +16,8 @@ export default function Input({
     name,
     updateExternalState,
     prepopulate,
-    isRequired = false
+    isRequired = false,
+    resetKey
 }: { 
     label: string,
     type: string, 
@@ -25,6 +26,7 @@ export default function Input({
     updateExternalState?: (value: string) => void,
     prepopulate?: string,
     isRequired?: boolean
+    resetKey?: number
 }) {
     const [value, setValue] = useState("");
     const [error, setError] = useState("");
@@ -52,12 +54,12 @@ export default function Input({
         const result = InputSchema.safeParse({ value: sanitizedPrepopulate });
 
         if (result.success) {
-            setValue(result.data.value); // Set the value if validation passes
+            setValue(sanitizedPrepopulate); // Set the value if validation passes
         } else {
             console.error(result.error); // Log or handle validation errors
             setValue(""); // Optionally set an empty value or handle it differently
         }    
-    }, [prepopulate]);
+    }, [prepopulate, resetKey]);
 
     return (
         <div className="w-full relative">
@@ -73,6 +75,8 @@ export default function Input({
                 className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                 required={isRequired}
                 autoComplete="off"
+                min="0"
+                step="0.01"
             />
             {
                 type === "password" && (

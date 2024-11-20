@@ -38,7 +38,10 @@ export default function ReportWrapper() {
     const yearsSince2022: number[] = [];
     
     const [reportData, setReportData] = useState<ReportDataProps[]>([]);
-    const [total, setTotal] = useState(0);
+    const [totalHours, setTotalHours] = useState(0);
+    const [preTaxAmount, setPreTaxAmount] = useState("")
+    const [taxAmount, setTaxAmount] = useState("")
+    const [afterTaxAmount, setAfterTaxAmount] = useState("")
     const [month, setMonth] = useState(currentMonth);
     const [year, setYear] = useState(currentYear);
 
@@ -53,8 +56,17 @@ export default function ReportWrapper() {
     }, [month, year])
 
     const calculateTotal = useCallback ( () => {
-        const totalHours = reportData.reduce((sum, record) => sum + record.fields.duration, 0);
-        setTotal(totalHours);
+        const hourSum = reportData.reduce((sum, record) => sum + record.fields.duration, 0);
+        const preTaxCalc = (hourSum * 100).toFixed(2)
+        const taxCalc = (parseFloat(preTaxCalc) * 0.05).toFixed(2)
+        const afterTaxCalc = (parseFloat(preTaxCalc) * 1.05).toFixed(2)
+
+        console.log("TAX CALC", taxCalc, typeof(taxCalc))
+    
+        setTotalHours(hourSum)
+        setPreTaxAmount(preTaxCalc)
+        setTaxAmount(taxCalc)
+        setAfterTaxAmount(afterTaxCalc)
     }, [reportData])
 
     useEffect(() => {   
@@ -102,7 +114,7 @@ export default function ReportWrapper() {
                 <div className="w-1/3 p-4 bg-blue-50 flex flex-col">
                     <div className="flex flex-col items-center justify-center p-8 border-b border-gray-300">
                         <p className="text-fsGray mb-4 text-sm">Total EIR Hours</p>
-                        <p className="text-4xl text-fsGray font-bold">{total}</p>
+                        <p className="text-4xl text-fsGray font-bold">{totalHours}</p>
                         <p className="text-fsGray text-sm">Hours</p>
                     </div>
 
@@ -111,15 +123,15 @@ export default function ReportWrapper() {
                             <p className="text-fsGray text-sm py-4 font-semibold">Estimated Invoice Total*</p>
                             <div className="flex justify-between py-2">
                                 <p className="text-fsGray text-sm">EIR Coaching Hours</p>
-                                <p className="text-fsGray text-sm">${total * 100}.00</p>
+                                <p className="text-fsGray text-sm">${preTaxAmount}</p>
                             </div>
                             <div className="flex justify-between pb-2">
                                 <p className="text-fsGray text-sm">GST (5%)</p>
-                                <p className="text-fsGray text-sm">${(total * 1.05).toFixed(2)}</p>
+                                <p className="text-fsGray text-sm">${taxAmount}</p>
                             </div>
                             <div className="flex justify-between pb-2">
                                 <p className="text-fsGray text-sm">Total</p>
-                                <p className="text-fsGray text-sm">${total + (total * 1.05).toFixed(2)}</p>
+                                <p className="text-fsGray text-sm">${afterTaxAmount}</p>
                             </div>
                             <div className="flex justify-between">
                                 <p className="text-fsGray text-sm">Please submit invoice by:</p>

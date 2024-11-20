@@ -6,10 +6,10 @@ import DOMPurify from "dompurify";
 
 // Define the schema using Zod
 const TextareaSchema = z.object({
-  value: z.string().min(1, "This field is required"),
+  value: z.string().min(0),
 });
 
-export default function Textarea({ label, name, prepopulate }: { label: string, name: string, prepopulate?: string }) {
+export default function Textarea({ label, name, prepopulate, resetKey }: { label: string, name: string, prepopulate?: string, resetKey?: number }) {
     const [value, setValue] = useState("");
     const [error, setError] = useState("");
 
@@ -23,7 +23,7 @@ export default function Textarea({ label, name, prepopulate }: { label: string, 
             console.error(result.error); // Log or handle validation errors
             setValue(""); // Optionally set an empty value or handle it differently
         }
-    }, [prepopulate]);
+    }, [prepopulate, resetKey]);
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const sanitizedValue = DOMPurify.sanitize(e.target.value);

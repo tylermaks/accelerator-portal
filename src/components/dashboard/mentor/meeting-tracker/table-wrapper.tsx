@@ -26,7 +26,7 @@ type TableData = {
 
 type TableProps = {
     tableData: TableData;
-    supportTypeList: string[];
+    supportTypeList: [{ Name: number, 'Dropdown Item Name': string, 'Dropdown Type': string[]}];
     companyList: string[];
     programList: string[];
 }
@@ -61,7 +61,7 @@ export default function TableWrapper( {tableData, supportTypeList, companyList, 
                     <MeetingForm 
                         addOptimistic={addOptimisticRow}
                         toggleModal={toggleModal}
-                        supportTypeOptions= {supportTypeList}
+                        supportTypeList={supportTypeList}
                         companyOptions={companyList}
                         programOptions={programList}
                         data={ showModal.data }

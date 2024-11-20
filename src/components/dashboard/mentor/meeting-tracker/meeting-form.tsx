@@ -2,25 +2,48 @@ import Input from "@/components/ui/input";
 import Select from "@/components/ui/select";
 import Textarea from "@/components/ui/textarea";
 import MainButton from "@/components/ui/main-button";
-import { useState, useRef, useCallback, } from "react";
+import AltButton from "@/components/ui/alt-button";
+import DeleteButton from "@/components/ui/delete-button";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { addMeeting, deleteMeeting, updateMeeting } from "@/lib/meeting-actions"
 
 type MeetingFormProps = { 
     toggleModal: (modalData: {}) => void;
     addOptimistic: (newRow: any) => void;
-    supportTypeOptions: string[];
+    supportTypeList: [{ Name: number, 'Dropdown Item Name': string, 'Dropdown Type': string[]}];
     companyOptions: string[];
     programOptions: string[];
     data: any;
 }
 
 
-export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOptions, companyOptions, programOptions, data } : MeetingFormProps) {
+export default function MeetingForm( { toggleModal, addOptimistic, supportTypeList, companyOptions, programOptions, data } : MeetingFormProps) {
     const [clickedButton, setClickedButton] = useState<string>(""); 
-    const [supportType, setSupportType] = useState<string>(""); 
+    const [resetKey, setResetKey] = useState<number>(0)
+    const [supportOptions, setSupportOptions] = useState<MeetingFormProps["supportTypeList"]>();
+    const [currentSupportType, setCurrentSupportType] = useState<string>(""); 
+    const [companyName, setCompanyName] = useState<string>("")
+    const [altName, setAltName] = useState<string>("")
+    const [date, setDate] = useState<string>("")
+    const [duration, setDuration] = useState<string>("")
+    const [notes, setNotes] = useState<string>("")
     const formRef = useRef<HTMLFormElement>(null); 
     const { fields } = data
   
+    useEffect(() => { 
+        setSupportOptions(supportTypeList)
+
+        if(fields && fields.supportType){
+            setCurrentSupportType(fields.supportType)
+            setCompanyName(fields.companyName)
+            setAltName(fields.altName)
+            setDate(fields.date)
+            setDuration(fields.duration)
+            setNotes(fields.notes)
+        } else{ 
+            setCurrentSupportType(supportTypeList[0]['Dropdown Item Name'])
+        }
+    }, [])
 
     const getButtonID = (event: React.MouseEvent<HTMLButtonElement>) => {
         setClickedButton(event.currentTarget.id);
@@ -41,11 +64,15 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOp
             fields: newMeeting
         });
 
+
+        if (clickedButton === "add-another-meeting") { 
+            formRef.current?.reset();
+            setResetKey(prevKey => prevKey + 1)
+        }
+
         if (clickedButton === "submit-meeting"){
             await toggleModal({});
-        } else { 
-            formRef.current?.reset();
-        }
+        } 
 
         try {
             await addMeeting(formData); 
@@ -72,36 +99,40 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOp
         }
     };
 
-    const handleUpdateSupportType = useCallback( (currentSupportOption: string) => { 
-        setSupportType(currentSupportOption);
+    const handleUpdateSupportType = useCallback( (newSupportOption: string) => { 
+        setCurrentSupportType(newSupportOption);
     }, [])
 
 
     const renderConditionalInput = (type : string) => {
-        const requireCompanyList = ["Supporting a Company", "Advisory Board Meeting", "Access to Capital", "Goodwill Advising"]
+        const findCurrentSupportOption = supportOptions?.find((option) => option['Dropdown Item Name'] === currentSupportType)
+        const currentDropdownType = findCurrentSupportOption?.["Dropdown Type"][0]
 
-        if(requireCompanyList.includes(type)){ 
+    
+        if(currentDropdownType === "Company List"){ 
             return ( 
                 <Select 
                     label="Company Name"
                     id="companyName"
                     name="companyName"
-                    prepopulate={fields && fields.companyName}
+                    prepopulate={companyName}
                     optionList={companyOptions}
                     isSearchable={true}
                     isRequired={true}
+                    resetKey={resetKey}
                 />
             )
-        } else if (type === "Program Moderation") { 
+        } else if (currentDropdownType === "Program List") { 
             return ( 
                 <Select 
                     label="Program Name"
                     id="altName"
                     name="altName"
-                    prepopulate={fields && fields.altName}
+                    prepopulate={altName}
                     optionList={programOptions}
                     isSearchable={false}
                     isRequired={true}
+                    resetKey={resetKey}
                 />
             )
         } else { 
@@ -111,15 +142,14 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOp
                     type="text"
                     id="altName"
                     name="altName"
-                    prepopulate={fields && fields.altName}
+                    prepopulate={altName}
                     isRequired={true}
+                    resetKey={resetKey}
                 />
             )
         }
     };
     
-    const currentSupportType = supportType || fields?.supportType;
-
     return(
         <form 
             onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
@@ -130,7 +160,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOp
                     return;
                 }
 
-                if (clickedButton === "submit-meeting") {
+                if (clickedButton === "submit-meeting" || clickedButton === "add-another-meeting") {
                     const formData = new FormData(e.currentTarget);
                     handleSubmit(formData as unknown as FormData);
                     return;
@@ -150,11 +180,12 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOp
                 label="Support Type"
                 id="supportType"
                 name="supportType"
-                prepopulate={fields && fields.supportType} 
-                optionList={supportTypeOptions}
+                prepopulate={currentSupportType} 
+                optionList={supportTypeList.map(options => {return options['Dropdown Item Name']})}
                 setFormState={handleUpdateSupportType}
                 isRequired={true}
            />
+
            { renderConditionalInput(currentSupportType) }
            
             <Input 
@@ -162,22 +193,25 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOp
                 type="date"
                 id="date"
                 name="date"
-                prepopulate={fields && fields.date}
+                prepopulate={date}
                 isRequired={true}
+                resetKey={resetKey}
             />
             <Input 
                 label="Duration (hrs)"
                 type="number"
                 id="duration"
                 name="duration"
-                prepopulate={fields && fields.duration}
+                prepopulate={duration}
                 isRequired={true}
+                resetKey={resetKey}
             />
            
             <Textarea 
                 name="notes" 
                 label="Notes"
-                prepopulate={fields && fields.notes}
+                prepopulate={notes}
+                resetKey={resetKey}
             />  
                                     
             <div className="flex gap-4">
@@ -186,13 +220,20 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeOp
                     text={fields ? "Update" : "Submit"} 
                     action={getButtonID}
                 />
-                <MainButton 
-                    id={fields ? "delete-meeting" : "add-another-meeting"}
-                    text={fields ? "Delete" : "Submit and add another"}
-                    altButton={true}
-                    warning={fields ? true : false}
-                    action={getButtonID}
-                />
+
+                { fields ? (
+                    <DeleteButton 
+                        id="delete-meeting"
+                        text="Delete"
+                        action={getButtonID}
+                    />
+                ) : (
+                    <AltButton 
+                        id="add-another-meeting"
+                        text="Submit and add another"
+                        action={getButtonID}
+                    />
+                )}
             </div>
         </form>
     )
