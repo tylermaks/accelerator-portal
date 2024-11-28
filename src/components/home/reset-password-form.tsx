@@ -67,7 +67,7 @@ export default function ResetPasswordForm() {
               id="password" 
               name="password" 
               isRequired={true}
-              updateExternalState={setPassword}
+              setFormState={setPassword}
             />
             <>
               <Input 
@@ -76,7 +76,7 @@ export default function ResetPasswordForm() {
                 id="confirmed-password" 
                 name="confirmed-password"
                 isRequired={true}
-                updateExternalState={setConfirmPassword}
+                setFormState={setConfirmPassword}
               />
               {error && <p className="text-red-500 text-xs">{error}</p>}
             </>

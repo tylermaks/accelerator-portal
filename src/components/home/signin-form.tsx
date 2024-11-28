@@ -53,7 +53,7 @@ export default function SignInForm() {
                     id="email"
                     name="email"
                     isRequired={true}
-                    updateExternalState={setEmail}
+                    setFormState={setEmail}
                 />
                 <>
                     <Input 
@@ -62,7 +62,7 @@ export default function SignInForm() {
                         id="password"
                         name="password"
                         isRequired={true}
-                        updateExternalState={setPassword}
+                        setFormState={setPassword}
                     />
                     {error && <p className="text-red-500 text-sm">{error}</p>}
                 </>
