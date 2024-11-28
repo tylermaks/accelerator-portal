@@ -5,15 +5,17 @@ import { jwtDecode } from "jwt-decode";
 const publicRoutes = ['/', '/reset-password', '/error']; 
 
 const roleRoutes: { [key: string]: string[] } = {
-    admin: ['/admin/dashboard', '/admin/members', '/admin/controls', '/mentor/meeting-tracker', '/mentor/profile', '/mentor/reports', '/mentor/support-requests', '/mentor/faqs'],
-    mentor: ['/mentor/meeting-tracker', '/mentor/profile', '/mentor/reports', '/mentor/support-requests', '/mentor/faqs'],
+    admin: ['/admin/dashboard', '/admin/members', '/admin/controls', '/dashboard/meeting-tracker', '/dashboard/profile', '/dashboard/reports', '/dashboard/support-requests', '/dashboard/faqs'],
+    eir: ['/dashboard/meeting-tracker', '/dashboard/profile', '/dashboard/reports', '/dashboard/support-requests', '/dashboard/faqs'],
+    mentor: ['/dashboard/meeting-tracker', '/dashboard/profile', '/dashboard/support-requests', '/dashboard/faqs'],
     company: ['/company/dashboard', '/company/mentors', '/company/faqs'],
 };
 
 const defaultRoutes: { [key: string]: string } = {
     admin: '/admin/members',
-    mentor: '/mentor/meeting-tracker',
-    company: '/company/dashboard',
+    eir: '/dashboard/meeting-tracker',
+    mentor: '/dashboard/meeting-tracker',
+    company: '/dashboard',
 };
 
 

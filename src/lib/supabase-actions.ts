@@ -27,15 +27,11 @@ export async function login(formData: FormData) {
     }
 
     if (user) {
-        console.log("user found")
-        console.log("USER FROM SIGNIN", user?.user_metadata.user_type)
         revalidatePath('/', 'layout')
-        if ( user?.user_metadata.user_type === "mentor"){ 
-          redirect('/mentor/meeting-tracker')
-        }
-
         if( user?.user_metadata.user_type === "admin"){ 
           redirect('/admin/members')
+        } else {
+          redirect('/dashboard')
         }
     }
 }

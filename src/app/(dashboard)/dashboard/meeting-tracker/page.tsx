@@ -3,6 +3,7 @@ import TableWrapper from "@/components/dashboard/mentor/meeting-tracker/table-wr
 import getSupportTypeList from "@/components/dashboard/mentor/meeting-tracker/support-type-list";
 import getCompanyList from "@/components/dashboard/mentor/meeting-tracker/company-list"
 import getTableData from "@/components/dashboard/mentor/meeting-tracker/table-data"
+import getMeetingObjectiveList from "@/components/dashboard/mentor/meeting-tracker/meeting-objective-list";
 
 const getProgramOptionsList = async () => { 
   const url = `https://api.airtable.com/v0/${process.env.BASE_ID}/${process.env.PROGRAM_OPTIONS_TABLE_ID}?sort[0][field]=Name&sort[0][direction]=asc`
@@ -59,6 +60,7 @@ export default async function MeetingTracker({
     const companyListOptions = await getCompanyList()
     const companyList = companyListOptions?.map((item: Company) => item?.fields.companyName)
     const programOptionsList = await getProgramOptionsList()
+    const meetingObjectiveList = await getMeetingObjectiveList()
 
     return (
       <div className="flex flex-col gap-8 py-10 px-8">
@@ -71,6 +73,7 @@ export default async function MeetingTracker({
           supportTypeList={supportTypeList}
           companyList={companyList}
           programList={programOptionsList}
+          meetingObjectiveList={meetingObjectiveList}
         />      
       </div>
     );

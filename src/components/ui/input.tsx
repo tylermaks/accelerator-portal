@@ -14,7 +14,7 @@ export default function Input({
     type, 
     id,
     name,
-    updateExternalState,
+    setFormState,
     prepopulate,
     isRequired = false,
     resetKey
@@ -23,7 +23,7 @@ export default function Input({
     type: string, 
     id: string,
     name: string,
-    updateExternalState?: (value: string) => void,
+    setFormState?: (value: string) => void,
     prepopulate?: string,
     isRequired?: boolean
     resetKey?: number
@@ -41,7 +41,7 @@ export default function Input({
         } else {
             setError("");
             setValue(sanitizedValue);
-            updateExternalState && updateExternalState(sanitizedValue);
+            setFormState && setFormState(sanitizedValue);
         }
     };
 

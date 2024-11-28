@@ -4,7 +4,7 @@ import Textarea from "@/components/ui/textarea";
 import MainButton from "@/components/ui/main-button";
 import AltButton from "@/components/ui/alt-button";
 import DeleteButton from "@/components/ui/delete-button";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { addMeeting, deleteMeeting, updateMeeting } from "@/lib/meeting-actions"
 
 type MeetingFormProps = { 
@@ -13,56 +13,46 @@ type MeetingFormProps = {
     supportTypeList: [{ Name: number, 'Dropdown Item Name': string, 'Dropdown Type': string[]}];
     companyOptions: string[];
     programOptions: string[];
+    meetingObjectiveOptions: string[];
     data: any;
 }
 
+const initializeFields = (fields: any, supportTypeList: MeetingFormProps["supportTypeList"]) => ({
+    supportType: fields?.supportType || supportTypeList[0]['Dropdown Item Name'],
+    companyName: fields?.companyName || "",
+    altName: fields?.altName || "",
+    date: fields?.date || "",
+    duration: fields?.duration || "",
+    meetingObjective: fields?.meetingObjective || "",
+    notes: fields?.notes || "",
+});
 
-export default function MeetingForm( { toggleModal, addOptimistic, supportTypeList, companyOptions, programOptions, data } : MeetingFormProps) {
+
+export default function MeetingForm( { toggleModal, addOptimistic, supportTypeList, companyOptions, programOptions, meetingObjectiveOptions, data } : MeetingFormProps) {
+    const [formState, setFormState] = useState(() => initializeFields(data.fields, supportTypeList));
     const [clickedButton, setClickedButton] = useState<string>(""); 
-    const [resetKey, setResetKey] = useState<number>(0)
-    const [supportOptions, setSupportOptions] = useState<MeetingFormProps["supportTypeList"]>();
-    const [currentSupportType, setCurrentSupportType] = useState<string>(""); 
-    const [companyName, setCompanyName] = useState<string>("")
-    const [altName, setAltName] = useState<string>("")
-    const [date, setDate] = useState<string>("")
-    const [duration, setDuration] = useState<string>("")
-    const [notes, setNotes] = useState<string>("")
-    const formRef = useRef<HTMLFormElement>(null); 
-    const { fields } = data
+    const [resetKey, setResetKey] = useState<number>(0)    
+    const formRef = useRef<HTMLFormElement>(null);
+    const supportOptions = useMemo(() => supportTypeList, [supportTypeList]);
   
-    useEffect(() => { 
-        setSupportOptions(supportTypeList)
-
-        if(fields && fields.supportType){
-            setCurrentSupportType(fields.supportType)
-            setCompanyName(fields.companyName)
-            setAltName(fields.altName)
-            setDate(fields.date)
-            setDuration(fields.duration)
-            setNotes(fields.notes)
-        } else{ 
-            setCurrentSupportType(supportTypeList[0]['Dropdown Item Name'])
+    useEffect(() => {
+        if (data.fields) {
+            setFormState(initializeFields(data.fields, supportOptions));
         }
-    }, [fields, supportTypeList])
+    }, [data.fields, supportTypeList]);
+
+ 
+    const handleInputChange = (name: string, value: string) => {
+        setFormState((prev) => ({ ...prev, [name]: value }));
+    };
 
     const getButtonID = (event: React.MouseEvent<HTMLButtonElement>) => {
         setClickedButton(event.currentTarget.id);
     };
   
-    const handleSubmit = async (formData: FormData) => {
-        const newMeeting = {
-            date: formData.get("date"),
-            companyName: formData.get("companyName"),
-            altName: formData.get("altName"),
-            duration: formData.get("duration"),
-            supportType: formData.get("supportType"),
-            notes: formData.get("notes")
-        }
-
-        addOptimistic({
-            id: Math.random(),
-            fields: newMeeting
-        });
+    const handleSubmit = async () => {
+        const newMeeting = { ...formState };
+        addOptimistic({ id: Math.random(), fields: newMeeting });
 
 
         if (clickedButton === "add-another-meeting") { 
@@ -75,7 +65,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
         } 
 
         try {
-            await addMeeting(formData); 
+            await addMeeting(newMeeting); 
         } catch (error) {
             console.error('Error adding meeting:', error);
         } 
@@ -90,138 +80,142 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
         }
     };
 
-    const handleEdit = async (formData: FormData) => {
+    const handleEdit = async () => {
+        console.log("FORM STATE", formState)
+
         try {
-            await updateMeeting(data.id, formData);
+            await updateMeeting(data.id, formState);
             toggleModal({});
         } catch (error) {
             console.error('Error updating meeting:', error);
         }
     };
 
-    const handleUpdateSupportType = useCallback( (newSupportOption: string) => { 
-        setCurrentSupportType(newSupportOption);
-    }, [])
+
+    const currentDropdownType = useMemo(() => {
+        const option = supportOptions.find((opt) => opt["Dropdown Item Name"] === formState.supportType);
+        return option?.["Dropdown Type"][0] || "";
+    }, [supportOptions, formState.supportType]);
 
 
-    const renderConditionalInput = (type : string) => {
-        const findCurrentSupportOption = supportOptions?.find((option) => option['Dropdown Item Name'] === currentSupportType)
-        const currentDropdownType = findCurrentSupportOption?.["Dropdown Type"][0]
-
-    
-        if(currentDropdownType === "Company List"){ 
-            return ( 
-                <Select 
-                    label="Company Name"
-                    id="companyName"
-                    name="companyName"
-                    prepopulate={companyName}
-                    optionList={companyOptions}
-                    isSearchable={true}
-                    isRequired={true}
-                    resetKey={resetKey}
-                />
-            )
-        } else if (currentDropdownType === "Program List") { 
-            return ( 
-                <Select 
-                    label="Program Name"
-                    id="altName"
-                    name="altName"
-                    prepopulate={altName}
-                    optionList={programOptions}
-                    isSearchable={false}
-                    isRequired={true}
-                    resetKey={resetKey}
-                />
-            )
-        } else { 
+    const renderConditionalInput = () => {
+        switch (currentDropdownType) {
+          case "Company List":
             return (
-                <Input 
-                    label={"Please provide details:"}
-                    type="text"
-                    id="altName"
-                    name="altName"
-                    prepopulate={altName}
-                    isRequired={true}
-                    resetKey={resetKey}
-                />
-            )
+              <Select
+                label="Company Name"
+                id="companyName"
+                name="companyName"
+                prepopulate={formState.companyName}
+                setFormState={(value) => handleInputChange("companyName", value)}
+                optionList={companyOptions}
+                isSearchable
+                resetKey={resetKey}
+              />
+            );
+          case "Program List":
+            return (
+              <Select
+                label="Program Name"
+                id="altName"
+                name="altName"
+                prepopulate={formState.altName}
+                setFormState={(value) => handleInputChange("altName", value)}
+                optionList={programOptions}
+                isSearchable={false}
+                isRequired
+                resetKey={resetKey}
+              />
+            );
+          default:
+            return (
+              <Input
+                label="Please provide details:"
+                type="text"
+                id="altName"
+                name="altName"
+                prepopulate={formState.altName}
+                setFormState={(value) => handleInputChange("altName", value)}
+                isRequired
+                resetKey={resetKey}
+              />
+            );
         }
+    };
+
+    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (clickedButton === "delete-meeting") return handleDelete();
+        if (clickedButton === "update-meeting") return handleEdit();
+        handleSubmit();
     };
     
     return(
         <form 
-            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                e.preventDefault();
-
-                if (clickedButton === "delete-meeting") {                    
-                    handleDelete();
-                    return;
-                }
-
-                if (clickedButton === "submit-meeting" || clickedButton === "add-another-meeting") {
-                    const formData = new FormData(e.currentTarget);
-                    handleSubmit(formData as unknown as FormData);
-                    return;
-                }
-
-                if (clickedButton === "update-meeting") {
-                    const formData = new FormData(e.currentTarget);
-                    handleEdit(formData as unknown as FormData);
-                    return;
-                }
-            }} 
+            onSubmit={handleFormSubmit}
             className="flex flex-col gap-4 h-full pb-4"
             ref={formRef}
         >
 
-           <Select 
+            <Select
                 label="Support Type"
                 id="supportType"
                 name="supportType"
-                prepopulate={currentSupportType} 
-                optionList={supportTypeList.map(options => {return options['Dropdown Item Name']})}
-                setFormState={handleUpdateSupportType}
-                isRequired={true}
-           />
+                prepopulate={formState.supportType}
+                optionList={supportTypeList.map((opt) => opt["Dropdown Item Name"])}
+                setFormState={(value) => handleInputChange("supportType", value)}
+                isRequired
+            />
 
-           { renderConditionalInput(currentSupportType) }
+           { renderConditionalInput() }
+           { formState.supportType === "Supporting a company" &&
+                <Select
+                   label="Meeting Objective"
+                   id="meetingObjective"
+                   name="meetingObjective"
+                   prepopulate={formState.meetingObjective}
+                   setFormState={(value) => handleInputChange("meetingObjective", value)}
+                   optionList={meetingObjectiveOptions}
+                   resetKey={resetKey}
+                 />
+           }
            
             <Input 
                 label="Date"
                 type="date"
                 id="date"
                 name="date"
-                prepopulate={date}
-                isRequired={true}
+                prepopulate={formState.date}
+                setFormState={(value) => handleInputChange("date", value)}
                 resetKey={resetKey}
+                isRequired
             />
             <Input 
                 label="Duration (hrs)"
                 type="number"
                 id="duration"
                 name="duration"
-                prepopulate={duration}
-                isRequired={true}
+                prepopulate={formState.duration}
+                setFormState={(value) => handleInputChange("duration", value)}
                 resetKey={resetKey}
+                isRequired
             />
            
             <Textarea 
-                name="notes" 
                 label="Notes"
-                prepopulate={notes}
+                name="notes" 
+                prepopulate={formState.notes}
+                setFormState={(value) => handleInputChange("notes", value)}
                 resetKey={resetKey}
             />  
                                     
             <div className="flex gap-4">
-                <MainButton 
-                    id={fields ? "update-meeting" : "submit-meeting"}
-                    text={fields ? "Update" : "Submit"} 
+                <MainButton
+                    id={data.fields ? "update-meeting" : "submit-meeting"}
+                    text={data.fields ? "Update" : "Submit"}
                     action={getButtonID}
                 />
-
-                { fields ? (
+                { data.fields ? (
                     <DeleteButton 
                         id="delete-meeting"
                         text="Delete"
@@ -238,3 +232,23 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
         </form>
     )
 }
+
+
+// e.preventDefault();
+
+// if (clickedButton === "delete-meeting") {                    
+//     handleDelete();
+//     return;
+// }
+
+// if (clickedButton === "submit-meeting" || clickedButton === "add-another-meeting") {
+//     const formData = new FormData(e.currentTarget);
+//     handleSubmit(formData as unknown as FormData);
+//     return;
+// }
+
+// if (clickedButton === "update-meeting") {
+//     const formData = new FormData(e.currentTarget);
+//     handleEdit(formData as unknown as FormData);
+//     return;
+// }

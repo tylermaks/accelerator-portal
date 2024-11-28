@@ -16,9 +16,18 @@ type SelectProps = {
     resetKey?: number
 }
 
-export default function Select(
-    {label, id, name, prepopulate, optionList, setFormState, closeDropdown, isRequired = false, isSearchable = false, resetKey } : SelectProps
-) {
+export default function Select({
+    label, 
+    id, 
+    name, 
+    prepopulate, 
+    optionList, 
+    setFormState, 
+    closeDropdown, 
+    isRequired = false, 
+    isSearchable = false, 
+    resetKey 
+} : SelectProps) {
     const [dropdown, setDropdown] = useState(false)
     const [search, setSearch] = useState("")
     const [filteredList, setFilteredList] = useState<string[]>([])
@@ -28,38 +37,34 @@ export default function Select(
     const inputRef = useRef<HTMLInputElement>(null);
     const selectRef = useRef<HTMLSelectElement>(null)
 
-    
-    useEffect(() => {
-        setFilteredList(optionList);
-        prepopulate && setCurrentOption(prepopulate);
-    }, [optionList, prepopulate]);
+    //Toggle dropdown visibility
+    const toggleDropdown = () => setDropdown(!dropdown)
 
-    const toggleDropdown = () => { 
-        setDropdown(!dropdown)
-    }
-
+    //Handle click outside of the dropdown
     const handleClickOutside = (event: MouseEvent) => {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
             setDropdown(false);
         }
     };
 
-    const updateOption = (item: string) => {
+    //Update the selected option
+    const updateOption = useCallback((item: string) => {
         setCurrentOption(item)
-        setFormState && setFormState(item)
+        setFormState?.(item)
         setDropdown(false)
+        setSearch("")
         closeDropdown && closeDropdown(item)
       
-        if(selectRef.current){
-            selectRef.current.value = item
-        }
-    }
+        if(selectRef.current) selectRef.current.value = item
+    }, [setFormState, closeDropdown])
 
+
+    //Update search value
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => { 
-        const newValue = event.target.value;
-        setSearch(newValue)
+        setSearch(event.target.value)
     }
 
+    //Update the search list based on search value
     const filterCompanyList = useCallback(() => { 
         const searchResults = optionList?.filter(item => 
             item.toLowerCase().includes(search.toLowerCase())
@@ -68,32 +73,37 @@ export default function Select(
         setFilteredList(searchResults)
     },[search, optionList])
 
+    //Run filterCompanyList when callback is triggered
+    useEffect(() => { 
+        filterCompanyList()
+    }, [filterCompanyList])
+
+    //Add and remove event listener for clicks outside dropdown
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);
+    }, [handleClickOutside]);
 
+    //Focus input when dropdown opens
     useEffect(() => { 
         if(dropdown && inputRef.current){ 
             inputRef.current.focus()
         }
     }, [dropdown])
 
-    useEffect(() => { 
-        filterCompanyList()
-    }, [filterCompanyList])
 
-    useEffect(() => { 
-        if(optionList){
-            setFilteredList(optionList)
-        }
-    }, [optionList])
-
+    //Reset select when "Add another" is clicked
     useEffect(() => {
         setCurrentOption("")
     },[resetKey])
+
+
+    //Update select value when prepopulate data is available
+    useEffect(() => { 
+        if(prepopulate) setCurrentOption(prepopulate);
+    },[prepopulate])
 
     const selectClass = "cursor-pointer flex flex-row justify-between p-2.5 border border-gray-300 rounded-lg"
     const dropdownClass = dropdown ? "max-h-64 bg-gray-50 px-1 overflow-scroll absolute top-5 left-0 right-0 border border-2 border-blue-700 rounded-lg z-10" : "hidden"

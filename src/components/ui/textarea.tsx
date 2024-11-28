@@ -9,7 +9,22 @@ const TextareaSchema = z.object({
   value: z.string().min(0),
 });
 
-export default function Textarea({ label, name, prepopulate, resetKey }: { label: string, name: string, prepopulate?: string, resetKey?: number }) {
+type TextAreaProps = { 
+    label: string,
+    name: string,
+    prepopulate?: string,
+    setFormState?: (value: string) => void,
+    resetKey?: number
+}
+
+
+export default function Textarea({
+    label,
+    name,
+    prepopulate,
+    setFormState,
+    resetKey
+}: TextAreaProps ) {
     const [value, setValue] = useState("");
     const [error, setError] = useState("");
 
@@ -34,6 +49,7 @@ export default function Textarea({ label, name, prepopulate, resetKey }: { label
         } else {
             setError("");
             setValue(sanitizedValue);
+            setFormState && setFormState(sanitizedValue);
         }
     };
 

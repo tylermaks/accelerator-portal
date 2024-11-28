@@ -15,7 +15,16 @@ export async function infiniteScrollData(offset: string | undefined) {
   return newTableData
 }
 
-export async function addMeeting(formData: FormData) {
+export async function addMeeting(
+  formData: {
+    companyName: string, 
+    altName: string, 
+    supportType: string, 
+    meetingObjective: string, 
+    date: string,
+    duration: string,
+    notes: string
+}) {
   const supabase = createClient();
   const { data: user, error} =  await supabase.auth.getUser();
 
@@ -28,18 +37,21 @@ export async function addMeeting(formData: FormData) {
       return { error: "No user found" , status: 401 };
   }
 
+  console.log("TEST", formData)
+
 
   if(user){
     const userEmail = user.user.email
 
     const meetingRecord = {
-      "companyName": formData.get('companyName') ? formData.get('companyName') as string : "Foresight",
-      "altName": formData.get('altName') as string,
-      "supportType": formData.get('supportType') as string,
+      "companyName": formData.companyName ? formData.companyName : "Foresight",
+      "altName": formData.altName,
+      "supportType": formData.supportType,
+      "meetingObjective": formData.meetingObjective,
       "email": userEmail as string, // add user email here
-      "date": formData.get('date') as string,
-      "duration": Number(formData.get('duration')) as number,
-      "notes": formData.get('notes') as string
+      "date": formData.date,
+      "duration": Number(formData.duration) as number,
+      "notes": formData.notes
     };
 
     try {
@@ -62,7 +74,7 @@ export async function addMeeting(formData: FormData) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      revalidatePath("/mentor/meeting-tracker");
+      revalidatePath("/dashboard/meeting-tracker");
       return { message: "Meeting added successfully" };
     } catch (error) {
       console.error('Error:', error);
@@ -90,7 +102,7 @@ export async function deleteMeeting(recordID: string) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
   
-        revalidatePath("/mentor/meeting-tracker");
+        revalidatePath("/dashboard/meeting-tracker");
         return { message: "Meeting deleted successfully" };
       } catch (error) {
         console.error('Error:', error);
@@ -99,18 +111,34 @@ export async function deleteMeeting(recordID: string) {
     }
 }
 
-export async function updateMeeting(recordID: string, fieldData: any) {
-  const supabase = createClient();
-  const user =  await supabase.auth.getUser();
 
-  const stateKey = Object.getOwnPropertySymbols(fieldData)[0];
-  const fieldObj = fieldData[stateKey];
+
+export async function updateMeeting(
+  recordID: string, 
+  fieldData: {
+    companyName: string, 
+    supportType: string, 
+    meetingObjective: string, 
+    date: string, 
+    duration: string, 
+    notes: string
+}) {
+  const supabase = createClient();
+  const { data: user, error } =  await supabase.auth.getUser();
+  
+  if (error) {
+    console.log("Error fetching user:", error)
+    return
+  }
+
+
   const airtableData = {
-    "companyName": fieldObj[1].value,
-    "supportType": fieldObj[0].value,
-    "date": new Date(fieldObj[2].value),
-    "duration": Number(fieldObj[3].value),
-    "notes": fieldObj[4].value,
+    "companyName": fieldData.companyName,
+    "supportType": fieldData.supportType,
+    "meetingObjective": fieldData.meetingObjective,
+    "date": new Date(fieldData.date),
+    "duration": Number(fieldData.duration),
+    "notes": fieldData.notes,
   }
 
   if(user){
@@ -130,7 +158,7 @@ export async function updateMeeting(recordID: string, fieldData: any) {
         throw new Error(`HTTP error! status: ${response.status}`);
       } 
 
-      revalidatePath("/mentor/meeting-tracker");
+      revalidatePath("/dashboard/meeting-tracker");
       return { message: "Meeting updated successfully" };
     } catch (error) {
       console.error('Error:', error);

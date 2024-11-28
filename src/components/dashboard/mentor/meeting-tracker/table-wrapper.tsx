@@ -16,6 +16,7 @@ type Record = {
         companyName: string;
         duration: string;
         supportType: string;
+        meetingObjective: string;
     }    
 }
 
@@ -29,10 +30,11 @@ type TableProps = {
     supportTypeList: [{ Name: number, 'Dropdown Item Name': string, 'Dropdown Type': string[]}];
     companyList: string[];
     programList: string[];
+    meetingObjectiveList: string[];
 }
 
 
-export default function TableWrapper( {tableData, supportTypeList, companyList, programList } : TableProps) { 
+export default function TableWrapper( {tableData, supportTypeList, companyList, programList, meetingObjectiveList } : TableProps) { 
     const [rows, setRows] = useState<TableData>(tableData);
     const [showModal, setShowModal] = useState({ open: false, data: {} });
     const [optimisticRows, addOptimisticRow] = useOptimistic(
@@ -64,6 +66,7 @@ export default function TableWrapper( {tableData, supportTypeList, companyList, 
                         supportTypeList={supportTypeList}
                         companyOptions={companyList}
                         programOptions={programList}
+                        meetingObjectiveOptions={meetingObjectiveList}
                         data={ showModal.data }
                     />
 

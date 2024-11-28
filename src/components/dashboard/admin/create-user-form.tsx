@@ -23,12 +23,14 @@ export default function CreateUserForm( {toggleModal} : FormProps) {
                         type="text"
                         id="email"
                         name="email"
+                        isRequired={true}
                     />
                     <Input 
                         label="Password"
                         type="password"
                         id="password"
                         name="password"
+                        isRequired={true}
                     />
                 </div>
 
@@ -37,7 +39,8 @@ export default function CreateUserForm( {toggleModal} : FormProps) {
                         label="User Type"
                         id="userType"
                         name="userType"
-                        optionList={['Mentor', 'Admin', 'Company']}
+                        optionList={['EIR','Mentor', 'Admin', 'Company']}
+                        isRequired={true}
                     />
                 </div>
 
@@ -47,12 +50,14 @@ export default function CreateUserForm( {toggleModal} : FormProps) {
                         type="text"
                         id="firstName"
                         name="firstName"
+                        isRequired={true}
                     />
                     <Input 
                         label="Last Name"
                         type="text"
                         id="lastName"
                         name="lastName"
+                        isRequired={true}
                     />
                 </div>
 

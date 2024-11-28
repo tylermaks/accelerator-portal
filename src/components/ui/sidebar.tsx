@@ -1,43 +1,110 @@
 "use client"
 
 import { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import { logout } from "@/lib/supabase-actions";
 import Link from "next/link";
 import Image from "next/image";
-import { logout } from "@/lib/supabase-actions";
+
 
 const sideBarLinks = [
     {
+        role:'eir',
+        links: [
+            {
+                text: "Meeting Tracker",
+                icon: '/images/calendar-icon.svg',
+                route: '/dashboard/meeting-tracker'
+            }, 
+            { 
+                text: "Reports",
+                icon: '/images/report-icon.svg',
+                route: '/dashboard/reports'
+            },
+            {
+                text: "Profile",
+                icon: '/images/user-icon.svg',
+                route: '/dashboard/profile'
+            },
+            {
+                text: "FAQs",
+                icon: '/images/question-icon.svg',
+                route: '/dashboard/faqs'
+            }
+        ]
+    },
+    {
         role:'mentor',
-        icons: ['/images/calendar-icon.svg', '/images/user-icon.svg', '/images/report-icon.svg', '/images/question-icon.svg',], //Add when ready '/images/bolt-icon.svg',
-        links: ["Meeting Tracker", "Profile", "Reports", "FAQs"], // Add Support Requests when ready
-        routes: ['/mentor/meeting-tracker', '/mentor/profile', '/mentor/reports','/mentor/faqs',], //Add when ready '/mentor/support-requests'
-    }, 
+        links: [
+            {
+                text: "Meeting Tracker",
+                icon: '/images/calendar-icon.svg',
+                route: '/dashboard/meeting-tracker'
+            }, 
+            {
+                text: "Profile",
+                icon: '/images/user-icon.svg',
+                route: '/dashboard/profile'
+            },
+            {
+                text: "FAQs",
+                icon: '/images/question-icon.svg',
+                route: '/dashboard/faqs'
+            }
+        ]
+
+    },
     {
-        role:'company',
-        icons: ['/images/calendar-icon.svg', '/images/user-icon.svg', '/images/report-icon.svg', '/images/question-icon.svg',],
-        links: ["Dashboard", "Mentors", "FAQs"],
-        routes: ['/company/dashboard', '/company/mentors', '/company/faqs'],
-    }, 
-    {
-        role:'admin',
-        icons: [ '/images/user-icon.svg', ], //Add when ready: '/images/calendar-icon.svg', '/images/report-icon.svg', '/images/question-icon.svg',
-        links: ["Members"], //Add when ready: "Dashboard", "Controls"
-        routes: ['/admin/members',], //Add when ready: '/admin/dashboard',  '/admin/controls'
-    }, 
+        role: 'admin',
+        links: [
+            {
+                text: "Members",
+                icon: '/images/user-icon.svg',
+                route: '/admin/members'
+            },
+            {
+                text: "Meeting Tracker",
+                icon: '/images/calendar-icon.svg',
+                route: '/dashboard/meeting-tracker'
+            }, 
+            { 
+                text: "Reports",
+                icon: '/images/report-icon.svg',
+                route: '/dashboard/reports'
+            },
+            {
+                text: "Profile",
+                icon: '/images/user-icon.svg',
+                route: '/dashboard/profile'
+            },
+            {
+                text: "FAQs",
+                icon: '/images/question-icon.svg',
+                route: '/dashboard/faqs'
+            }
+        ]
+
+    }
 ]
 
-interface Link {
+type Link = {
     role: string;
-    icons: string[];
-    links: string[];
-    routes: string[];
+    links: {
+        text: string,
+        icon: string,
+        route: string
+    }[]
 }
 
 const defaultLink: Link = {
     role: '',
-    icons: [],
-    links: [],
-    routes: []
+    links: [
+        {
+            text:'',
+            icon:'',
+            route: ''
+        }
+    ]
   };
 
 
@@ -45,9 +112,11 @@ export default function Sidebar() {
     const [userLinks, setUserLinks] = useState<Link>(defaultLink)
 
     useEffect(() => {
-        const pathName = window.location.pathname
-        const userRole = pathName.split('/')[1]
-        const roleLinks = sideBarLinks.find(link => link.role === userRole)
+        const cookie = document.cookie
+        const decodedCookie = jwtDecode<{ user_metadata?: { user_type?: string } }>(cookie)
+        const userType = decodedCookie?.user_metadata?.user_type 
+        const roleLinks = sideBarLinks.find(link => link.role === userType)
+        
         roleLinks && setUserLinks(roleLinks)
     }, [])
 
@@ -56,23 +125,25 @@ export default function Sidebar() {
             <div className="flex flex-col gap-8">
                 <Image src="/images/logo-secondary.png" width={125} height={100} alt="logo" />
                 {
-                    userLinks?.links.map((link: string, index: number) => (
-                        <div key={index} className="flex items-center gap-3.5">
-                            <Image
-                                className="filter invert"
-                                src={userLinks.icons[index]} 
-                                width={15} 
-                                height={15} 
-                                alt={link}
-                            />
-                            <Link
-                                className="text-sm"
-                                href={String(userLinks.routes[index])}    
-                            >
-                                {link}
-                            </Link>
-                        </div>  
-                    ))
+                    userLinks.links?.map( (link, index) => { 
+                        return (
+                            <div key={index} className="flex items-center gap-3">
+                                <Image
+                                    className="filter invert"
+                                    src={link.icon} 
+                                    width={15} 
+                                    height={15} 
+                                    alt={link.text}
+                                />
+                                <Link
+                                    className="text-sm"
+                                    href={link.route}    
+                                >
+                                    {link.text}
+                                </Link>
+                            </div>
+                        )
+                    })
                 }
             </div>
         
