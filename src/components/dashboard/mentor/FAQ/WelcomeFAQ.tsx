@@ -1,5 +1,5 @@
 import FAQSection from "@/components/ui/faq/FAQSection";
-import FAQDirectoryList from "./FAQDirectoryList";
+import FAQDirectoryList from "./FAQDirectoryListEIR";
 
 export default function WelcomeFAQ(){ 
     return ( 

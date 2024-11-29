@@ -31,7 +31,7 @@ export async function updateProfile(recordID: string, fieldData: any) {
           throw new Error('Network response was not ok');
         }
         
-        revalidatePath("/mentor/profile");
+        revalidatePath("/dashboard/profile");
         return { message: "Skill updated successfully" };
       } catch(error){ 
           console.error("Error:", error);

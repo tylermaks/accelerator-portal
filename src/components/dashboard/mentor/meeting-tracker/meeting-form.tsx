@@ -52,6 +52,11 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
   
     const handleSubmit = async () => {
         const newMeeting = { ...formState };
+
+        if (!newMeeting.companyName) {
+            newMeeting.companyName = "Foresight";
+        }
+
         addOptimistic({ id: Math.random(), fields: newMeeting });
 
 
@@ -81,8 +86,6 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
     };
 
     const handleEdit = async () => {
-        console.log("FORM STATE", formState)
-
         try {
             await updateMeeting(data.id, formState);
             toggleModal({});
@@ -130,7 +133,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
           default:
             return (
               <Input
-                label="Please provide details:"
+                label="Please provide project name:"
                 type="text"
                 id="altName"
                 name="altName"

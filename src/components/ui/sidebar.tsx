@@ -29,7 +29,7 @@ const sideBarLinks = [
             {
                 text: "FAQs",
                 icon: '/images/question-icon.svg',
-                route: '/dashboard/faqs'
+                route: '/dashboard/faqs/eir'
             }
         ]
     },
@@ -49,7 +49,7 @@ const sideBarLinks = [
             {
                 text: "FAQs",
                 icon: '/images/question-icon.svg',
-                route: '/dashboard/faqs'
+                route: '/dashboard/faqs/mentor'
             }
         ]
 
@@ -80,7 +80,7 @@ const sideBarLinks = [
             {
                 text: "FAQs",
                 icon: '/images/question-icon.svg',
-                route: '/dashboard/faqs'
+                route: '/dashboard/faqs/eir'
             }
         ]
 

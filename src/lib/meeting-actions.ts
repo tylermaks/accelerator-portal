@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
+import * as z from "zod"
 import getTableData from '@/components/dashboard/mentor/meeting-tracker/table-data'
 
 
@@ -28,33 +29,32 @@ export async function addMeeting(
   const supabase = createClient();
   const { data: user, error} =  await supabase.auth.getUser();
 
-  if (error) {
-    console.error('Error fetching user:', error);
-    return { error: 'Error fetching user', status: 500 }
+  if (error || !user) {
+    return { error: "Unauthorized access", status: 401 };
   }
 
-  if (!user) {
-      return { error: "No user found" , status: 401 };
-  }
-
-  console.log("TEST", formData)
+  const schema = z.object({
+    companyName: z.string().min(1, { message: "Company name is required" }),
+    altName: z.string().optional(),
+    supportType: z.string().min(1, { message: "Support type is required" }),
+    meetingObjective: z.string().optional(),
+    date: z.string().refine((val) => !isNaN(Date.parse(val)), {
+      message: "Invalid date format",
+    }),
+    duration: z.preprocess((val) => Number(val), z.number().positive()),
+    notes: z.string().optional(),
+  });
 
 
   if(user){
-    const userEmail = user.user.email
-
-    const meetingRecord = {
-      "companyName": formData.companyName ? formData.companyName : "Foresight",
-      "altName": formData.altName,
-      "supportType": formData.supportType,
-      "meetingObjective": formData.meetingObjective,
-      "email": userEmail as string, // add user email here
-      "date": formData.date,
-      "duration": Number(formData.duration) as number,
-      "notes": formData.notes
-    };
-
     try {
+      const validatedData = schema.parse(formData);
+
+      const meetingRecord = {
+        ...validatedData,
+        email: user.user.email,
+      };
+
       const response = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}`, {
         method: 'POST',
         headers: {
@@ -126,23 +126,31 @@ export async function updateMeeting(
   const supabase = createClient();
   const { data: user, error } =  await supabase.auth.getUser();
   
-  if (error) {
-    console.log("Error fetching user:", error)
-    return
+  if (error || !user) {
+    return { error: "Unauthorized access", status: 401 };
   }
 
+  const schema = z.object({
+    companyName: z.string().min(1, { message: "Company name is required" }),
+    altName: z.string().optional(),
+    supportType: z.string().min(1, { message: "Support type is required" }),
+    meetingObjective: z.string().optional(),
+    date: z.string().refine((val) => !isNaN(Date.parse(val)), {
+      message: "Invalid date format",
+    }),
+    duration: z.preprocess((val) => Number(val), z.number().positive()),
+    notes: z.string().optional(),
+  });
 
-  const airtableData = {
-    "companyName": fieldData.companyName,
-    "supportType": fieldData.supportType,
-    "meetingObjective": fieldData.meetingObjective,
-    "date": new Date(fieldData.date),
-    "duration": Number(fieldData.duration),
-    "notes": fieldData.notes,
-  }
 
   if(user){
     try {
+      const validatedData = schema.parse(fieldData);
+
+      const meetingRecord = {
+        ...validatedData,
+      }
+
       const response = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}/${recordID}`, {
         method: 'PATCH',
         headers: {
@@ -150,7 +158,7 @@ export async function updateMeeting(
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({  
-          fields: airtableData
+          fields: meetingRecord
         })
       });
 

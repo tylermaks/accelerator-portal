@@ -1,10 +1,10 @@
 import PageHeader from "@/components/ui/page-header";
 import WelcomeFAQ from "@/components/dashboard/mentor/FAQ/WelcomeFAQ";
-import MeetingTrackerFAQ from "@/components/dashboard/mentor/FAQ/MeetingTrackerFAQ";
+import MeetingTrackerFAQEIR from "@/components/dashboard/mentor/FAQ/MeetingTrackerFAQEIR";
 import ProfileFAQ from "@/components/dashboard/mentor/FAQ/ProfileFAQ";
 import SupportRequestFAQ from "@/components/dashboard/mentor/FAQ/SupportRequestsFAQ";
 import TroubleshootingFAQ from "@/components/dashboard/mentor/FAQ/TroubleshootingFAQ";
-import FAQDirectoryList from "@/components/dashboard/mentor/FAQ/FAQDirectoryList";
+import FAQDirectoryList from "@/components/dashboard/mentor/FAQ/FAQDirectoryListEIR";
 
 export default async function FAQ() {
     return ( 
@@ -22,7 +22,7 @@ export default async function FAQ() {
                     subTitle=""
                 />
                 <WelcomeFAQ />
-                <MeetingTrackerFAQ />
+                <MeetingTrackerFAQEIR />
                 <ProfileFAQ />
                 <SupportRequestFAQ />
                 <TroubleshootingFAQ />

@@ -1,12 +1,11 @@
 import FAQSection from "@/components/ui/faq/FAQSection";
 import FAQSubSection from "@/components/ui/faq/FAQSubSection";
 import FAQDetails from "@/components/ui/faq/FAQDetails";
-import FAQList from "@/components/ui/faq/FAQList";
 import FAQHighlight from "@/components/ui/faq/FAQHighlight";
 import SupportTypeTable from "./SupportTypeTable";
 import Image from "next/image";
 
-export default function MeetingTrackerFAQ() { 
+export default function MeetingTrackerFAQEIR() { 
     return(
         <FAQSection title={"Tracking Your Billable Hours with Foresight"} id={"meeting-tracking-section"}>
             <p className="mb-8">
