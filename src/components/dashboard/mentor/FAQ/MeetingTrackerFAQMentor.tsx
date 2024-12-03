@@ -36,7 +36,7 @@ export default function MeetingTrackerFAQMentor() {
                 <div>
                     <Image 
                         className="w-full"
-                        src="/images/add-meeting.gif"
+                        src={`https://drive.google.com/uc?export=view&id=${process.env.ADD_MEETING_GIF_ID}`}
                         alt="Add meeting example"
                         width={500}
                         height={200}
@@ -69,7 +69,7 @@ export default function MeetingTrackerFAQMentor() {
                 <div>
                 <Image 
                         className="w-full"
-                        src="/images/edit-meeting.gif"
+                        src={`https://drive.google.com/uc?export=view&id=${process.env.EDIT_MEETING_GIF_ID}`}
                         alt="Edit meeting example"
                         width={500}
                         height={200}

@@ -22,7 +22,7 @@ export default function ProfileFAQ() {
                 <div>
                     <Image 
                         className="w-full"
-                        src="/images/add-skills.gif"
+                        src={`https://drive.google.com/uc?export=view&id=${process.env.ADD_SKILL_GIF_ID}`}
                         alt="Add skills example"
                         width={500}
                         height={200}
@@ -41,7 +41,7 @@ export default function ProfileFAQ() {
                 <div>
                     <Image 
                         className="w-full"
-                        src="/images/delete-skills.gif"
+                        src={`https://drive.google.com/uc?export=view&id=${process.env.DELETE_SKILL_GIF_ID}`}
                         alt="Add skills example"
                         width={500}
                         height={200}
