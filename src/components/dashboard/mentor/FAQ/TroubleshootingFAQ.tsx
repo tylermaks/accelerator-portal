@@ -1,6 +1,7 @@
 import FAQList from "@/components/ui/faq/FAQList";
 import FAQSection from "@/components/ui/faq/FAQSection";
 import FAQSubSection from "@/components/ui/faq/FAQSubSection";
+import Link from "next/link";
 
 const missingVentureBullets= [ 
     "Use the search bar in the Company Dropdown to lookup the company’s legal name they may have been listed in our system under another name",
@@ -9,16 +10,14 @@ const missingVentureBullets= [
 ]
 
 const missingSupportType = [
-    "Consider the existing Support Types <LINK>, which of these best describes the support that you provide",
+    "Consider the existing Support Types, which of these best describes the support that you provide",
     "Use the “Other” support type and provide more details in the description and notes section. Program managers have access to the database and may update these manually to match our funding criteria.",
     "Reach out to a program manager to clarify which Support Type is best for the work that is being completed"
 ]
 
+const ticketFormLink = process.env.TICKET_FORM_LINK
+
 export default function TroubleshootingFAQ() { 
-
-
-
-
     return (
         <FAQSection title="Troubleshooting Common Issues" id="troubleshooting-section">
             <FAQSubSection title="A venture is missing form the Venture Dropdown" id="missing-venture">
@@ -42,7 +41,7 @@ export default function TroubleshootingFAQ() {
 
             <FAQSubSection title="I've found a bug while using the Foresight Advisor Portal" id="found-bug">
                 <p>
-                    If you experience issues while using the Foresight Advisor Portal please submit a ticket using this form (add link here). 
+                    If you experience issues while using the Foresight Advisor Portal please submit a ticket using <a className="underline text-orange" href={ticketFormLink} target="_blank">this form</a>. 
                     If the issue is urgent, you can contact Tyler Maksymiw directly. Thanks for your patience.
                 </p>
             </FAQSubSection>

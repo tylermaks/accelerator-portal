@@ -123,25 +123,40 @@ export default async function Profile() {
  
     return(
        <div className="flex flex-col gap-8 px-24 pb-10 relative bg-white py-10 px-8">
-            <div className="absolute top-10 left-8 right-8 h-48">
-                <Image 
-                    className="absolute top-0 left-0 right-0 z-0 rounded-md"
-                    src="/images/solar-panels.jpg"
-                    alt="banner"
-                    layout="fill"
-                    objectFit="cover"
-                    objectPosition="center"
-                />
-            </div>
+            
 
             { skillsData.length > 0  ? (
-                <div className="px-28">
-                    <ProfileName data={fields}/>
-                    <ProfileText id={id} data={fields.Bio} /> 
-                    <SkillsWrapper id={id} data={skillsArray} metaData={metaData.fields}/>
-                </div>
+                <>
+                    <div className="absolute top-10 left-8 right-8 h-48">
+                    <Image 
+                        className="absolute top-0 left-0 right-0 z-0 rounded-md"
+                        src="/images/solar-panels.jpg"
+                        alt="banner"
+                        layout="fill"
+                        objectFit="cover"
+                        objectPosition="center"
+                        />
+                    </div>
+                    
+                    <div className="px-28">
+                        <ProfileName data={fields}/>
+                        <ProfileText id={id} data={fields.Bio} /> 
+                        <SkillsWrapper id={id} data={skillsArray} metaData={metaData.fields}/>
+                    </div>
+                </>
             ) : (
-                <h2 className="mt-72">It appears you need to fill out your EIR Entry Form</h2>
+                <div className="h-screen">
+                    <iframe 
+                        className="airtable-embed h-full" 
+                        src={process.env.EIR_FORM_URL}
+                        width="100%" 
+                        height="533" 
+                        style={{ background: 'transparent' }}
+                        title="Airtable Embed"  
+                        sandbox="allow-scripts allow-same-origin allow-forms"
+                    ></iframe>
+                </div>
+                
             )}
        </div>
     )

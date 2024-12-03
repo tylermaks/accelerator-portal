@@ -85,7 +85,7 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
 
     return (
         <div
-            className={`w-full relative py-1.5`}
+            className={`w-full relative py-1.5 my-8`}
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >

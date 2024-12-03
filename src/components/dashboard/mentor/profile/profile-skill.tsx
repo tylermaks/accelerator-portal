@@ -36,6 +36,8 @@ export default function ProfileSkill({ id, data, metaData, title, index, updateC
     };
 
     const handleDeleteCategory = async (categoryToDelete: string) => {
+
+        console.log("Category to delete", categoryToDelete)
         updateCategories((prevCategories) => prevCategories.filter((item) => item !== categoryToDelete));
         updateProfile(id, { [categoryToDelete]: [] });
         setEditing(false);

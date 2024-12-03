@@ -5,6 +5,7 @@ import { jwtDecode } from "jwt-decode";
 import { logout } from "@/lib/supabase-actions";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 
 const sideBarLinks = [
@@ -110,6 +111,10 @@ const defaultLink: Link = {
 
 export default function Sidebar() {
     const [userLinks, setUserLinks] = useState<Link>(defaultLink)
+    const pathName = usePathname()
+
+    
+
 
     useEffect(() => {
         const cookie = document.cookie
@@ -122,12 +127,15 @@ export default function Sidebar() {
 
     return(
         <nav className="h-screen flex flex-col justify-between p-8 w-1/5 bg-teal text-gray-100 ">
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
                 <Image src="/images/logo-secondary.png" width={125} height={100} alt="logo" />
                 {
                     userLinks.links?.map( (link, index) => { 
+                        const linkStyles = pathName.includes(link.route) ? "flex items-center gap-3 bg-teal-md p-2 rounded-md" : "flex items-center gap-3 p-2"
+                       
+
                         return (
-                            <div key={index} className="flex items-center gap-3">
+                            <div key={index} className={linkStyles}>
                                 <Image
                                     className="filter invert"
                                     src={link.icon} 

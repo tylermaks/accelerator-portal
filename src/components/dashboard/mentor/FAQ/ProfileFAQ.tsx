@@ -1,3 +1,4 @@
+import Image from "next/image";
 import FAQHighlight from "@/components/ui/faq/FAQHighlight";
 import FAQSection from "@/components/ui/faq/FAQSection";
 import FAQSubSection from "@/components/ui/faq/FAQSubSection";
@@ -19,7 +20,13 @@ export default function ProfileFAQ() {
                     See the image below: 
                 </p>
                 <div>
-                    ADD GIF HERE
+                    <Image 
+                        className="w-full"
+                        src="/images/add-skills.gif"
+                        alt="Add skills example"
+                        width={500}
+                        height={200}
+                    />
                 </div>
             </FAQSubSection>
 
@@ -32,7 +39,13 @@ export default function ProfileFAQ() {
                     See the image below: 
                 </p>
                 <div>
-                    ADD GIF HERE
+                    <Image 
+                        className="w-full"
+                        src="/images/delete-skills.gif"
+                        alt="Add skills example"
+                        width={500}
+                        height={200}
+                    />
                 </div>
             </FAQSubSection>
 

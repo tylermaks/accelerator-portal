@@ -12,6 +12,8 @@ export async function updateProfile(recordID: string, fieldData: any) {
     const user =  await supabase.auth.getUser();
     
     if(!recordID || !fieldData) return
+
+    console.log("FIELD DATA", fieldData)
   
     if(user){
       try{
@@ -26,6 +28,8 @@ export async function updateProfile(recordID: string, fieldData: any) {
               fields: fieldData
           })
         })
+
+        console.log("RESPONSE", response)
   
         if (!response.ok) {
           throw new Error('Network response was not ok');

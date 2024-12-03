@@ -116,9 +116,15 @@ export default function ReportWrapper() {
                         <p className="text-fsGray mb-4 text-sm">Total EIR Hours</p>
                         <p className="text-4xl text-fsGray font-bold">{totalHours}</p>
                         <p className="text-fsGray text-sm">Hours</p>
+                        
+                    </div>
+                    <div className="flex justify-center gap-1 mt-4">
+                        <p className="text-fsGray text-xs">Please submit invoice by:</p>
+                        <p className="text-fsGray text-xs">{new Date(year, month, 10).toDateString()}</p>
                     </div>
 
-                    <div className="flex flex-col flex-1 justify-between py-4">
+
+                    {/* <div className="flex flex-col flex-1 justify-between py-4">
                         <div>
                             <p className="text-fsGray text-sm py-4 font-semibold">Estimated Invoice Total*</p>
                             <div className="flex justify-between py-2">
@@ -141,7 +147,7 @@ export default function ReportWrapper() {
                         <div className="flex justify-end mt-4">
                             <p className="text-fsGray text-[10px] m0">*This is an estimate only, not a valid invoice.</p>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div> 
         </div>
