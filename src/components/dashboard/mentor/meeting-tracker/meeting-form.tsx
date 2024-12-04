@@ -133,7 +133,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
           default:
             return (
               <Input
-                label="Please provide project name:"
+                label={formState.supportType === "Content Development" ? "Please provided project name:" : "Please provided company name:"}
                 type="text"
                 id="altName"
                 name="altName"
@@ -171,7 +171,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
             />
 
            { renderConditionalInput() }
-           { formState.supportType === "Supporting a company" &&
+           { (formState.supportType === "Supporting a company" || formState.supportType === "Goodwill Advising") &&
                 <Select
                    label="Meeting Objective"
                    id="meetingObjective"
@@ -235,23 +235,3 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
         </form>
     )
 }
-
-
-// e.preventDefault();
-
-// if (clickedButton === "delete-meeting") {                    
-//     handleDelete();
-//     return;
-// }
-
-// if (clickedButton === "submit-meeting" || clickedButton === "add-another-meeting") {
-//     const formData = new FormData(e.currentTarget);
-//     handleSubmit(formData as unknown as FormData);
-//     return;
-// }
-
-// if (clickedButton === "update-meeting") {
-//     const formData = new FormData(e.currentTarget);
-//     handleEdit(formData as unknown as FormData);
-//     return;
-// }
