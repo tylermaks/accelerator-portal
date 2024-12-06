@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    experimental: {
+        serverActions: {
+          allowedOrigins: [process.env.URL_ROOT],
+        },
+    },
     images:{
         remotePatterns:[
             {
