@@ -39,7 +39,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
         if (data.fields) {
             setFormState(initializeFields(data.fields, supportOptions));
         }
-    }, [data.fields, supportTypeList]);
+    }, [data.fields, supportTypeList, supportOptions]);
 
  
     const handleInputChange = (name: string, value: string) => {

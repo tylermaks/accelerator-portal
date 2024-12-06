@@ -116,6 +116,7 @@ export async function logout() {
 
 export async function sendPasswordReset(formData: FormData) {
   const redirectURL = process.env.UPDATE_PASSWORD_URL
+
   const supabase = createClient()
 
   const { data, error } = await supabase.auth.resetPasswordForEmail(formData.get('email') as string, {

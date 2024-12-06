@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtDecode } from "jwt-decode";
 
-
 const publicRoutes = ['/', '/reset-password', '/error']; 
 
 const roleRoutes: { [key: string]: string[] } = {
@@ -18,41 +17,57 @@ const defaultRoutes: { [key: string]: string } = {
     company: '/dashboard',
 };
 
+export function middleware(request: NextRequest) {
+    try {
+        const pathName = request.nextUrl.pathname;
+        const SB_TOKEN = process.env.SB_TOKEN;
+        const cookie = SB_TOKEN && request.cookies.get(SB_TOKEN);
+        const token = cookie && cookie.value;
 
-export async function middleware(request: NextRequest) {
-    const pathName = request.nextUrl.pathname;
-    const SB_TOKEN = process.env.SB_TOKEN;
-    const cookie = SB_TOKEN && request.cookies.get(SB_TOKEN);
-    const token = cookie && cookie.value;
-   
-
-    //if token is NOT expired then check the route and make a decision on where to go next
-    if(token){
-        const decoded = jwtDecode<{ exp?: number; user_metadata?: { user_type?: string } }>(token);
-        const isTokenExpired = decoded.exp && Date.now() >= decoded.exp * 1000
-        const userRole = decoded.user_metadata?.user_type
-
-    
-        if(userRole && roleRoutes[userRole] && roleRoutes[userRole].includes(pathName)){
-            return NextResponse.next();
+        // If no token and not a public route, redirect to home
+        if (!token && !publicRoutes.includes(pathName)) {
+            return NextResponse.redirect(new URL('/', request.url));
         }
 
-        if(userRole && !roleRoutes[userRole].includes(pathName)){ 
-            return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
-        } 
+        // If token exists, validate and check routes
+        if (token) {
+            let decoded;
+            try {
+                decoded = jwtDecode<{ exp?: number; user_metadata?: { user_type?: string } }>(token);
+            } catch (decodeError) {
+                console.error('Token decode error:', decodeError);
+                return NextResponse.redirect(new URL('/', request.url));
+            }
 
-        if (userRole && publicRoutes.includes(pathName)) {
-            return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
-        } 
+            const isTokenExpired = decoded.exp && Date.now() >= decoded.exp * 1000;
+            const userRole = decoded.user_metadata?.user_type;
 
-        if(isTokenExpired && !publicRoutes.includes(pathName)){ 
-            return NextResponse.redirect(new URL('/', request.url))
+            // Token is expired, redirect to home
+            if (isTokenExpired && !publicRoutes.includes(pathName)) {
+                return NextResponse.redirect(new URL('/', request.url));
+            }
+
+            // Check user role and route permissions
+            if (userRole) {
+                // Redirect to public routes if logged in
+                if (publicRoutes.includes(pathName)) {
+                    return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
+                }
+
+                // Check route permissions
+                if (roleRoutes[userRole]) {
+                    if (!roleRoutes[userRole].includes(pathName)) {
+                        return NextResponse.redirect(new URL(defaultRoutes[userRole], request.url));
+                    }
+                }
+            }
         }
-    } 
 
-    //If token is expired and user is trying to reach protected route, redirect to home
-    if(!token && !publicRoutes.includes(pathName)){ 
-        return NextResponse.redirect(new URL('/', request.url))
+        return NextResponse.next();
+    } catch (error) {
+        console.error('Middleware error:', error);
+        // Fallback to home route in case of any unexpected error
+        return NextResponse.redirect(new URL('/', request.url));
     }
 }
 
