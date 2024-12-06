@@ -47,6 +47,7 @@ export default function ForgotPassword() {
                     type="email" 
                     id="email"
                     name="email"
+                    isRequired
                 />
                
                 <MainButton 
