@@ -18,9 +18,9 @@ const defaultRoutes: { [key: string]: string } = {
 };
 
 export function middleware(request: NextRequest) {
+    const SB_TOKEN = process.env.SB_TOKEN;
     try {
         const pathName = request.nextUrl.pathname;
-        const SB_TOKEN = process.env.SB_TOKEN;
         const cookie = SB_TOKEN && request.cookies.get(SB_TOKEN);
         const token = cookie && cookie.value;
 
@@ -36,15 +36,20 @@ export function middleware(request: NextRequest) {
                 decoded = jwtDecode<{ exp?: number; user_metadata?: { user_type?: string } }>(token);
             } catch (decodeError) {
                 console.error('Token decode error:', decodeError);
-                return NextResponse.redirect(new URL('/', request.url));
+                // Create a response to clear the cookie and redirect
+                const response = NextResponse.redirect(new URL('/', request.url));
+                response.cookies.delete(SB_TOKEN);
+                return response;
             }
 
             const isTokenExpired = decoded.exp && Date.now() >= decoded.exp * 1000;
             const userRole = decoded.user_metadata?.user_type;
 
-            // Token is expired, redirect to home
-            if (isTokenExpired && !publicRoutes.includes(pathName)) {
-                return NextResponse.redirect(new URL('/', request.url));
+            // Token is expired, clear cookie and redirect to home
+            if (isTokenExpired) {
+                const response = NextResponse.redirect(new URL('/', request.url));
+                response.cookies.delete(SB_TOKEN);
+                return response;
             }
 
             // Check user role and route permissions
@@ -66,8 +71,10 @@ export function middleware(request: NextRequest) {
         return NextResponse.next();
     } catch (error) {
         console.error('Middleware error:', error);
-        // Fallback to home route in case of any unexpected error
-        return NextResponse.redirect(new URL('/', request.url));
+        // Create a response to clear the cookie and redirect
+        const response = NextResponse.redirect(new URL('/', request.url));
+        if (SB_TOKEN) response.cookies.delete(SB_TOKEN);
+        return response;
     }
 }
 
@@ -76,4 +83,3 @@ export const config = {
         '/((?!api|_next/static|_next/image|favicon.ico|images).*)'
     ]
 };
-
