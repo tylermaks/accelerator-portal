@@ -34,13 +34,13 @@ export default function MeetingTrackerFAQMentor() {
                     As shown in the image below you can simply hit the “Add Meeting” button in the top-right corner and add the meeting details. 
                 </p>
                 <div>
-                    {/* <Image 
+                    <Image 
                         className="w-full"
                         src={`https://drive.google.com/uc?export=view&id=${process.env.ADD_MEETING_GIF_ID}`}
                         alt="Add meeting example"
                         width={500}
                         height={200}
-                    /> */}
+                    />
                 </div>
                 <FAQDetails title="Company Dropdown" id="company-dropdown">
                     <p>
@@ -67,13 +67,13 @@ export default function MeetingTrackerFAQMentor() {
                     icon located on the right-hand side of the row of data that you would like to update. 
                 </p>
                 <div>
-                    {/* <Image 
+                    <Image 
                         className="w-full"
                         src={`https://drive.google.com/uc?export=view&id=${process.env.EDIT_MEETING_GIF_ID}`}
                         alt="Edit meeting example"
                         width={500}
                         height={200}
-                    /> */}
+                    />
                 </div>
             </FAQSubSection>
         </FAQSection>

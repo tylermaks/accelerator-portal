@@ -96,7 +96,7 @@ export default function TableWrapper( {tableData, supportTypeList, companyList, 
             </div>
 
             <Table 
-                tableHeaders={["Date", "Company Name", "Duration (hrs)", "Support Type", ""]}
+                tableHeaders={["Date", "Company Name", "Duration (hrs)", "Support Type", "Meeting Objective", ""]}
                 tableRows={optimisticRows}
                 toggleModal={toggleModal}
                 offset={rows?.offset}

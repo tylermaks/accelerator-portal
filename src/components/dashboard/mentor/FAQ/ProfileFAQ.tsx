@@ -20,13 +20,13 @@ export default function ProfileFAQ() {
                     See the image below: 
                 </p>
                 <div>
-                    {/* <Image 
+                    <Image 
                         className="w-full"
                         src={`https://drive.google.com/uc?export=view&id=${process.env.ADD_SKILL_GIF_ID}`}
                         alt="Add skills example"
                         width={500}
                         height={200}
-                    /> */}
+                    />
                 </div>
             </FAQSubSection>
 
@@ -39,13 +39,13 @@ export default function ProfileFAQ() {
                     See the image below: 
                 </p>
                 <div>
-                    {/* <Image 
+                    <Image 
                         className="w-full"
                         src={`https://drive.google.com/uc?export=view&id=${process.env.DELETE_SKILL_GIF_ID}`}
                         alt="Add skills example"
                         width={500}
                         height={200}
-                    /> */}
+                    />
                 </div>
             </FAQSubSection>
 

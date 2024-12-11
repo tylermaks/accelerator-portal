@@ -17,6 +17,7 @@ type TableProps = {
             companyName: string;
             duration: string;
             supportType: string;
+            meetingObjective: string;
         }
     }[]
 }
@@ -92,18 +93,21 @@ export default function Table({ tableHeaders, tableRows, toggleModal, offset, se
                             <td className={rowStyles}>{row.fields.altName ? row.fields.altName : row.fields.companyName}</td>
                             <td className={rowStyles}>{row.fields.duration}</td>
                             <td className={rowStyles}>{row.fields.supportType}</td>
+                            <td className={rowStyles}>{row.fields.meetingObjective}</td>
                             <td 
                                 id={row.id} 
-                                className={rowStyles}
+                                className={`${rowStyles} cursor-pointer`}
                                 onClick={() => toggleModal(row)}
                             >
                                 <Image 
-                                    className="cursor-pointer" 
+                                    className="inline-block"
                                     src="/images/open-icon.svg" 
                                     alt="Open record" 
                                     width={20} 
                                     height={20}
                                 />
+
+                                <p  className="inline-block ml-2 text-fsGray text-xs m-0">Edit</p>
                             </td>
                         </tr>
                     ))}
