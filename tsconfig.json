@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/utils/supabase/supabaseReqResClient.js", "src/context/SortFilterContext.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/utils/supabase/supabaseReqResClient.js", "src/context/SortFilterContext.js", "src/utils/supabase/middleware.js"],
   "exclude": ["node_modules"]
 }

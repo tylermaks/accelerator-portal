@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { updateSession } from '@/utils/supabase/middleware'
+import { cookies } from 'next/headers';
 import { jwtDecode } from "jwt-decode";
 
 const publicRoutes = ['/', '/reset-password', '/error']; 
@@ -17,7 +19,7 @@ const defaultRoutes: { [key: string]: string } = {
     company: '/dashboard',
 };
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     const SB_TOKEN = process.env.SB_TOKEN;
     try {
         const pathName = request.nextUrl.pathname;
@@ -68,7 +70,7 @@ export function middleware(request: NextRequest) {
             }
         }
 
-        return NextResponse.next();
+        return await updateSession(request)
     } catch (error) {
         console.error('Middleware error:', error);
         // Create a response to clear the cookie and redirect

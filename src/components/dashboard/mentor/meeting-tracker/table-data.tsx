@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
+import { cookies, headers } from 'next/headers'
 
 const API_KEY = process.env.AIRTABLE_API_KEY
 const BASE_ID = process.env.BASE_ID

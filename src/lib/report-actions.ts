@@ -32,7 +32,7 @@ export async function getReportData({month, year, offset= null} : ReportDataProp
         const endDate = new Date(year, month, 0); // get the last day of the month
         const filterFormula = `AND({email} = '${userEmail}', {date} >= '${startDate.toISOString()}', {date} <= '${endDate.toISOString()}')`;
         const sortQuery = "sort[0][field]=date&sort[0][direction]=asc";
-        const fields = ["companyName", "altName", "supportType", "date", "duration"]
+        const fields = ["companyName", "altName", "supportType", "date", "meetingObjective", "duration"]
         const fieldQuery = fields.map(field => `fields=${field}`).join("&")
         const urlBase = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?filterByFormula=${filterFormula}&${sortQuery}&${fieldQuery}&view=${VIEW_ID}`
         const urlOffset = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?offset=${offset}`

@@ -12,6 +12,7 @@ type ReportDataProps = {
         altName?: string;
         supportType: string;
         date: string;
+        meetingObjective: string;
         duration: number;
     };
 }
@@ -39,9 +40,6 @@ export default function ReportWrapper() {
     
     const [reportData, setReportData] = useState<ReportDataProps[]>([]);
     const [totalHours, setTotalHours] = useState(0);
-    const [preTaxAmount, setPreTaxAmount] = useState("")
-    const [taxAmount, setTaxAmount] = useState("")
-    const [afterTaxAmount, setAfterTaxAmount] = useState("")
     const [month, setMonth] = useState(currentMonth);
     const [year, setYear] = useState(currentYear);
 
@@ -52,21 +50,14 @@ export default function ReportWrapper() {
     const getData = useCallback( async () => {
         const data = await getReportData({month, year});
         const { records } = data;
+
+        console.log("RECORDS", records)
         setReportData(records);
     }, [month, year])
 
     const calculateTotal = useCallback ( () => {
         const hourSum = reportData.reduce((sum, record) => sum + record.fields.duration, 0);
-        const preTaxCalc = (hourSum * 100).toFixed(2)
-        const taxCalc = (parseFloat(preTaxCalc) * 0.05).toFixed(2)
-        const afterTaxCalc = (parseFloat(preTaxCalc) * 1.05).toFixed(2)
-
-        console.log("TAX CALC", taxCalc, typeof(taxCalc))
-    
         setTotalHours(hourSum)
-        setPreTaxAmount(preTaxCalc)
-        setTaxAmount(taxCalc)
-        setAfterTaxAmount(afterTaxCalc)
     }, [reportData])
 
     useEffect(() => {   
@@ -79,8 +70,6 @@ export default function ReportWrapper() {
 
     return (
         <div>
-            <div className="flex justify-between mb-4">
-            </div>
             <div className="flex bg-white rounded-md">
                 <div className="w-2/3 p-4">
                     <div className="flex justify-between mb-6">
@@ -122,32 +111,6 @@ export default function ReportWrapper() {
                         <p className="text-fsGray text-xs">Please submit invoice by:</p>
                         <p className="text-fsGray text-xs">{new Date(year, month, 10).toDateString()}</p>
                     </div>
-
-
-                    {/* <div className="flex flex-col flex-1 justify-between py-4">
-                        <div>
-                            <p className="text-fsGray text-sm py-4 font-semibold">Estimated Invoice Total*</p>
-                            <div className="flex justify-between py-2">
-                                <p className="text-fsGray text-sm">EIR Coaching Hours</p>
-                                <p className="text-fsGray text-sm">${preTaxAmount}</p>
-                            </div>
-                            <div className="flex justify-between pb-2">
-                                <p className="text-fsGray text-sm">GST (5%)</p>
-                                <p className="text-fsGray text-sm">${taxAmount}</p>
-                            </div>
-                            <div className="flex justify-between pb-2">
-                                <p className="text-fsGray text-sm">Total</p>
-                                <p className="text-fsGray text-sm">${afterTaxAmount}</p>
-                            </div>
-                            <div className="flex justify-between">
-                                <p className="text-fsGray text-sm">Please submit invoice by:</p>
-                                <p className="text-fsGray text-sm">{new Date(year, month, 10).toDateString()}</p>
-                            </div>
-                        </div>
-                        <div className="flex justify-end mt-4">
-                            <p className="text-fsGray text-[10px] m0">*This is an estimate only, not a valid invoice.</p>
-                        </div>
-                    </div> */}
                 </div>
             </div> 
         </div>

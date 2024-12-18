@@ -20,6 +20,7 @@ const sortFilterOptions = [
     { label: "Company Name", value: "companyName" },
     { label: "Duration", value: "duration" },
     { label: "Support Type", value: "supportType" },
+    { label: "Meeting Objective", value: "meetingObjective"}
 ];
 
 export default function SortFilterButton({ text, icon }: TableButtonProps) {    
