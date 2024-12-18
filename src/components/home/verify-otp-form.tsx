@@ -13,8 +13,11 @@ export default function VerifyOTPForm() {
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => { 
         event.preventDefault()
 
-        //get email
-        const { email } = usePathname.arguments;
+
+         //get email
+        const pathName = window.location.search; 
+        const urlParams = new URLSearchParams(pathName);
+        const email = urlParams.get('email');
         console.log("EMAIL FROM OTP", email)
         const userEmail = typeof email === 'string' ? email : '';
 
