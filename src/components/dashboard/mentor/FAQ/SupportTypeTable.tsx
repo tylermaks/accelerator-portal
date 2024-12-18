@@ -12,10 +12,6 @@ const supportTypeData = [
         description: "Advisory Board Meetings (ABMs) are quarterly, invite-only meetings in which three EIRs evaluate a company’s progress. Only the duration of the meeting is billable. Prep time will require you to meet with the venture and can be billed under Support a Company."
     }, 
     { 
-        title: "Access to Capital",
-        description: ""
-    },
-    { 
         title: "Content Development", 
         description: "Content Development includes all support generating content for Foresight’s programs, learning management system, etc. This Support Type only applies to you if you’ve been approached by a member of Foresight staff to create content. "
     }, 
