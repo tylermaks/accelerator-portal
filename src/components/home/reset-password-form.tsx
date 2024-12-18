@@ -92,7 +92,6 @@ export default function ResetPasswordForm() {
     return (
         <form className="flex flex-col gap-4 py-16 w-1/3" onSubmit={handleSubmit}>
             <div>
-             
               <h1 className="text-xl font-semibold text-fsGray mb-2 ">Reset your password</h1>
               <p className="text-fsGray text-sm">Enter your new password below to reset it</p>
             </div>

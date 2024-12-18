@@ -127,3 +127,21 @@ export async function sendPasswordReset(formData: FormData) {
 }
 
 
+export async function verifyPasscode(email: string, token: string) { 
+  const supabase = createClient()
+  const { data, error } = await supabase.auth.verifyOtp({ email, token, type: 'recovery'})
+
+  if (error) { 
+    console.error(error)
+    return { message: "An error occured verify your passcode", status: 500}
+  }
+
+    // Check if OTP was successfully verified and redirect if valid
+  if (data.user) {
+    return { message: "Passcode verified", status: 200, redirectUrl: `/reset-password?email=${email}` };
+  }
+
+  // If no user data (e.g., invalid OTP)
+  return { message: "Invalid or expired passcode", status: 400 };
+}
+
