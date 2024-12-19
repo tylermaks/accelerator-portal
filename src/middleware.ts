@@ -3,7 +3,7 @@ import { updateSession } from '@/utils/supabase/middleware'
 import { cookies } from 'next/headers';
 import { jwtDecode } from "jwt-decode";
 
-const publicRoutes = ['/', '/reset-password', '/error', '/verify-otp']; 
+const publicRoutes = ['/', '/reset-password', '/error', '/confirm-reset']; 
 
 const roleRoutes: { [key: string]: string[] } = {
     admin: ['/admin/dashboard', '/admin/members', '/admin/controls', '/dashboard/meeting-tracker', '/dashboard/profile', '/dashboard/reports', '/dashboard/support-requests', '/dashboard/faqs/eir', '/dashboard/faqs/mentor'],

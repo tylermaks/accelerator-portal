@@ -3,7 +3,7 @@
 import Input from "../ui/input"
 import MainButton from "@/components/ui/main-button"
 import { verifyPasscode } from "@/lib/supabase-actions"
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState, FormEvent } from 'react';
 
 export default function VerifyOTPForm() {
@@ -14,7 +14,7 @@ export default function VerifyOTPForm() {
         event.preventDefault()
 
 
-         //get email
+        //get email
         const pathName = window.location.search; 
         const urlParams = new URLSearchParams(pathName);
         const email = urlParams.get('email');
