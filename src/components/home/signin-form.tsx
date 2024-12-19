@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import { login } from "@/lib/supabase-actions";
 import Input from "../ui/input";
+import PasswordInput from "../ui/password-input";
 import MainButton from "../ui/main-button";
 import LoadingSpinner from "../ui/loading-spinner";
 
@@ -56,12 +57,19 @@ export default function SignInForm() {
                     setFormState={setEmail}
                 />
                 <>
-                    <Input 
+                    {/* <Input 
                         label="Password:"
                         type="password" 
                         id="password"
                         name="password"
                         isRequired={true}
+                        setFormState={setPassword}
+                    /> */}
+
+                    <PasswordInput 
+                        label="Password:"
+                        id="password"
+                        name="password"
                         setFormState={setPassword}
                     />
                     {error && <p className="text-red-500 text-sm">{error}</p>}

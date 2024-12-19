@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { useState, useEffect, FormEvent } from "react";
-import Input from "@/components/ui/input";
+import PasswordInput from "@/components/ui/password-input";
 import MainButton from "@/components/ui/main-button";
 import * as z from "zod"; // Import Zod
 
@@ -12,7 +12,7 @@ const passwordSchema = z.string()
   .min(8, "Password must be at least 8 characters long")
   .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
   .regex(/[0-9]/, "Password must contain at least one number")
-  .regex(/[@$!%*?&#]/, "Password must contain at least one special character");
+  .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character");
 
 
 export default function ResetPasswordForm() {
@@ -37,7 +37,7 @@ export default function ResetPasswordForm() {
         length: value.length >= 8,
         uppercase: /[A-Z]/.test(value),
         number: /[0-9]/.test(value),
-        specialChar: /[@$!%*?&#]/.test(value),
+        specialChar: /[^A-Za-z0-9]/.test(value),
       });
     };
 
@@ -95,12 +95,10 @@ export default function ResetPasswordForm() {
               <h1 className="text-xl font-semibold text-fsGray mb-2 ">Reset your password</h1>
               <p className="text-fsGray text-sm">Enter your new password below to reset it</p>
             </div>
-            <Input 
+            <PasswordInput 
               label="New Password:" 
-              type="password" 
               id="password" 
-              name="password" 
-              isRequired={true}
+              name="password"
               setFormState={handlePasswordChange}
             />
              <div className="text-sm mt-2">
@@ -118,12 +116,10 @@ export default function ResetPasswordForm() {
               </p>
             </div>
             <>
-              <Input 
+              <PasswordInput 
                 label="Confirm Password:" 
-                type="password" 
                 id="confirmed-password" 
                 name="confirmed-password"
-                isRequired={true}
                 setFormState={setConfirmPassword}
               />
               <div className="text-sm mt-2">
