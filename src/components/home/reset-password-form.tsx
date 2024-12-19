@@ -90,7 +90,7 @@ export default function ResetPasswordForm() {
     }, [password, confirmPassword])
 
     return (
-        <form className="flex flex-col gap-4 py-16 w-1/3" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
             <div>
               <h1 className="text-xl font-semibold text-fsGray mb-2 ">Reset your password</h1>
               <p className="text-fsGray text-sm">Enter your new password below to reset it</p>
@@ -104,16 +104,16 @@ export default function ResetPasswordForm() {
               setFormState={handlePasswordChange}
             />
              <div className="text-sm mt-2">
-              <p className={validationStatus.length ? "text-green-500" : "text-red-500"}>
+              <p className={validationStatus.length ? "text-teal-md" : "text-red-500"}>
                 {validationStatus.length ? "✓" : "✗"} Must have at least 8 characters
               </p>
-              <p className={validationStatus.uppercase ? "text-green-500" : "text-red-500"}>
+              <p className={validationStatus.uppercase ? "text-teal-md" : "text-red-500"}>
                 {validationStatus.uppercase ? "✓" : "✗"} Must contain an uppercase letter
               </p>
-              <p className={validationStatus.number ? "text-green-500" : "text-red-500"}>
+              <p className={validationStatus.number ? "text-teal-md" : "text-red-500"}>
                 {validationStatus.number ? "✓" : "✗"} Must contain a number
               </p>
-              <p className={validationStatus.specialChar ? "text-green-500" : "text-red-500"}>
+              <p className={validationStatus.specialChar ? "text-teal-md" : "text-red-500"}>
                 {validationStatus.specialChar ? "✓" : "✗"} Must contain a special character
               </p>
             </div>
@@ -127,7 +127,7 @@ export default function ResetPasswordForm() {
                 setFormState={setConfirmPassword}
               />
               <div className="text-sm mt-2">
-                <p className={password === confirmPassword ? "text-green-500" : "text-red-500"}>
+                <p className={password === confirmPassword ? "text-teal-md" : "text-red-500"}>
                   {password === confirmPassword ? "✓" : "✗"} Passwords must match
                 </p>
               </div>
