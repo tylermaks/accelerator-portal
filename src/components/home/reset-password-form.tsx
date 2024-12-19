@@ -68,13 +68,12 @@ export default function ResetPasswordForm() {
 
           if (error) {
             console.log("ERROR", error)
-            setError("There was an issue resetting your password. Please contact the Foresight team.")
+            setError("Password was not updated")
             setIsLoading(false)
-            return
+            router.push("/")
           }
 
           if (resetData) {
-            console.log("RESET DATA", resetData)
             router.push("/")
           }
           
