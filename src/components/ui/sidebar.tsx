@@ -6,6 +6,8 @@ import { logout } from "@/lib/supabase-actions";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { cookies } from 'next/headers'
+
 
 
 const sideBarLinks = [
@@ -108,18 +110,23 @@ const defaultLink: Link = {
     ]
   };
 
+  export function getCookie(name: string): string | undefined {
+    const cookies = document.cookie.split(';')
+    const cookie = cookies.find(c => c.trim().startsWith(name + '='))
+    if (!cookie) return undefined
+    return cookie.split('=')[1]
+}
+
+
 
 export default function Sidebar() {
     const [userLinks, setUserLinks] = useState<Link>(defaultLink)
     const pathName = usePathname()
 
     useEffect(() => {
-        const path = window.location.pathname
-        const userType = path.split('/')[1]
-        // const cookie = document.cookie
-        // const decodedCookie = jwtDecode<{ user_metadata?: { user_type?: string } }>(cookie)
-        // const userType = decodedCookie?.user_metadata?.user_type 
+        const userType = getCookie('user_type')
         const roleLinks = sideBarLinks.find(link => link.role === userType)
+
         roleLinks && setUserLinks(roleLinks)
     }, [])
 

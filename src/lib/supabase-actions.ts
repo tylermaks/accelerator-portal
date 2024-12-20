@@ -7,6 +7,7 @@ import { createClient } from '@/utils/supabase/server'
 import * as z from "zod";
 
 export async function login(formData: FormData) {
+    const cookieStore = cookies()
     const supabase = createClient()
 
     const data = {
@@ -28,13 +29,25 @@ export async function login(formData: FormData) {
     }
 
     if (user) {
-        console.log((user?.user_metadata.user_type))
-        revalidatePath('/', 'layout')
-        if( user?.user_metadata.user_type === "admin"){ 
+      const userType = user.user_metadata.user_type
+        
+      // Set cookie with user type
+      cookieStore.set('user_type', userType, {
+          // Cookie options
+          httpOnly: false, // Makes cookie inaccessible to browser JavaScript
+          secure: process.env.NODE_ENV === 'production', // Only sends cookie over HTTPS in production
+          sameSite: 'lax', // Protects against CSRF
+          maxAge: 60 * 60 * 24 * 7, // Cookie expires after 1 week
+          path: '/', // Cookie is available on all paths
+      })
+
+      revalidatePath('/', 'layout')
+      
+      if (userType === "admin") {
           redirect('/admin/members')
-        } else {
+      } else {
           redirect('/dashboard')
-        }
+      }
     }
 }
 
@@ -108,9 +121,14 @@ export async function createUser(formData: FormData) {
 }
 
 export async function logout() {
+  const cookieStore = cookies()
   const supabase = createClient()
+
   const { error } = await supabase.auth.signOut()
-  cookies().delete('sessionToken')
+
+  cookieStore.delete('sessionToken')
+  cookieStore.delete('user_type')
+
   revalidatePath('/', 'layout')
   redirect('/')
 }
