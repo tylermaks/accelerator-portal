@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/client";
 import { useState, useEffect, FormEvent } from "react";
 import PasswordInput from "@/components/ui/password-input";
 import MainButton from "@/components/ui/main-button";
@@ -73,17 +73,7 @@ export default function ResetPasswordForm() {
           }
 
           if (code) { 
-            console.log("CODE", code)
-            const supabase = await createClient()
-            const sessionResponse = await supabase.auth.exchangeCodeForSession(code)
-
-            console.log("SESSION RESPONSE", sessionResponse)
-
-            if (sessionResponse.error) {
-              console.log("SESSION ERROR", sessionResponse.error.message)
-              setIsLoading(false);
-              return;
-            }
+            const supabase = createClient()
 
             const { data: resetData, error } = await supabase.auth.updateUser({
               password: confirmPassword
@@ -101,7 +91,7 @@ export default function ResetPasswordForm() {
             }
           }
         } catch(error) {
-          console.error(error)
+          console.error("There was an error:", error)
           setError("A server error occurred, please try again")
           setIsLoading(false)
         } 
