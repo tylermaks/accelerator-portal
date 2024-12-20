@@ -113,15 +113,13 @@ export default function Sidebar() {
     const [userLinks, setUserLinks] = useState<Link>(defaultLink)
     const pathName = usePathname()
 
-    
-
-
     useEffect(() => {
-        const cookie = document.cookie
-        const decodedCookie = jwtDecode<{ user_metadata?: { user_type?: string } }>(cookie)
-        const userType = decodedCookie?.user_metadata?.user_type 
+        const path = window.location.pathname
+        const userType = path.split('/')[1]
+        // const cookie = document.cookie
+        // const decodedCookie = jwtDecode<{ user_metadata?: { user_type?: string } }>(cookie)
+        // const userType = decodedCookie?.user_metadata?.user_type 
         const roleLinks = sideBarLinks.find(link => link.role === userType)
-        
         roleLinks && setUserLinks(roleLinks)
     }, [])
 

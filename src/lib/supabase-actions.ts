@@ -28,6 +28,7 @@ export async function login(formData: FormData) {
     }
 
     if (user) {
+        console.log((user?.user_metadata.user_type))
         revalidatePath('/', 'layout')
         if( user?.user_metadata.user_type === "admin"){ 
           redirect('/admin/members')
