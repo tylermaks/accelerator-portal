@@ -58,7 +58,17 @@ export async function updateSession(request: NextRequest) {
   const userRole = user?.user_metadata.user_type
   const pathName = request.nextUrl.pathname
 
-  console.log("USER", userRole, pathName)
+   // Check if user exists and user_type cookie doesn't exist
+   if (user && userRole && !request.cookies.get('user_type')) {
+    // Set the user_type cookie
+    supabaseResponse.cookies.set('user_type', userRole, {
+      path: '/',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 // 7 days in seconds
+    })
+  }
 
   if (
     !user &&
