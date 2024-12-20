@@ -1,8 +1,7 @@
-import PageHeader from "@/components/ui/page-header"
-import MembersTable from "@/components/dashboard/admin/member-table"
-import CreateNewUser from "@/components/dashboard/admin/create-btn"
-import { createClient } from '@/utils/supabase/server'
-
+import PageHeader from "../../../../components/ui/page-header"
+import MembersTable from "../../../../components/dashboard/admin/member-table"
+import CreateNewUser from "../../../../components/dashboard/admin/create-btn"
+import { createClient } from "../../../../utils/supabase/server"
 
 const getUserList = async () => { 
     const supabase = createClient();
