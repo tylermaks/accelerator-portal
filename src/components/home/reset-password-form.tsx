@@ -77,6 +77,8 @@ export default function ResetPasswordForm() {
             const supabase = await createClient()
             const sessionResponse = await supabase.auth.exchangeCodeForSession(code)
 
+            console.log("SESSION RESPONSE", sessionResponse)
+
             if (sessionResponse.error) {
               console.log("SESSION ERROR", sessionResponse.error.message)
               setIsLoading(false);
