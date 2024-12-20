@@ -16,6 +16,7 @@ const passwordSchema = z.string()
 
 
 export default function ResetPasswordForm() {
+    const [code, setCode] = useState("")
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
@@ -41,6 +42,17 @@ export default function ResetPasswordForm() {
       });
     };
 
+    useEffect(() => {
+      if (typeof window !== 'undefined') {
+        const pathName = window.location.search;
+        const urlParams = new URLSearchParams(pathName);
+        const pathUrl = urlParams?.get('code');
+        if (typeof pathUrl === 'string') {
+          setCode(pathUrl);
+        }
+      }
+    }, []);
+
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setIsLoading(true)
@@ -60,24 +72,26 @@ export default function ResetPasswordForm() {
             return
           }
 
-     
-          const supabase = createClient()
-          const { data: resetData, error } = await supabase.auth.updateUser({
-            password: confirmPassword
-          })
+          if (code) { 
+            console.log("CODE", code)
+            const supabase = createClient()
+            await supabase.auth.exchangeCodeForSession(code)
 
-          if (error) {
-            console.log("ERROR", error)
-            setError("Password was not updated")
-            setIsLoading(false)
-            router.push("/")
+            const { data: resetData, error } = await supabase.auth.updateUser({
+              password: confirmPassword
+            })
+
+            if (error) {
+              console.log("ERROR", error)
+              setError("Password was not updated")
+              setIsLoading(false)
+              router.push("/")
+            }
+  
+            if (resetData) {
+              router.push("/")
+            }
           }
-
-          if (resetData) {
-            router.push("/")
-          }
-          
-
         } catch(error) {
           console.error(error)
           setError("A server error occurred, please try again")
