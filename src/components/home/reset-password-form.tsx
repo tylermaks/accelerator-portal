@@ -75,7 +75,13 @@ export default function ResetPasswordForm() {
           if (code) { 
             console.log("CODE", code)
             const supabase = createClient()
-            await supabase.auth.exchangeCodeForSession(code)
+            const sessionResponse = await supabase.auth.exchangeCodeForSession(code)
+
+            if (sessionResponse.error) {
+              console.log("SESSION ERROR", sessionResponse.error.message)
+              setIsLoading(false);
+              return;
+            }
 
             const { data: resetData, error } = await supabase.auth.updateUser({
               password: confirmPassword
@@ -83,7 +89,7 @@ export default function ResetPasswordForm() {
 
             if (error) {
               console.log("ERROR", error)
-              setError("Password was not updated")
+              setError("Password was not updated: " + error.message)
               setIsLoading(false)
               router.push("/")
             }
