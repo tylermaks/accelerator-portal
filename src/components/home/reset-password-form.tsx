@@ -102,7 +102,7 @@ export default function ResetPasswordForm() {
         setError("")
     }, [password, confirmPassword])
 
-    return (
+    return code ? (
         <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
             <div>
               <h1 className="text-xl font-semibold text-fsGray mb-2 ">Reset your password</h1>
@@ -149,5 +149,15 @@ export default function ResetPasswordForm() {
               text="Submit"
             />
         </form>
-    );
+      ) : (
+        <div>
+          <h1>Sorry, it looks like your reset password token has expired</h1>
+          <p>
+            You cannot change your passwords because your token has expired or you already clicked on this link.
+            Please request another change password email from the Forgot Email page. 
+            Thank you for your patience.
+          </p>
+        </div>
+      )
 }
+        
