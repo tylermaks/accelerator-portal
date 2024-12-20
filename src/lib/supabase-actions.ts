@@ -8,7 +8,7 @@ import * as z from "zod";
 
 export async function login(formData: FormData) {
     const cookieStore = cookies()
-    const supabase = createClient()
+    const supabase =  await createClient()
 
     const data = {
         email: formData.get('email') as string,
@@ -62,7 +62,7 @@ const createUserSchema = z.object({
 
 
 export async function createUser(formData: FormData) {
-  const supabase = createClient()
+  const supabase = await createClient()
   try {
     // Validate form data using Zod schema
     const parsedData = createUserSchema.parse({
@@ -122,7 +122,7 @@ export async function createUser(formData: FormData) {
 
 export async function logout() {
   const cookieStore = cookies()
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase.auth.signOut()
 
@@ -136,7 +136,7 @@ export async function logout() {
 export async function sendPasswordReset(formData: FormData) {
   const redirectURL = process.env.UPDATE_PASSWORD_URL
 
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase.auth.resetPasswordForEmail(formData.get('email') as string, {
     redirectTo: redirectURL,
@@ -147,7 +147,7 @@ export async function sendPasswordReset(formData: FormData) {
 
 
 export async function verifyPasscode(email: string, token: string) { 
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data, error } = await supabase.auth.verifyOtp({ email, token, type: 'recovery'})
 
   if (error) { 

@@ -8,7 +8,7 @@ const TABLE_ID = process.env.EIR_PROFILE_TABLE_ID
 
 
 export async function updateProfile(recordID: string, fieldData: any) {
-    const supabase = createClient();
+    const supabase = await createClient();
     const user =  await supabase.auth.getUser();
     
     if(!recordID || !fieldData) return

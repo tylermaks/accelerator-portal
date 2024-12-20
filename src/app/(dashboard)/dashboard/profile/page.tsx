@@ -11,7 +11,7 @@ const VIEW_ID = process.env.EIR_PROFILE_VIEW_ID
 
 
 async function getSkillData() {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: user, error } = await supabase.auth.getUser();
 
 

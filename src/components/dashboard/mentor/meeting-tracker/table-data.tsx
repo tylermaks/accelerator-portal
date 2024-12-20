@@ -14,7 +14,7 @@ export default async function getTableData(
     offset: string | null = null,
     params: Params | null = null,
 ) {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: user, error } = await supabase.auth.getUser();
 
     if (error) {

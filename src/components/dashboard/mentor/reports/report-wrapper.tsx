@@ -50,8 +50,7 @@ export default function ReportWrapper() {
     const getData = useCallback( async () => {
         const data = await getReportData({month, year});
         const { records } = data;
-
-        console.log("RECORDS", records)
+        
         setReportData(records);
     }, [month, year])
 

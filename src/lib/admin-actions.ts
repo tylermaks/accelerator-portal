@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 
 
 export async function deleteUser (formData: FormData){ 
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: { user }, error } = await supabase.auth.getUser()
 
     if(error) { 

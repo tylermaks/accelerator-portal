@@ -23,28 +23,24 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(key: string) {
-          return request.cookies.get(key)?.value
+        getAll() {
+          return request.cookies.getAll()
         },
-        set(name, value, options) {
-          request.cookies.set(name, value)
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({
             request,
           })
-          supabaseResponse.cookies.set(name, value, options)
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          )
         },
-        remove(name, options) {
-          request.cookies.delete(name)
-          supabaseResponse = NextResponse.next({
-            request,
-          })
-          supabaseResponse.cookies.delete(name)
-        }
       },
     }
   )

@@ -26,7 +26,7 @@ export async function addMeeting(
     duration: string,
     notes: string
 }) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: user, error} =  await supabase.auth.getUser();
 
   if (error || !user) {
@@ -85,7 +85,7 @@ export async function addMeeting(
 
 
 export async function deleteMeeting(recordID: string) {
-    const supabase = createClient();
+    const supabase = await createClient();
     const user =  await supabase.auth.getUser();
 
     if(user){
@@ -123,7 +123,7 @@ export async function updateMeeting(
     duration: string, 
     notes: string
 }) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: user, error } =  await supabase.auth.getUser();
   
   if (error || !user) {

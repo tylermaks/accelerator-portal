@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/server";
 import { useState, useEffect, FormEvent } from "react";
 import PasswordInput from "@/components/ui/password-input";
 import MainButton from "@/components/ui/main-button";
@@ -74,7 +74,7 @@ export default function ResetPasswordForm() {
 
           if (code) { 
             console.log("CODE", code)
-            const supabase = createClient()
+            const supabase = await createClient()
             const sessionResponse = await supabase.auth.exchangeCodeForSession(code)
 
             if (sessionResponse.error) {

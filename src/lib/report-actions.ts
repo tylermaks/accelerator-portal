@@ -14,7 +14,7 @@ type ReportDataProps = {
 }
 
 export async function getReportData({month, year, offset= null} : ReportDataProps) {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: user, error } = await supabase.auth.getUser();
 
     if (error) {
