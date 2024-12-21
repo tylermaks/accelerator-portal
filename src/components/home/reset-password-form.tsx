@@ -42,16 +42,16 @@ export default function ResetPasswordForm() {
       });
     };
 
-    useEffect(() => {
-      if (typeof window !== 'undefined') {
-        const pathName = window.location.search;
-        const urlParams = new URLSearchParams(pathName);
-        const pathUrl = urlParams?.get('code');
-        if (typeof pathUrl === 'string') {
-          setCode(pathUrl);
-        }
-      }
-    }, []);
+    // useEffect(() => {
+    //   if (typeof window !== 'undefined') {
+    //     const pathName = window.location.search;
+    //     const urlParams = new URLSearchParams(pathName);
+    //     const pathUrl = urlParams?.get('code');
+    //     if (typeof pathUrl === 'string') {
+    //       setCode(pathUrl);
+    //     }
+    //   }
+    // }, []);
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -72,7 +72,7 @@ export default function ResetPasswordForm() {
             return
           }
 
-          if (code) { 
+          // if (code) { 
             const supabase = createClient()
 
             const { data: resetData, error } = await supabase.auth.updateUser({
@@ -89,7 +89,7 @@ export default function ResetPasswordForm() {
             if (resetData) {
               router.push("/")
             }
-          }
+          // }
         } catch(error) {
           console.error("There was an error:", error)
           setError("A server error occurred, please try again")
@@ -102,62 +102,53 @@ export default function ResetPasswordForm() {
         setError("")
     }, [password, confirmPassword])
 
-    return code ? (
-        <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
-            <div>
-              <h1 className="text-xl font-semibold text-fsGray mb-2 ">Reset your password</h1>
-              <p className="text-fsGray text-sm">Enter your new password below to reset it</p>
-            </div>
+    return (
+      <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
+          <div>
+            <h1 className="text-xl font-semibold text-fsGray mb-2 ">Reset your password</h1>
+            <p className="text-fsGray text-sm">Enter your new password below to reset it</p>
+          </div>
+          <PasswordInput 
+            label="New Password:" 
+            id="password" 
+            name="password"
+            setFormState={handlePasswordChange}
+          />
+            <div className="text-sm mt-2">
+            <p className={validationStatus.length ? "text-teal-md" : "text-red-500"}>
+              {validationStatus.length ? "✓" : "✗"} Must have at least 8 characters
+            </p>
+            <p className={validationStatus.uppercase ? "text-teal-md" : "text-red-500"}>
+              {validationStatus.uppercase ? "✓" : "✗"} Must contain an uppercase letter
+            </p>
+            <p className={validationStatus.number ? "text-teal-md" : "text-red-500"}>
+              {validationStatus.number ? "✓" : "✗"} Must contain a number
+            </p>
+            <p className={validationStatus.specialChar ? "text-teal-md" : "text-red-500"}>
+              {validationStatus.specialChar ? "✓" : "✗"} Must contain a special character
+            </p>
+          </div>
+          <>
             <PasswordInput 
-              label="New Password:" 
-              id="password" 
-              name="password"
-              setFormState={handlePasswordChange}
+              label="Confirm Password:" 
+              id="confirmed-password" 
+              name="confirmed-password"
+              setFormState={setConfirmPassword}
             />
-             <div className="text-sm mt-2">
-              <p className={validationStatus.length ? "text-teal-md" : "text-red-500"}>
-                {validationStatus.length ? "✓" : "✗"} Must have at least 8 characters
-              </p>
-              <p className={validationStatus.uppercase ? "text-teal-md" : "text-red-500"}>
-                {validationStatus.uppercase ? "✓" : "✗"} Must contain an uppercase letter
-              </p>
-              <p className={validationStatus.number ? "text-teal-md" : "text-red-500"}>
-                {validationStatus.number ? "✓" : "✗"} Must contain a number
-              </p>
-              <p className={validationStatus.specialChar ? "text-teal-md" : "text-red-500"}>
-                {validationStatus.specialChar ? "✓" : "✗"} Must contain a special character
+            <div className="text-sm mt-2">
+              <p className={password === confirmPassword ? "text-teal-md" : "text-red-500"}>
+                {password === confirmPassword ? "✓" : "✗"} Passwords must match
               </p>
             </div>
-            <>
-              <PasswordInput 
-                label="Confirm Password:" 
-                id="confirmed-password" 
-                name="confirmed-password"
-                setFormState={setConfirmPassword}
-              />
-              <div className="text-sm mt-2">
-                <p className={password === confirmPassword ? "text-teal-md" : "text-red-500"}>
-                  {password === confirmPassword ? "✓" : "✗"} Passwords must match
-                </p>
-              </div>
-              
-              {error && <p className="text-red-500 text-xs">{error}</p>}
-            </>
-            <MainButton 
-              loading={isLoading}
-              id='reset-password'
-              text="Submit"
-            />
-        </form>
-      ) : (
-        <div>
-          <h1>Sorry, it looks like your reset password token has expired</h1>
-          <p>
-            You cannot change your passwords because your token has expired or you already clicked on this link.
-            Please request another change password email from the Forgot Email page. 
-            Thank you for your patience.
-          </p>
-        </div>
-      )
+            
+            {error && <p className="text-red-500 text-xs">{error}</p>}
+          </>
+          <MainButton 
+            loading={isLoading}
+            id='reset-password'
+            text="Submit"
+          />
+      </form>
+    )
 }
         
