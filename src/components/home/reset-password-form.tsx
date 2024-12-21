@@ -42,16 +42,16 @@ export default function ResetPasswordForm() {
       });
     };
 
-    // useEffect(() => {
-    //   if (typeof window !== 'undefined') {
-    //     const pathName = window.location.search;
-    //     const urlParams = new URLSearchParams(pathName);
-    //     const pathUrl = urlParams?.get('code');
-    //     if (typeof pathUrl === 'string') {
-    //       setCode(pathUrl);
-    //     }
-    //   }
-    // }, []);
+    useEffect(() => {
+      if (typeof window !== 'undefined') {
+        const pathName = window.location.search;
+        const urlParams = new URLSearchParams(pathName);
+        const pathUrl = urlParams?.get('code');
+        if (typeof pathUrl === 'string') {
+          setCode(pathUrl);
+        }
+      }
+    }, []);
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -72,8 +72,11 @@ export default function ResetPasswordForm() {
             return
           }
 
-          // if (code) { 
+          if (code) { 
             const supabase = createClient()
+
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+            console.log("SESSIONN", session, sessionError)
 
             const { data: resetData, error } = await supabase.auth.updateUser({
               password: confirmPassword
@@ -89,7 +92,7 @@ export default function ResetPasswordForm() {
             if (resetData) {
               router.push("/")
             }
-          // }
+          }
         } catch(error) {
           console.error("There was an error:", error)
           setError("A server error occurred, please try again")
