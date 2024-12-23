@@ -32,8 +32,8 @@ export default function ResetPasswordForm() {
     const searchParams = useSearchParams();
     const supabase = createClient();
     
-    const code = searchParams.get('code');
-    const email = searchParams.get('email') as string;
+    const code = searchParams?.get('code');
+    const email = searchParams?.get('email') as string;
 
     const handlePasswordChange = (value: string) => {
       setPassword(value);

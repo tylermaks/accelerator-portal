@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Suspense } from 'react'
 import ResetPasswordForm from "@/components/home/reset-password-form";
 
 
@@ -13,7 +14,9 @@ export default function ResetPassword() {
             alt="logo" 
           />
           <div className="flex flex-col gap-8 p-20 items-center justify-center">
-            <ResetPasswordForm />
+            <Suspense>
+              <ResetPasswordForm />
+            </Suspense>
           </div>
         </div>
         <div className="relative w-1/2">
