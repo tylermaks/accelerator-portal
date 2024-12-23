@@ -2,7 +2,7 @@
 
 import { useEffect, useState, MouseEvent } from 'react'
 import { createClient } from "@/utils/supabase/client";
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Image from "next/image";
 
 
@@ -12,10 +12,6 @@ export default function ConfirmReset() {
 
   const router = useRouter()
   const supabase = createClient()
-  const searchParams = useSearchParams()
-
-  const emailTest = searchParams.get("email")
-  console.log("emailTest", emailTest)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
