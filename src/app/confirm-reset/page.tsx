@@ -28,9 +28,9 @@ export default function ConfirmReset() {
     }
   }, []);
 
-  const handleSumit = async (event: FormEvent<HTMLFormElement>) => { 
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => { 
     event.preventDefault()
-
+    console.log("HANDLE SUBMIT ENGAGED", url, email)
     const { error: verifyError } = await supabase.auth.verifyOtp({
       token: url,
       email: email,
@@ -61,7 +61,7 @@ export default function ConfirmReset() {
           <button
             className="p-2 bg-orange text-white p-2 w-1/3 text-center rounded-md"
             id="confirmReset" 
-            onClick={() => handleSumit}
+            onClick={() => handleSubmit}
           >
             Reset Password
           </button>
