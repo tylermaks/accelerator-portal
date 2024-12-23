@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { useState, useEffect, FormEvent } from "react";
 import PasswordInput from "@/components/ui/password-input";
@@ -16,7 +16,8 @@ const passwordSchema = z.string()
 
 
 export default function ResetPasswordForm() {
-    // const [code, setCode] = useState("")
+    const [code, setCode] = useState("")
+    const [email, setEmail] = useState("")
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
@@ -28,12 +29,27 @@ export default function ResetPasswordForm() {
       specialChar: false,
     });
 
+    useEffect(() => {
+      if (typeof window !== 'undefined') {
+        const pathName = window.location.search;
+        const urlParams = new URLSearchParams(pathName);
+        const pathUrl = urlParams?.get('code');
+        const emailUrl = urlParams?.get('email')
+        if (typeof pathUrl === 'string') {
+          setCode(pathUrl);
+        }
+        if (typeof emailUrl === 'string') {
+          setEmail(emailUrl);
+        }
+      }
+    }, []);
+
     const router = useRouter();
-    const searchParams = useSearchParams();
+    // const searchParams = useSearchParams();
     const supabase = createClient();
     
-    const code = searchParams?.get('code');
-    const email = searchParams?.get('email') as string;
+    // const code = searchParams?.get('code');
+    // const email = searchParams?.get('email') as string;
 
     const handlePasswordChange = (value: string) => {
       setPassword(value);
