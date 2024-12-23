@@ -17,7 +17,7 @@ const passwordSchema = z.string()
 
 export default function ResetPasswordForm() {
     const [code, setCode] = useState("")
-    const [email, setEmail] = useState("")
+    // const [email, setEmail] = useState("")
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
@@ -34,20 +34,20 @@ export default function ResetPasswordForm() {
         const pathName = window.location.search;
         const urlParams = new URLSearchParams(pathName);
         const pathUrl = urlParams?.get('code');
-        const emailUrl = urlParams?.get('email')
+        // const emailUrl = urlParams?.get('email')
         if (typeof pathUrl === 'string') {
           setCode(pathUrl);
         }
-        if (typeof emailUrl === 'string') {
-          setEmail(emailUrl);
-        }
+        // if (typeof emailUrl === 'string') {
+        //   setEmail(emailUrl);
+        // }
       }
     }, []);
 
     const router = useRouter();
-    // const searchParams = useSearchParams();
     const supabase = createClient();
-    
+
+    // const searchParams = useSearchParams();
     // const code = searchParams?.get('code');
     // const email = searchParams?.get('email') as string;
 
@@ -89,18 +89,18 @@ export default function ResetPasswordForm() {
             return;
           }
 
-          const { error: verifyError } = await supabase.auth.verifyOtp({
-            token: code,
-            type: "recovery",
-            email: email
-          });
+          // const { error: verifyError } = await supabase.auth.verifyOtp({
+          //   token: code,
+          //   type: "recovery",
+          //   email: email
+          // });
 
-          if (verifyError) {
-            console.log("Verify Error", verifyError);
-              setError("Error verifying code:" + verifyError.message);
-              setIsLoading(false);
-              return;
-          }
+          // if (verifyError) {
+          //   console.log("Verify Error", verifyError);
+          //     setError("Error verifying code:" + verifyError.message);
+          //     setIsLoading(false);
+          //     return;
+          // }
 
           const { error: updateUserError } = await supabase.auth.updateUser({
             password: confirmPassword
@@ -114,6 +114,7 @@ export default function ResetPasswordForm() {
                 return;
           }
         
+          console.log("SUCCESSFULLY UPDATED PASSWORD")
           router.push("/dashboard");
 
 
