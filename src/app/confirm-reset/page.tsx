@@ -6,14 +6,19 @@ import Link from "next/link";
 
 export default function ConfirmReset() {
   const [url, setUrl] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const pathName = window.location.search;
       const urlParams = new URLSearchParams(pathName);
       const pathUrl = urlParams?.get('url');
+      const emailUrl = urlParams?.get('email')
       if (typeof pathUrl === 'string') {
         setUrl(pathUrl);
+      }
+      if (typeof emailUrl === 'string') {
+        setEmail(emailUrl);
       }
     }
   }, []);
@@ -32,7 +37,7 @@ export default function ConfirmReset() {
           <p className="text-gray-600 mb-6 text-center">To proceed with resetting your password, please confirm by clicking the button below.</p>
           <Link 
             className="p-2 bg-orange text-white p-2 w-1/3 text-center rounded-md" 
-            href={url}
+            href={url+"&"+email}
           >
             Reset password
           </Link>
