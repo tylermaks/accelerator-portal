@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useState, FormEvent } from 'react'
+import { useEffect, useState, MouseEvent } from 'react'
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from "next/image";
 
 
@@ -12,6 +12,10 @@ export default function ConfirmReset() {
 
   const router = useRouter()
   const supabase = createClient()
+  const searchParams = useSearchParams()
+
+  const emailTest = searchParams.get("email")
+  console.log("emailTest", emailTest)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -28,7 +32,7 @@ export default function ConfirmReset() {
     }
   }, []);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => { 
+  const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => { 
     event.preventDefault()
     console.log("HANDLE SUBMIT ENGAGED", url, email)
     const { error: verifyError } = await supabase.auth.verifyOtp({
@@ -61,7 +65,7 @@ export default function ConfirmReset() {
           <button
             className="p-2 bg-orange text-white p-2 w-1/3 text-center rounded-md"
             id="confirmReset" 
-            onClick={() => handleSubmit}
+            onClick={handleSubmit}
           >
             Reset Password
           </button>
