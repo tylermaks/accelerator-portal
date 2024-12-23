@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { useState, useEffect, FormEvent } from "react";
 import PasswordInput from "@/components/ui/password-input";
@@ -16,7 +16,7 @@ const passwordSchema = z.string()
 
 
 export default function ResetPasswordForm() {
-    const [code, setCode] = useState("")
+    // const [code, setCode] = useState("")
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
@@ -28,7 +28,12 @@ export default function ResetPasswordForm() {
       specialChar: false,
     });
 
-    const router = useRouter()
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const supabase = createClient();
+    
+    const code = searchParams.get('code');
+    const email = searchParams.get('email') as string;
 
     const handlePasswordChange = (value: string) => {
       setPassword(value);
@@ -42,16 +47,6 @@ export default function ResetPasswordForm() {
       });
     };
 
-    useEffect(() => {
-      if (typeof window !== 'undefined') {
-        const pathName = window.location.search;
-        const urlParams = new URLSearchParams(pathName);
-        const pathUrl = urlParams?.get('code');
-        if (typeof pathUrl === 'string') {
-          setCode(pathUrl);
-        }
-      }
-    }, []);
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -72,27 +67,61 @@ export default function ResetPasswordForm() {
             return
           }
 
-          if (code) { 
-            const supabase = createClient()
-
-            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-            console.log("SESSIONN", session, sessionError)
-
-            const { data: resetData, error } = await supabase.auth.updateUser({
-              password: confirmPassword
-            })
-
-            if (error) {
-              console.log("ERROR", error)
-              setError("Password was not updated: " + error.message)
-              setIsLoading(false)
-              router.push("/")
-            }
-  
-            if (resetData) {
-              router.push("/")
-            }
+          if(!code){
+            setError("Your password reset link is not valid. Either it was already clicked or it has expired. Please request another password reset link")
+            setIsLoading(false)
+            return;
           }
+
+          const { error: verifyError } = await supabase.auth.verifyOtp({
+            token: code,
+            type: "recovery",
+            email: email
+          });
+
+          if (verifyError) {
+            console.log("Verify Error", verifyError);
+              setError("Error verifying code:" + verifyError.message);
+              setIsLoading(false);
+              return;
+          }
+
+          const { error: updateUserError } = await supabase.auth.updateUser({
+            password: confirmPassword
+          })
+
+
+          if (updateUserError) {
+              console.log("Update User Error", updateUserError);
+                setError("Error updating password:" + updateUserError.message);
+                setIsLoading(false);
+                return;
+          }
+        
+          router.push("/dashboard");
+
+
+          // if (code) { 
+          //   const supabase = createClient()
+
+          //   const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+          //   console.log("SESSIONN", session, sessionError)
+
+          //   const { data: resetData, error } = await supabase.auth.updateUser({
+          //     password: confirmPassword
+          //   })
+
+          //   if (error) {
+          //     console.log("ERROR", error)
+          //     setError("Password was not updated: " + error.message)
+          //     setIsLoading(false)
+          //     router.push("/")
+          //   }
+  
+          //   if (resetData) {
+          //     router.push("/")
+          //   }
+          // }
         } catch(error) {
           console.error("There was an error:", error)
           setError("A server error occurred, please try again")
