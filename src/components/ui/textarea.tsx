@@ -38,7 +38,11 @@ export default function Textarea({
             console.error(result.error); // Log or handle validation errors
             setValue(""); // Optionally set an empty value or handle it differently
         }
-    }, [prepopulate, resetKey]);
+    }, [prepopulate]);
+
+    useEffect(() => {
+        setValue("");
+    }, [resetKey]);
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const sanitizedValue = DOMPurify.sanitize(e.target.value);

@@ -59,7 +59,11 @@ export default function Input({
             console.error(result.error); // Log or handle validation errors
             setValue(""); // Optionally set an empty value or handle it differently
         }    
-    }, [prepopulate, resetKey]);
+    }, [prepopulate]);
+
+    useEffect(() => {
+        setValue("");
+    }, [resetKey]);
 
     return (
         <div className="w-full relative">

@@ -61,7 +61,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
 
 
         if (clickedButton === "add-another-meeting") { 
-            formRef.current?.reset();
+            setFormState(() => initializeFields({}, supportOptions));
             setResetKey(prevKey => prevKey + 1)
         }
 
