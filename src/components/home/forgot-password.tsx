@@ -7,6 +7,7 @@ import MainButton from "../ui/main-button";
 import LoadingSpinner from "../ui/loading-spinner";
 
 export default function ForgotPassword() {
+    const [email, setEmail] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false)
 
@@ -42,12 +43,14 @@ export default function ForgotPassword() {
                 <p className="text-gray-700 text-sm">Please enter your email to reset your password</p>
             </div>    
             <form onSubmit={handleSendPasswordReset} className="w-full flex flex-col gap-4" >
-                <Input 
+                <Input
                     label="Email:"
-                    type="email" 
+                    type="email"
                     id="email"
                     name="email"
-                    isRequired
+                    isRequired={true}
+                    setFormState={setEmail}
+                    prepopulate={email} // Added prepopulate prop
                 />
                
                 <MainButton 
