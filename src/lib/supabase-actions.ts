@@ -61,18 +61,19 @@ const createUserSchema = z.object({
 })
 
 
-export async function createUser(formData: FormData) {
+export async function createUser(
+  formData : { 
+    email: string, 
+    password: string, 
+    firstName: string, 
+    lastName: string, 
+    userType:string, 
+    companyName: string
+  }) {
   const supabase = await createClient()
   try {
     // Validate form data using Zod schema
-    const parsedData = createUserSchema.parse({
-      email: formData.get("email"),
-      password: formData.get("password"),
-      firstName: formData.get("firstName"),
-      lastName: formData.get("lastName"),
-      userType: formData.get("userType"),
-      companyName: formData.get("companyName"),
-    });
+    const parsedData = createUserSchema.parse(formData);
 
     // Fetch current user and check role
     const { data: user, error: userError } = await supabase.auth.getUser();
