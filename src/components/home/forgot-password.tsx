@@ -16,8 +16,7 @@ export default function ForgotPassword() {
         setIsLoading(true)
 
         try{ 
-            const formData = new FormData(event.currentTarget);
-            const result = await sendPasswordReset(formData);
+            const result = await sendPasswordReset(email);
 
             if (result?.status === 400) {
                 setError("Invalid email");
