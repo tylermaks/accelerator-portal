@@ -31,17 +31,8 @@ const initializeFields = (fields: any, supportTypeList: MeetingFormProps["suppor
 export default function MeetingForm( { toggleModal, addOptimistic, supportTypeList, companyOptions, programOptions, meetingObjectiveOptions, data } : MeetingFormProps) {
     const [formState, setFormState] = useState(() => initializeFields(data.fields, supportTypeList));
     const [clickedButton, setClickedButton] = useState<string>(""); 
-    const [resetKey, setResetKey] = useState<number>(0)    
-    const formRef = useRef<HTMLFormElement>(null);
     const supportOptions = useMemo(() => supportTypeList, [supportTypeList]);
-  
-    useEffect(() => {
-        if (data.fields) {
-            setFormState(initializeFields(data.fields, supportOptions));
-        }
-    }, [data.fields, supportTypeList, supportOptions]);
 
- 
     const handleInputChange = (name: string, value: string) => {
         setFormState((prev) => ({ ...prev, [name]: value }));
     };
@@ -62,7 +53,6 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
 
         if (clickedButton === "add-another-meeting") { 
             setFormState(() => initializeFields({}, supportOptions));
-            setResetKey(prevKey => prevKey + 1)
         }
 
         if (clickedButton === "submit-meeting"){
@@ -113,7 +103,6 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
                 setFormState={(value) => handleInputChange("companyName", value)}
                 optionList={companyOptions}
                 isSearchable
-                resetKey={resetKey}
               />
             );
           case "Program List":
@@ -127,7 +116,6 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
                 optionList={programOptions}
                 isSearchable={false}
                 isRequired
-                resetKey={resetKey}
               />
             );
           default:
@@ -140,7 +128,6 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
                 prepopulate={formState.altName}
                 setFormState={(value) => handleInputChange("altName", value)}
                 isRequired
-                resetKey={resetKey}
               />
             );
         }
@@ -157,7 +144,6 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
         <form 
             onSubmit={handleFormSubmit}
             className="flex flex-col gap-4 h-full pb-4"
-            ref={formRef}
         >
 
             <Select
@@ -179,7 +165,6 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
                    prepopulate={formState.meetingObjective}
                    setFormState={(value) => handleInputChange("meetingObjective", value)}
                    optionList={meetingObjectiveOptions}
-                   resetKey={resetKey}
                  />
            }
            
@@ -190,7 +175,6 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
                 name="date"
                 prepopulate={formState.date}
                 setFormState={(value) => handleInputChange("date", value)}
-                resetKey={resetKey}
                 isRequired
             />
             <Input 
@@ -198,9 +182,8 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
                 type="number"
                 id="duration"
                 name="duration"
-                prepopulate={formState.duration}
+                prepopulate={formState.duration.toString()}
                 setFormState={(value) => handleInputChange("duration", value)}
-                resetKey={resetKey}
                 isRequired
             />
            
@@ -209,7 +192,6 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
                 name="notes" 
                 prepopulate={formState.notes}
                 setFormState={(value) => handleInputChange("notes", value)}
-                resetKey={resetKey}
             />  
                                     
             <div className="flex gap-4">
