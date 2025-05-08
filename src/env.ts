@@ -9,6 +9,8 @@ const envSchema = z.object({
   EIR_BASE_ID: z.string().min(1, "Missing EIR_BASE_ID"),
   EIR_PROFILE_TABLE_ID: z.string().min(1, "Missing EIR_PROFILE_TABLE_ID"),
   EIR_PROFILE_VIEW_ID: z.string().min(1, "Missing EIR_PROFILE_VIEW_ID"),
+  NEXT_PUBLIC_SUPABASE_URL: z.string().min(1, "Missing NEXT_PUBLIC_SUPABASE_URL"),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, "Missing NEXT_PUBLIC_SUPABASE_ANON_KEY"),
   // Add any other required variables here
 });
 
