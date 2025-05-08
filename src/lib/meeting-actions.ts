@@ -4,11 +4,12 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
 import * as z from "zod"
 import getTableData from '@/components/dashboard/mentor/meeting-tracker/table-data'
+import { env } from "@/env"
 
 
-const API_KEY = process.env.AIRTABLE_API_KEY
-const BASE_ID = process.env.BASE_ID
-const TABLE_ID = process.env.MEETING_TABLE_ID
+const API_KEY = env.AIRTABLE_API_KEY
+const BASE_ID = env.BASE_ID
+const TABLE_ID = env.MEETING_TABLE_ID
 
 
 export async function infiniteScrollData(offset: string | undefined) { 

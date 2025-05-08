@@ -1,10 +1,11 @@
 "use server"
 import { revalidatePath } from 'next/cache'
 import { createClient } from "@/utils/supabase/server";
+import { env } from "@/env";
 
-const API_KEY = process.env.AIRTABLE_API_KEY
-const BASE_ID = process.env.EIR_BASE_ID
-const TABLE_ID = process.env.EIR_PROFILE_TABLE_ID
+const API_KEY = env.AIRTABLE_API_KEY
+const BASE_ID = env.EIR_BASE_ID
+const TABLE_ID = env.EIR_PROFILE_TABLE_ID
 
 
 export async function updateProfile(recordID: string, fieldData: any) {

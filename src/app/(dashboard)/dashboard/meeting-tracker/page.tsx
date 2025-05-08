@@ -4,12 +4,13 @@ import getSupportTypeList from "@/components/dashboard/mentor/meeting-tracker/su
 import getCompanyList from "@/components/dashboard/mentor/meeting-tracker/company-list"
 import getTableData from "@/components/dashboard/mentor/meeting-tracker/table-data"
 import getMeetingObjectiveList from "@/components/dashboard/mentor/meeting-tracker/meeting-objective-list";
+import { env } from "@/env"; 
 
 const getProgramOptionsList = async () => { 
-  const url = `https://api.airtable.com/v0/${process.env.BASE_ID}/${process.env.PROGRAM_OPTIONS_TABLE_ID}?sort[0][field]=Name&sort[0][direction]=asc`
+  const url = `https://api.airtable.com/v0/${env.BASE_ID}/${env.PROGRAM_OPTIONS_TABLE_ID}?sort[0][field]=Name&sort[0][direction]=asc`
   const res = await fetch(url, { 
     headers: {
-      'Authorization': `Bearer ${process.env.AIRTABLE_API_KEY}`,
+      'Authorization': `Bearer ${env.AIRTABLE_API_KEY}`,
       'Content-Type': 'application/json'
     }, 
     cache: "force-cache"
