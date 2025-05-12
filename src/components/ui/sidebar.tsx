@@ -1,14 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
-import { logout } from "@/lib/supabase-actions";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { cookies } from 'next/headers'
-
-
+import { logout } from "@/lib/supabase-actions";
 
 const sideBarLinks = [
     {
@@ -110,25 +105,9 @@ const defaultLink: Link = {
     ]
   };
 
-  export function getCookie(name: string): string | undefined {
-    const cookies = document.cookie.split(';')
-    const cookie = cookies.find(c => c.trim().startsWith(name + '='))
-    if (!cookie) return undefined
-    return cookie.split('=')[1]
-}
-
-
-
-export default function Sidebar() {
-    const [userLinks, setUserLinks] = useState<Link>(defaultLink)
-    const pathName = usePathname()
-
-    useEffect(() => {
-        const userType = getCookie('user_type')
-        const roleLinks = sideBarLinks.find(link => link.role === userType)
-
-        roleLinks && setUserLinks(roleLinks)
-    }, [])
+export default function Sidebar({userType}: {userType: string}) {
+    const pathName = usePathname();
+    const userLinks = sideBarLinks.find(link => link.role === userType) ?? defaultLink;
 
     return(
         <nav className="h-screen flex flex-col justify-between p-8 w-1/5 bg-teal text-gray-100 ">
@@ -137,8 +116,6 @@ export default function Sidebar() {
                 {
                     userLinks.links?.map( (link, index) => { 
                         const linkStyles = pathName.includes(link.route) ? "flex items-center gap-3 bg-teal-md p-2 rounded-md" : "flex items-center gap-3 p-2"
-                       
-
                         return (
                             <div key={index} className={linkStyles}>
                                 <Image

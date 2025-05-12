@@ -34,7 +34,7 @@ export async function login(formData: FormData) {
         
       // Set cookie with user type using centralized utility
       await setCookie('user_type', userType, {
-          httpOnly: false, // If you want it accessible to JS, otherwise remove for best security
+          httpOnly: true,
           maxAge: 60 * 60 * 24 * 7, // 1 week
       })
 
