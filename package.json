@@ -21,6 +21,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@next/env": "^15.3.2",
+    "@testing-library/jest-dom": "^6.6.3",
     "@types/bcrypt": "^5.0.2",
     "@types/dompurify": "^3.0.5",
     "@types/jest": "^29.5.14",
@@ -31,6 +33,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "ts-jest": "^29.3.2",
