@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 import * as z from "zod";
+import { setCookie } from '@/utils/cookies';
 
 export async function login(formData: FormData) {
     const cookieStore = cookies()
@@ -31,14 +32,10 @@ export async function login(formData: FormData) {
     if (user) {
       const userType = user.user_metadata.user_type
         
-      // Set cookie with user type
-      cookieStore.set('user_type', userType, {
-          // Cookie options
-          httpOnly: false, // Makes cookie inaccessible to browser JavaScript
-          secure: process.env.NODE_ENV === 'production', // Only sends cookie over HTTPS in production
-          sameSite: 'lax', // Protects against CSRF
-          maxAge: 60 * 60 * 24 * 7, // Cookie expires after 1 week
-          path: '/', // Cookie is available on all paths
+      // Set cookie with user type using centralized utility
+      await setCookie('user_type', userType, {
+          httpOnly: false, // If you want it accessible to JS, otherwise remove for best security
+          maxAge: 60 * 60 * 24 * 7, // 1 week
       })
 
       revalidatePath('/', 'layout')
