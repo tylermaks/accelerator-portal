@@ -1,5 +1,4 @@
 import { createClient } from '@/utils/supabase/server'
-import { cookies, headers } from 'next/headers'
 import { env } from "@/env";
 
 const API_KEY = env.AIRTABLE_API_KEY;
