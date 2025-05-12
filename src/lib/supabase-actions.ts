@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 import * as z from "zod";
-import { setCookie } from '@/utils/cookies';
+import { setCookie, deleteCookie } from '@/utils/cookies';
 
 export async function login(formData: FormData) {
     const cookieStore = cookies()
@@ -119,23 +119,18 @@ export async function createUser(
 }
 
 export async function logout() {
-  const cookieStore = cookies()
   const supabase = await createClient()
-
   const { error } = await supabase.auth.signOut()
 
-  cookieStore.delete('sessionToken')
-  cookieStore.delete('user_type')
-
+  await deleteCookie('sessionToken')
+  await deleteCookie('user_type')
   revalidatePath('/', 'layout')
   redirect('/')
 }
 
 export async function sendPasswordReset(email: string) {
   const redirectURL = process.env.UPDATE_PASSWORD_URL
-
   const supabase = await createClient()
-
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: redirectURL,
   })
