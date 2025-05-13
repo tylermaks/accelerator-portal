@@ -118,14 +118,8 @@ export async function createUser(
   }
 }
 
-export async function logout() {
-  const supabase = await createClient()
-  const { error } = await supabase.auth.signOut()
-
-  await deleteCookie('sessionToken')
+export async function deleteUserTypeCookie() {
   await deleteCookie('user_type')
-  revalidatePath('/', 'layout')
-  redirect('/')
 }
 
 export async function sendPasswordReset(email: string) {

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { logout } from "@/lib/supabase-actions";
 
 const sideBarLinks = [
     {
@@ -103,7 +102,11 @@ const defaultLink: Link = {
             route: ''
         }
     ]
-  };
+};
+
+const handleSignOut = () => {
+    window.location.href = '/signout'
+}
 
 export default function Sidebar({userType}: {userType: string}) {
     const pathName = usePathname();
@@ -137,9 +140,9 @@ export default function Sidebar({userType}: {userType: string}) {
                 }
             </div>
         
-            <form className="flex items-center gap-3.5 cursor-pointer" action={logout}>
+            <form className="flex items-center gap-3.5 cursor-pointer" >
                 <Image className="filter invert" src="/images/cog-icon.svg" width={15} height={15} alt="cog"/>
-                <button type='submit' className="text-sm">Sign Out</button>
+                <button type='submit' onClick={handleSignOut} className="text-sm">Sign Out</button>
             </form>
         </nav>
     );

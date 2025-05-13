@@ -75,4 +75,48 @@ test('protected route redirects unauthenticated users', async ({ page, context }
   const cookies = await context.cookies();
   const accessToken = cookies.find(c => c.name.includes('-auth-token'));
   expect(accessToken).toBeUndefined();
+});
+
+test('signout clears all auth cookies', async ({ page, context }) => {
+  // Log in first
+  await page.goto('http://localhost:3000/');
+  const email = process.env.TEST_USER_EMAIL;
+  const password = process.env.TEST_USER_PASSWORD;
+  if (!email || !password) {
+    throw new Error('TEST_USER_EMAIL and TEST_USER_PASSWORD must be set');
+  }
+  await page.fill('input[name=email]', email);
+  await page.fill('input[name=password]', password);
+  await page.click('button[type=submit]');
+  await page.waitForURL('http://localhost:3000/dashboard', { timeout: 10000 });
+
+  // Click the sign out button
+  await page.click('text=Sign Out');
+
+  // Wait for redirect to login or home
+  await expect(page.locator('text=Welcome back')).toBeVisible();
+
+  // Get all cookies for the current domain
+  const cookies = await context.cookies();
+
+  // Assert that auth and user_type cookies are deleted (robust check)
+  const accessToken = cookies.find(c => c.name.includes('-auth-token.0'));
+  const refreshToken = cookies.find(c => c.name.includes('-auth-token.1'));
+  const userTypeCookie = cookies.find(c => c.name === 'user_type');
+
+  const isAccessTokenDeleted = !accessToken ||
+    !accessToken.value ||
+    (typeof accessToken.expires === 'number' && accessToken.expires < Date.now() / 1000);
+
+  const isRefreshTokenDeleted = !refreshToken ||
+    !refreshToken.value ||
+    (typeof refreshToken.expires === 'number' && refreshToken.expires < Date.now() / 1000);
+
+  const isUserTypeDeleted = !userTypeCookie ||
+    !userTypeCookie.value ||
+    (typeof userTypeCookie.expires === 'number' && userTypeCookie.expires < Date.now() / 1000);
+
+  expect(isAccessTokenDeleted).toBe(true);
+  expect(isRefreshTokenDeleted).toBe(true);
+  expect(isUserTypeDeleted).toBe(true);
 }); 
