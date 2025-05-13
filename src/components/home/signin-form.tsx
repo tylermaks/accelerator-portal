@@ -67,6 +67,7 @@ export default function SignInForm() {
                     loading={isLoading}
                     id='signin'
                     text="Sign In"
+                    type="submit"
                 />
             </form>
             {isLoading && <LoadingSpinner />}
