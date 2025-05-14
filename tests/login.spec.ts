@@ -119,4 +119,33 @@ test('signout clears all auth cookies', async ({ page, context }) => {
   expect(isAccessTokenDeleted).toBe(true);
   expect(isRefreshTokenDeleted).toBe(true);
   expect(isUserTypeDeleted).toBe(true);
+});
+
+test('session expiration logs out user and clears cookies', async ({ page, context }) => {
+  // Log in first
+  await page.goto('http://localhost:3000/');
+  const email = process.env.TEST_USER_EMAIL;
+  const password = process.env.TEST_USER_PASSWORD;
+  if (!email || !password) {
+    throw new Error('TEST_USER_EMAIL and TEST_USER_PASSWORD must be set');
+  }
+  await page.fill('input[name=email]', email);
+  await page.fill('input[name=password]', password);
+  await page.click('button[type=submit]');
+  await page.waitForURL('http://localhost:3000/dashboard', { timeout: 10000 });
+
+  // Simulate session expiration by clearing auth cookies
+  await context.clearCookies();
+
+  // Try to visit a protected route
+  await page.goto('http://localhost:3000/dashboard/meeting-tracker');
+
+  // Should be redirected to login or home
+  await expect(page).not.toHaveURL(/\/dashboard\/meeting-tracker/);
+  await expect(page.locator('text=Welcome back')).toBeVisible();
+
+  // Ensure no auth cookies are set
+  const cookies = await context.cookies();
+  const accessToken = cookies.find(c => c.name.includes('-auth-token'));
+  expect(accessToken).toBeUndefined();
 }); 
