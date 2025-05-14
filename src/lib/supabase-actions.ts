@@ -118,10 +118,6 @@ export async function createUser(
   }
 }
 
-export async function deleteUserTypeCookie() {
-  await deleteCookie('user_type')
-}
-
 export async function sendPasswordReset(email: string) {
   const redirectURL = process.env.UPDATE_PASSWORD_URL
   const supabase = await createClient()

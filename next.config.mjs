@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+import path from 'node:path';
+
 const nextConfig = {
     experimental: {
         serverActions: {
@@ -23,7 +25,11 @@ const nextConfig = {
         fetches: {
             fullUrl: true,
         }
-    }  
+    },
+    webpack: (config) => {
+        config.resolve.alias['@'] = path.resolve(process.cwd(), 'src');
+        return config;
+    },
 };
 
 export default nextConfig;
