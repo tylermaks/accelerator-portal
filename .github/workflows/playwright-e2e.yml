@@ -27,29 +27,23 @@ jobs:
 
       - name: 'Wait for Netlify Deploy Preview'
         id: netlify_deploy
-        uses: UnlyEd/github-action-await-netlify-deploy@v2
+        uses: probablyup/wait-for-netlify-action@3.2.0
         with:
-          netlify_auth_token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          site_id:  ${{ secrets.NETLIFY_PROJECT_ID }}
+          site_id: ${{ secrets.NETLIFY_PROJECT_ID }}
           max_timeout: 300 # 5 minutes
-  
+        env:
+          NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
 
       - name: 'Verify Netlify Deployment Status'
-        if: steps.netlify_deploy.outputs.deployment_state == 'ready'
         run: |
           echo "Netlify Deploy Preview is ready!"
-          echo "Preview URL: ${{ steps.netlify_deploy.outputs.deploy_url }}"
-
+          echo "Preview URL: ${{ steps.netlify_deploy.outputs.url }}"
 
       - name: 'Run Playwright Tests'
-        # Only run if the Netlify deployment was successful
-        if: steps.netlify_deploy.outputs.deployment_state == 'ready'
-
         env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.netlify_deploy.outputs.deploy_url }}
+          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.netlify_deploy.outputs.url }}
           TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
           TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-
         run: |
           # Install Playwright browsers (cached by default if already installed)
           npx playwright install --with-deps
@@ -57,14 +51,12 @@ jobs:
           npx playwright test
 
       - name: 'Upload Playwright Report'
-        # This step will run even if the Playwright tests fail, to ensure reports are always uploaded
-        if: always() && steps.netlify_deploy.outputs.deployment_state == 'ready'
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-       
           path: playwright-report/
-          retention-days: 7 
+          retention-days: 7
 
       # - name: '💬 Comment on PR with Preview URL and Test Status'
       #   if: always() && github.event_name == 'pull_request'
