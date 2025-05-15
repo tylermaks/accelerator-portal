@@ -196,6 +196,7 @@ export default function ResetPasswordForm() {
             loading={isLoading}
             id='reset-password'
             text="Submit"
+            type="submit"
           />
       </form>
     )

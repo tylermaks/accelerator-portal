@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test('login sets user_type and Supabase auth cookies securely', async ({ page, context }) => {
   // Go to login page
-  await page.goto('http://localhost:3000/');
+  await page.goto('/');
 
   const email = process.env.TEST_USER_EMAIL;
   const password = process.env.TEST_USER_PASSWORD;
@@ -49,12 +49,12 @@ test('login sets user_type and Supabase auth cookies securely', async ({ page, c
 });
 
 test('failed login shows error and does not set auth cookies', async ({ page, context }) => {
-  await page.goto('http://localhost:3000/');
+  await page.goto('/');
   await page.fill('input[name=email]', 'invalid@example.com');
   await page.fill('input[name=password]', 'wrongpassword');
   await page.click('button[type=submit]');
   // Wait for error message
-  await expect(page.locator('text=Invalid email or password')).toBeVisible();
+  await expect(page.locator('[data-testid="invalid-credentials"]')).toBeVisible();
   // Ensure not redirected to dashboard
   expect(page.url()).not.toContain('/dashboard');
   // Ensure no auth cookies are set
@@ -66,7 +66,7 @@ test('failed login shows error and does not set auth cookies', async ({ page, co
 test('protected route redirects unauthenticated users', async ({ page, context }) => {
   // Clear cookies to simulate logged-out state
   await context.clearCookies();
-  await page.goto('http://localhost:3000/dashboard/meeting-tracker');
+  await page.goto('/dashboard/meeting-tracker');
   // Should be redirected to login or home
   await expect(page).not.toHaveURL(/\/dashboard\/meeting-tracker/);
   // Optionally, check for login form or home page content
@@ -79,7 +79,7 @@ test('protected route redirects unauthenticated users', async ({ page, context }
 
 test('signout clears all auth cookies', async ({ page, context }) => {
   // Log in first
-  await page.goto('http://localhost:3000/');
+  await page.goto('/');
   const email = process.env.TEST_USER_EMAIL;
   const password = process.env.TEST_USER_PASSWORD;
   if (!email || !password) {
@@ -88,7 +88,7 @@ test('signout clears all auth cookies', async ({ page, context }) => {
   await page.fill('input[name=email]', email);
   await page.fill('input[name=password]', password);
   await page.click('button[type=submit]');
-  await page.waitForURL('http://localhost:3000/dashboard', { timeout: 10000 });
+  await page.waitForURL('/dashboard', { timeout: 10000 });
 
   // Click the sign out button
   await page.click('text=Sign Out');
@@ -123,7 +123,7 @@ test('signout clears all auth cookies', async ({ page, context }) => {
 
 test('session expiration logs out user and clears cookies', async ({ page, context }) => {
   // Log in first
-  await page.goto('http://localhost:3000/');
+  await page.goto('/');
   const email = process.env.TEST_USER_EMAIL;
   const password = process.env.TEST_USER_PASSWORD;
   if (!email || !password) {
@@ -132,13 +132,13 @@ test('session expiration logs out user and clears cookies', async ({ page, conte
   await page.fill('input[name=email]', email);
   await page.fill('input[name=password]', password);
   await page.click('button[type=submit]');
-  await page.waitForURL('http://localhost:3000/dashboard', { timeout: 10000 });
+  await page.waitForURL('/dashboard', { timeout: 10000 });
 
   // Simulate session expiration by clearing auth cookies
   await context.clearCookies();
 
   // Try to visit a protected route
-  await page.goto('http://localhost:3000/dashboard/meeting-tracker');
+  await page.goto('/dashboard/meeting-tracker');
 
   // Should be redirected to login or home
   await expect(page).not.toHaveURL(/\/dashboard\/meeting-tracker/);

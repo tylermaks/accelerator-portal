@@ -60,7 +60,7 @@ export default function SignInForm() {
                         name="password"
                         setFormState={setPassword}
                     />
-                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                    {error && <p data-testid="invalid-credentials" className="text-red-500 text-sm">{error}</p>}
                 </>
 
                 <MainButton
