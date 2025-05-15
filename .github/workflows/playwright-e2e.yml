@@ -3,7 +3,8 @@ name: Playwright E2E Tests
 
 on:
   # Listen for deployment status events, specifically from Netlify
-  deployment_status:
+  # deployment_status:
+  push:
 
 jobs:
   e2e_tests:
