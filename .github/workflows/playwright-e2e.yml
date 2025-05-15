@@ -3,14 +3,13 @@ name: Playwright E2E Tests
 
 on:
   # Listen for deployment status events, specifically from Netlify
-  # deployment_status:
-  push:
+  deployment_status:
 
 jobs:
   e2e_tests:
     # Only run this job if the deployment status is 'success'
     # and the environment is a Netlify preview deployment
-    if: github.event.deployment_status.state == 'success' && contains(github.event.deployment_status.target_url, 'netlify.app') && github.event.deployment.environment == 'Preview'
+    # if: github.event.deployment_status.state == 'success' && contains(github.event.deployment_status.target_url, 'netlify.app') && github.event.deployment.environment == 'Preview'
     runs-on: ubuntu-latest
     timeout-minutes: 15 # Adjust as needed
 
