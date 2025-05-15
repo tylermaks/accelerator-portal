@@ -199,6 +199,7 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
                     id={data.fields ? "update-meeting" : "submit-meeting"}
                     text={data.fields ? "Update" : "Submit"}
                     action={getButtonID}
+                    type="submit"
                 />
                 { data.fields ? (
                     <DeleteButton 

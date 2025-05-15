@@ -104,7 +104,8 @@ const defaultLink: Link = {
     ]
 };
 
-const handleSignOut = () => {
+const handleSignOut = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     window.location.href = '/signout'
 }
 
@@ -140,10 +141,10 @@ export default function Sidebar({userType}: {userType: string}) {
                 }
             </div>
         
-            <form className="flex items-center gap-3.5 cursor-pointer" >
+            <div className="flex items-center gap-3.5 cursor-pointer" >
                 <Image className="filter invert" src="/images/cog-icon.svg" width={15} height={15} alt="cog"/>
-                <button type='submit' onClick={handleSignOut} className="text-sm">Sign Out</button>
-            </form>
+                <button onClick={handleSignOut} className="text-sm">Sign Out</button>
+            </div>
         </nav>
     );
 }
