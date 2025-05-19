@@ -4,11 +4,19 @@ type MainButtonProps =  {
     action?: (event: React.MouseEvent<HTMLButtonElement>) => void, 
     loading?: boolean
     small?: boolean
-    width?: string
+    type?: "button" | "submit" | "reset"
 }
 
 
-export default function MainButton({ id, text, action, loading = false, small, width} : MainButtonProps ) {
+export default function MainButton({ 
+    text,
+    id,
+    action,
+    loading,
+    small,
+    type
+
+} : MainButtonProps ) {
     const loadingButtonStyle = loading ? "opacity-50 cursor-not-allowed" : ""
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         action && action(event);
@@ -17,6 +25,7 @@ export default function MainButton({ id, text, action, loading = false, small, w
     return (
         <button 
             id={id}
+            type={type || "button"}
             onClick={handleClick}
             className={`${loadingButtonStyle} ${small ? "p-1" : "p-2"} bg-orange text-white p-2 w-full rounded-md `}
         >

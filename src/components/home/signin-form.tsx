@@ -60,13 +60,14 @@ export default function SignInForm() {
                         name="password"
                         setFormState={setPassword}
                     />
-                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                    {error && <p data-testid="invalid-credentials" className="text-red-500 text-sm">{error}</p>}
                 </>
 
                 <MainButton
                     loading={isLoading}
                     id='signin'
                     text="Sign In"
+                    type="submit"
                 />
             </form>
             {isLoading && <LoadingSpinner />}

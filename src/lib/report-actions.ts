@@ -1,11 +1,12 @@
 "use server"
 
 import { createClient } from '@/utils/supabase/server'
+import { env } from "@/env";
 
-const API_KEY = process.env.AIRTABLE_API_KEY
-const BASE_ID = process.env.BASE_ID
-const TABLE_ID = process.env.MEETING_TABLE_ID
-const VIEW_ID = process.env.MEETING_VIEW_ID
+const API_KEY = env.AIRTABLE_API_KEY
+const BASE_ID = env.BASE_ID
+const TABLE_ID = env.MEETING_TABLE_ID
+const VIEW_ID = env.MEETING_VIEW_ID
 
 type ReportDataProps = {
     month: number;

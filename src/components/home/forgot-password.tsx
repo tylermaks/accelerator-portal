@@ -56,6 +56,7 @@ export default function ForgotPassword() {
                     loading={isLoading}
                     id='forgot-password'
                     text="Submit"
+                    type="submit"
                 />
             </form>
             {error && <p className="bg-green-200 p-2 rounded-md text-green-600 text-xs">{error}</p>}

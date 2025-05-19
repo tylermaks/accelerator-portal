@@ -58,8 +58,18 @@ export async function updateSession(request: NextRequest) {
   const userRole = user?.user_metadata.user_type
   const pathName = request.nextUrl.pathname
 
+  if (user && userRole && !request.cookies.get('user_type')) {
+    supabaseResponse.cookies.set('user_type', userRole, {
+      path: '/',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 // 7 days in seconds
+    });
+  }
+
    // Check if user exists and user_type cookie doesn't exist
-   if (user && userRole && !request.cookies.get('user_type')) {
+  if (user && userRole && !request.cookies.get('user_type')) {
     // Set the user_type cookie
     supabaseResponse.cookies.set('user_type', userRole, {
       path: '/',
@@ -70,10 +80,19 @@ export async function updateSession(request: NextRequest) {
     })
   }
 
+  if (!user && request.cookies.get('user_type')) {
+    supabaseResponse.cookies.set('user_type', '', {
+      path: '/',
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 0,
+      secure: process.env.NODE_ENV === 'production',
+    });
+  }
+
   if (
     !user &&
-    !request.nextUrl.pathname.startsWith('/') &&
-    !request.nextUrl.pathname.startsWith('/reset-password')
+    !publicRoutes.includes(request.nextUrl.pathname)
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone()

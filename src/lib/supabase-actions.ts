@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 import * as z from "zod";
+import { setCookie, deleteCookie } from '@/utils/cookies';
 
 export async function login(formData: FormData) {
     const cookieStore = cookies()
@@ -31,14 +32,10 @@ export async function login(formData: FormData) {
     if (user) {
       const userType = user.user_metadata.user_type
         
-      // Set cookie with user type
-      cookieStore.set('user_type', userType, {
-          // Cookie options
-          httpOnly: false, // Makes cookie inaccessible to browser JavaScript
-          secure: process.env.NODE_ENV === 'production', // Only sends cookie over HTTPS in production
-          sameSite: 'lax', // Protects against CSRF
-          maxAge: 60 * 60 * 24 * 7, // Cookie expires after 1 week
-          path: '/', // Cookie is available on all paths
+      // Set cookie with user type using centralized utility
+      await setCookie('user_type', userType, {
+          httpOnly: true,
+          maxAge: 60 * 60 * 24 * 7, // 1 week
       })
 
       revalidatePath('/', 'layout')
@@ -121,24 +118,9 @@ export async function createUser(
   }
 }
 
-export async function logout() {
-  const cookieStore = cookies()
-  const supabase = await createClient()
-
-  const { error } = await supabase.auth.signOut()
-
-  cookieStore.delete('sessionToken')
-  cookieStore.delete('user_type')
-
-  revalidatePath('/', 'layout')
-  redirect('/')
-}
-
 export async function sendPasswordReset(email: string) {
   const redirectURL = process.env.UPDATE_PASSWORD_URL
-
   const supabase = await createClient()
-
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: redirectURL,
   })

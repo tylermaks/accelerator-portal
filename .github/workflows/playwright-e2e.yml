@@ -1,0 +1,82 @@
+name: 'Playwright E2E Tests on Netlify Deploy Preview'
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  e2e-tests:
+    name: 'E2E Tests'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
+        # If your Playwright tests are in a subdirectory and need the repo root for Playwright config or base URL construction
+        # with:
+        #   path: main # checkout main repo content into 'main' directory (optional)
+
+      - name: 'Setup Node.js'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 'Install Dependencies'
+        run: npm ci
+
+      - name: 'Wait for Netlify Deploy Preview'
+        id: netlify_deploy
+        uses: probablyup/wait-for-netlify-action@3.2.0
+        with:
+          site_id: ${{ secrets.NETLIFY_PROJECT_ID }}
+          max_timeout: 300 # 5 minutes
+        env:
+          NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+      - name: 'Verify Netlify Deployment Status'
+        run: |
+          echo "Netlify Deploy Preview is ready!"
+          echo "Preview URL: ${{ steps.netlify_deploy.outputs.url }}"
+
+      - name: 'Run Playwright Tests'
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.netlify_deploy.outputs.url }}
+          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        run: |
+          # Install Playwright browsers (cached by default if already installed)
+          npx playwright install --with-deps
+          # Execute your Playwright tests
+          npx playwright test
+
+      - name: 'Upload Playwright Report'
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+      # - name: '💬 Comment on PR with Preview URL and Test Status'
+      #   if: always() && github.event_name == 'pull_request'
+      #   uses: actions/github-script@v7
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     script: |
+      #       const prNumber = context.issue.number;
+      #       const deployUrl = "${{ steps.netlify_deploy.outputs.deploy_url }}";
+      #       const jobStatus = "${{ job.status }}"; // 'success', 'failure', 'cancelled'
+      #       let statusMessage = `🚀 Netlify Deploy Preview: ${deployUrl}\n`;
+      #       statusMessage += `🧪 E2E Test Status: **${jobStatus.toUpperCase()}**`;
+
+      #       if (jobStatus === 'failure') {
+      #         statusMessage += `\n\n[View Test Report](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) (See 'playwright-report' artifact)`;
+      #       }
+
+      #       github.rest.issues.createComment({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         issue_number: prNumber,
+      #         body: statusMessage
+      #       });
