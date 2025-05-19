@@ -4,7 +4,7 @@ import Textarea from "@/components/ui/textarea";
 import MainButton from "@/components/ui/main-button";
 import AltButton from "@/components/ui/alt-button";
 import DeleteButton from "@/components/ui/delete-button";
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { addMeeting, deleteMeeting, updateMeeting } from "@/lib/meeting-actions"
 
 type MeetingFormProps = { 
@@ -30,18 +30,13 @@ const initializeFields = (fields: any, supportTypeList: MeetingFormProps["suppor
 
 export default function MeetingForm( { toggleModal, addOptimistic, supportTypeList, companyOptions, programOptions, meetingObjectiveOptions, data } : MeetingFormProps) {
     const [formState, setFormState] = useState(() => initializeFields(data.fields, supportTypeList));
-    const [clickedButton, setClickedButton] = useState<string>(""); 
     const supportOptions = useMemo(() => supportTypeList, [supportTypeList]);
 
     const handleInputChange = (name: string, value: string) => {
         setFormState((prev) => ({ ...prev, [name]: value }));
     };
-
-    const getButtonID = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setClickedButton(event.currentTarget.id);
-    };
   
-    const handleSubmit = async () => {
+    const handleSubmit = async (buttonId: string) => {
         const newMeeting = { ...formState };
 
         if (!newMeeting.companyName) {
@@ -51,11 +46,11 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
         addOptimistic({ id: Math.random(), fields: newMeeting });
 
 
-        if (clickedButton === "add-another-meeting") { 
+        if (buttonId === "add-another-meeting") { 
             setFormState(() => initializeFields({}, supportOptions));
         }
 
-        if (clickedButton === "submit-meeting"){
+        if (buttonId === "submit-meeting"){
             await toggleModal({});
         } 
 
@@ -135,9 +130,13 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (clickedButton === "delete-meeting") return handleDelete();
-        if (clickedButton === "update-meeting") return handleEdit();
-        handleSubmit();
+        const submitButton = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
+        if (!submitButton) return;
+        const buttonId = submitButton.id;
+
+        if (buttonId === "delete-meeting") return handleDelete();
+        if (buttonId === "update-meeting") return handleEdit();
+        handleSubmit(buttonId);
     };
     
     return(
@@ -198,20 +197,17 @@ export default function MeetingForm( { toggleModal, addOptimistic, supportTypeLi
                 <MainButton
                     id={data.fields ? "update-meeting" : "submit-meeting"}
                     text={data.fields ? "Update" : "Submit"}
-                    action={getButtonID}
                     type="submit"
                 />
                 { data.fields ? (
                     <DeleteButton 
                         id="delete-meeting"
                         text="Delete"
-                        action={getButtonID}
                     />
                 ) : (
                     <AltButton 
                         id="add-another-meeting"
                         text="Submit and add another"
-                        action={getButtonID}
                     />
                 )}
             </div>
