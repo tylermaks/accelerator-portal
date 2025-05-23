@@ -1,26 +1,7 @@
 import PageHeader from "../../../../components/ui/page-header"
 import MembersTable from "../../../../components/dashboard/admin/member-table"
 import CreateNewUser from "../../../../components/dashboard/admin/create-btn"
-import { createClient } from "../../../../utils/supabase/server"
-
-const getUserList = async () => { 
-    const supabase = await createClient();
-    const { data: userList, error: userListError } = await supabase
-        .from("profiles")
-        .select("*");
-
-    if (userListError) {
-        console.log("error", userListError);
-        return [];
-    }
-
-    if (userList) {
-        const sortedUserList = userList.sort((a, b) => a.first_name.localeCompare(b.first_name))
-        return sortedUserList;
-    }
-
-    return [];
-}
+import { getUserList } from "@/lib/get-user-list";
 
 export default async function Members() {
     const userData = await getUserList();

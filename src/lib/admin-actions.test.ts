@@ -64,7 +64,6 @@ describe('admin-actions', () => {
     });
 
     it('returns error for unexpected exceptions', async () => {
-    //   jest.spyOn(z, 'ZodError').mockImplementationOnce(() => false as any);
       mockSupabase.rpc.mockImplementation(() => { throw new Error('Unexpected'); });
       const result = await createUser(validForm);
       expect(result.status).toBe(500);
