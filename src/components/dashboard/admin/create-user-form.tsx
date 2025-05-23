@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { createUser } from "@/lib/supabase-actions";
+import { createUser } from "@/lib/admin-actions";
 import Input from "@/components/ui/input";
 import Select from "@/components/ui/select";
 
@@ -31,13 +31,11 @@ export default function CreateUserForm({ toggleModal }: FormProps) {
     };
 
     const handleFormSubmit = async (e: React.FormEvent) => {
-        e.preventDefault(); // Prevent default form submission
-
+        e.preventDefault();
         try {
             await createUser(formState);
             toggleModal();
         } catch (error) {
-            // Handle error (e.g., display an error message)
             console.error("Error creating user:", error);
         }
     };

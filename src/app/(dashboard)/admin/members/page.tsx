@@ -5,29 +5,21 @@ import { createClient } from "../../../../utils/supabase/server"
 
 const getUserList = async () => { 
     const supabase = await createClient();
-    const { data: { user }, error } = await supabase.auth.getUser();
-
-    if (error) {
-        console.log("User not found")
-        return [];
-    }
-
-    if (user?.user_metadata.user_type === "admin"){ 
-        const {data: userList, error: userListError} = await supabase
+    const { data: userList, error: userListError } = await supabase
         .from("profiles")
         .select("*");
 
-        if (userListError) {
-            console.log("error", userListError);
-            return [];
-        };
+    if (userListError) {
+        console.log("error", userListError);
+        return [];
+    }
 
+    if (userList) {
         const sortedUserList = userList.sort((a, b) => a.first_name.localeCompare(b.first_name))
         return sortedUserList;
-    };
+    }
 
-    console.log("Access denied.");
-    return []
+    return [];
 }
 
 export default async function Members() {
