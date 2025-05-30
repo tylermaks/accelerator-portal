@@ -44,6 +44,8 @@ jobs:
           PLAYWRIGHT_TEST_BASE_URL: ${{ steps.netlify_deploy.outputs.url }}
           TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
           TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+          TEST_ADMIN_EMAIL: ${{ secrets.TEST_ADMIN_EMAIL }}
+          TEST_ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
         run: |
           # Install Playwright browsers (cached by default if already installed)
           npx playwright install --with-deps
