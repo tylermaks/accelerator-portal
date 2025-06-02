@@ -54,7 +54,7 @@ describe('Environment Variable Validation (Parameterized)', () => {
             async ({ name, expectedErrorMsg }) => {
                 process.env[name] = ""; // Set the specific variable under test to be empty
 
-                await expect(import('./env')).rejects.toThrowError(expectedErrorMsg);
+                await expect(import('./env.server')).rejects.toThrowError(expectedErrorMsg);
             }
         );
     });
@@ -66,7 +66,7 @@ describe('Environment Variable Validation (Parameterized)', () => {
                 delete process.env[name]; // Delete the specific variable under test
     
                 try {
-                    await import('./env');
+                    await import('./env.server');
                     // If the import succeeds, this line will be reached, and the test should fail.
                     fail(`The import should have failed because ${name} is missing.`);
                 } catch (error: any) {
