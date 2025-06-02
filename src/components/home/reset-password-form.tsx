@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import { useState, useEffect, FormEvent } from "react";
 import PasswordInput from "@/components/ui/password-input";
 import MainButton from "@/components/ui/main-button";
-import * as z from "zod"; // Import Zod
+import * as z from "zod"; 
 
 // Define the password schema
 const passwordSchema = z.string()
@@ -14,10 +14,8 @@ const passwordSchema = z.string()
   .regex(/[0-9]/, "Password must contain at least one number")
   .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character");
 
-
 export default function ResetPasswordForm() {
     const [code, setCode] = useState("")
-    // const [email, setEmail] = useState("")
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
@@ -29,27 +27,31 @@ export default function ResetPasswordForm() {
       specialChar: false,
     });
 
+    const [sessionChecked, setSessionChecked] = useState(false);
+
+    const router = useRouter();
+    const supabase = createClient();
+
     useEffect(() => {
       if (typeof window !== 'undefined') {
         const pathName = window.location.search;
         const urlParams = new URLSearchParams(pathName);
         const pathUrl = urlParams?.get('code');
-        // const emailUrl = urlParams?.get('email')
+
         if (typeof pathUrl === 'string') {
           setCode(pathUrl);
         }
-        // if (typeof emailUrl === 'string') {
-        //   setEmail(emailUrl);
-        // }
       }
+      // Check for valid session on mount
+      const checkSession = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          setError("Your session has expired or is invalid. Please request a new password reset link.");
+        }
+        setSessionChecked(true);
+      };
+      checkSession();
     }, []);
-
-    const router = useRouter();
-    const supabase = createClient();
-
-    // const searchParams = useSearchParams();
-    // const code = searchParams?.get('code');
-    // const email = searchParams?.get('email') as string;
 
     const handlePasswordChange = (value: string) => {
       setPassword(value);
@@ -63,10 +65,17 @@ export default function ResetPasswordForm() {
       });
     };
 
-
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setIsLoading(true)
+
+        // Check session again before submitting
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          setError("Your session has expired or is invalid. Please request a new password reset link.");
+          setIsLoading(false);
+          return;
+        }
 
         try {
           const passwordValidation = passwordSchema.safeParse(password)
@@ -89,23 +98,9 @@ export default function ResetPasswordForm() {
             return;
           }
 
-          // const { error: verifyError } = await supabase.auth.verifyOtp({
-          //   token: code,
-          //   type: "recovery",
-          //   email: email
-          // });
-
-          // if (verifyError) {
-          //   console.log("Verify Error", verifyError);
-          //     setError("Error verifying code:" + verifyError.message);
-          //     setIsLoading(false);
-          //     return;
-          // }
-
           const { error: updateUserError } = await supabase.auth.updateUser({
             password: confirmPassword
           })
-
 
           if (updateUserError) {
               console.log("Update User Error", updateUserError);
@@ -114,38 +109,14 @@ export default function ResetPasswordForm() {
                 return;
           }
         
-          console.log("SUCCESSFULLY UPDATED PASSWORD")
-          router.push("/dashboard");
-
-
-          // if (code) { 
-          //   const supabase = createClient()
-
-          //   const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-          //   console.log("SESSIONN", session, sessionError)
-
-          //   const { data: resetData, error } = await supabase.auth.updateUser({
-          //     password: confirmPassword
-          //   })
-
-          //   if (error) {
-          //     console.log("ERROR", error)
-          //     setError("Password was not updated: " + error.message)
-          //     setIsLoading(false)
-          //     router.push("/")
-          //   }
-  
-          //   if (resetData) {
-          //     router.push("/")
-          //   }
-          // }
+          // Redirect to login with success message
+          router.push("/login?reset=success");
         } catch(error) {
           console.error("There was an error:", error)
           setError("A server error occurred, please try again")
           setIsLoading(false)
         } 
     }
-
 
     useEffect(() => {
         setError("")
@@ -197,6 +168,7 @@ export default function ResetPasswordForm() {
             id='reset-password'
             text="Submit"
             type="submit"
+            disabled={!sessionChecked || !!error}
           />
       </form>
     )
