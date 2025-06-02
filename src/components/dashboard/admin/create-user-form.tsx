@@ -1,9 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { createUser } from "@/lib/supabase-actions";
+import { createUser } from "@/lib/admin-actions";
 import Input from "@/components/ui/input";
 import Select from "@/components/ui/select";
+import { z } from "zod";
 
 
 type FormProps = {
@@ -19,26 +20,53 @@ const initialFormState = {
     companyName: ""
 };
 
+const createUserSchema = z.object({
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    userType: z.string().min(1, "User type is required"),
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
+    companyName: z.string().optional(),
+  });
+
 
 type FormStateType = typeof initialFormState;
 
 export default function CreateUserForm({ toggleModal }: FormProps) {
     const [formState, setFormState] = useState<FormStateType>(initialFormState);
-
+    const [successMessage, setSuccessMessage] = useState<string>("");
+    const [errorMessage, setErrorMessage] = useState<string>("");
+    const [isLoading, setIsLoading] = useState<boolean>(false);
    
     const handleInputChange = (name: string, value: string) => {
         setFormState((prev:any) => ({ ...prev, [name]: value }));
+        setSuccessMessage("");
+        setErrorMessage("");
     };
 
     const handleFormSubmit = async (e: React.FormEvent) => {
-        e.preventDefault(); // Prevent default form submission
+        e.preventDefault();
+        setIsLoading(true);
+        setErrorMessage("");
+        setSuccessMessage("");
 
         try {
+            createUserSchema.parse(formState);
             await createUser(formState);
-            toggleModal();
-        } catch (error) {
-            // Handle error (e.g., display an error message)
-            console.error("Error creating user:", error);
+            setSuccessMessage("User created successfully");
+            setTimeout(() => {
+                setSuccessMessage("");
+                toggleModal();
+            }, 1500);
+            setFormState(initialFormState);
+        } catch (error: any) {
+            if (error instanceof z.ZodError) {
+                setErrorMessage(error.errors.map(e => e.message).join(", "));
+                } else {
+                setErrorMessage(error?.message || "Error creating user");
+            }
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -108,8 +136,25 @@ export default function CreateUserForm({ toggleModal }: FormProps) {
                     setFormState={(value) => handleInputChange("companyName", value)}
                 />
 
-                <button className="bg-orange rounded-md p-2 text-white" type="submit">Create New User</button>
+                <button 
+                    className="bg-orange rounded-md p-2 text-white" 
+                    type="submit"
+                    disabled={isLoading}
+                >
+                    {isLoading ? "Creating..." : "Create New User"}
+                </button>
             </form>
+
+            { successMessage && (
+                <p data-message="user-created-success" className="text-xs text-green-500">
+                    {successMessage}
+                </p>
+            )}
+            { errorMessage && ( 
+                <p data-message="user-created-error" className="text-xs text-red-500">
+                    {errorMessage}
+                </p>
+            )}
         </div>
     );
 }

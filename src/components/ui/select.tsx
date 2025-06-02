@@ -103,7 +103,7 @@ const Select: React.FC<SelectProps> = ({
         {label}
       </label>
 
-      <div className={selectClass} onClick={toggleDropdown}>
+      <div className={selectClass} onClick={toggleDropdown} role="button" data-testid={`custom-select-${name}`}>
         <p className="text-sm mb-0">{prepopulate}</p>
         <Image
           src={"/images/chevron-down-icon.svg"}
@@ -134,6 +134,8 @@ const Select: React.FC<SelectProps> = ({
                   key={index}
                   onClick={() => updateOption(item)}
                   className={dropdownOptionClass}
+                  role="option"
+                  data-testid={`custom-select-option-${item}`}
                 >
                   <p className="mb-0">{item}</p>
                 </div>

@@ -20,7 +20,7 @@ export default function CreateNewUser() {
                 </Modal>
             }
             
-            <button onClick={toggleModal} className="rounded-md text-white text-sm bg-orange p-1.5"> Create New User </button>
+            <button id="user-modal-btn" onClick={toggleModal} className="rounded-md text-white text-sm bg-orange p-1.5"> Create New User </button>
         </div>
     )
 }

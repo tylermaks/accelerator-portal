@@ -28,7 +28,7 @@ export default async function MembersTable( { data } : UserProps) {
                 { 
                    data && data.map(user => (
                     <tr key={user.user_id}>
-                        <td className={rowStyles}>{user.first_name} {user.last_name}</td>
+                        <td data-user-id={`${user.user_id}`} className={rowStyles}>{user.first_name} {user.last_name}</td>
                         <td className={rowStyles}>{user.user_type ? user.user_type : "N/A"}</td>
                         <td className={rowStyles}>{user.company_name ? user.company_name : "N/A"}</td>
                         <td className={rowStyles}>
