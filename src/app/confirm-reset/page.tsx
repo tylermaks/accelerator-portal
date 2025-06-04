@@ -7,7 +7,7 @@ import Image from "next/image";
 
 
 export default function ConfirmReset() {
-  const [url, setUrl] = useState<string>('');
+  const [token, setToken] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
@@ -16,24 +16,33 @@ export default function ConfirmReset() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const pathName = window.location.search;
-      const urlParams = new URLSearchParams(pathName);
-      const pathUrl = urlParams?.get('url');
-      const emailUrl = urlParams?.get('email')
-      if (typeof pathUrl === 'string') {
-        setUrl(pathUrl);
+      const urlParams = new URLSearchParams(window.location.search);
+      const encodedUrl = urlParams.get('url');
+      const emailValue = urlParams.get('email') || "";
+
+      let tokenParam = "";
+      if (encodedUrl) {
+        try {
+          const decodedUrl = decodeURIComponent(encodedUrl);
+          const urlObj = new URL(decodedUrl);
+          tokenParam = urlObj.searchParams.get("token") || "";
+        } catch (e) {
+          setError("Invalid or expired reset link. Please request a new one.");
+        }
       }
-      if (typeof emailUrl === 'string') {
-        setEmail(emailUrl);
-      }
+
+      setToken(tokenParam);
+      setEmail(emailValue);
     }
   }, []);
 
   const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => { 
     event.preventDefault()
     setError(null);
+
+    // Call Supabase to verify the OTP token for password recovery
     const { error: verifyError } = await supabase.auth.verifyOtp({
-      token: url,
+      token: token,
       email: email,
       type: "recovery"
     });
@@ -43,7 +52,8 @@ export default function ConfirmReset() {
       return;
     }
 
-    router.push(url)
+    // Redirect to the password reset page after successful verification
+    router.push('/reset-password')
   }
 
   return (
