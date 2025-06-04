@@ -9,6 +9,7 @@ import Image from "next/image";
 export default function ConfirmReset() {
   const [url, setUrl] = useState<string>('');
   const [email, setEmail] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
 
   const router = useRouter()
   const supabase = createClient()
@@ -30,7 +31,7 @@ export default function ConfirmReset() {
 
   const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => { 
     event.preventDefault()
-    console.log("HANDLE SUBMIT ENGAGED", url, email)
+    setError(null);
     const { error: verifyError } = await supabase.auth.verifyOtp({
       token: url,
       email: email,
@@ -38,11 +39,10 @@ export default function ConfirmReset() {
     });
 
     if (verifyError) {
-      console.log("Verify Error", verifyError);
-      router.push("/")
+      setError("Invalid or expired reset link. Please request a new one.");
+      return;
     }
 
-    console.log("SUCCESS")
     router.push(url)
   }
 
@@ -65,14 +65,7 @@ export default function ConfirmReset() {
           >
             Reset Password
           </button>
-           
-
-          {/* <Link 
-            className="p-2 bg-orange text-white p-2 w-1/3 text-center rounded-md" 
-            href={url}
-          >
-            Reset password
-          </Link> */}
+          {error && <p className="text-red-500 text-center mt-4">{error}</p>}
         </div>
       </div>
    

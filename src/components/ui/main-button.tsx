@@ -5,6 +5,7 @@ type MainButtonProps =  {
     loading?: boolean
     small?: boolean
     type?: "button" | "submit" | "reset"
+    disabled?: boolean
 }
 
 
@@ -14,7 +15,8 @@ export default function MainButton({
     action,
     loading,
     small,
-    type
+    type,
+    disabled
 
 } : MainButtonProps ) {
     const loadingButtonStyle = loading ? "opacity-50 cursor-not-allowed" : ""
@@ -28,6 +30,7 @@ export default function MainButton({
             type={type || "button"}
             onClick={handleClick}
             className={`${loadingButtonStyle} ${small ? "p-1" : "p-2"} bg-orange text-white p-2 w-full rounded-md `}
+            disabled={disabled || loading}
         >
              {text}
         </button>

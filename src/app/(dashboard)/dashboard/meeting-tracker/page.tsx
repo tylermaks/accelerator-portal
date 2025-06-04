@@ -4,7 +4,7 @@ import getSupportTypeList from "@/components/dashboard/mentor/meeting-tracker/su
 import getCompanyList from "@/components/dashboard/mentor/meeting-tracker/company-list"
 import getTableData from "@/components/dashboard/mentor/meeting-tracker/table-data"
 import getMeetingObjectiveList from "@/components/dashboard/mentor/meeting-tracker/meeting-objective-list";
-import { env } from "@/env"; 
+import { env } from "@/env.server"; 
 
 const getProgramOptionsList = async () => { 
   const url = `https://api.airtable.com/v0/${env.BASE_ID}/${env.PROGRAM_OPTIONS_TABLE_ID}?sort[0][field]=Name&sort[0][direction]=asc`

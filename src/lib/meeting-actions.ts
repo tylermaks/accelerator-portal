@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
 import * as z from "zod"
 import getTableData from '@/components/dashboard/mentor/meeting-tracker/table-data'
-import { env } from "@/env"
+import { env } from "@/env.server"
 
 
 const API_KEY = env.AIRTABLE_API_KEY
