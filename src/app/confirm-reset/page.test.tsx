@@ -31,17 +31,25 @@ describe("ConfirmReset Page", () => {
   const originalLocation = window.location;
 
   beforeEach(() => {
-    // Mock window.location.search
+    // Mock window.location.search with a realistic encoded url containing a token
+    const token = "pkce_testtoken";
+    const encodedUrl = encodeURIComponent(
+      `https://your-supabase-project.supabase.co/auth/v1/verify?token=${token}&type=recovery&redirect_to=https://meeting-tracker.online/reset-password`
+    );
     Object.defineProperty(window, "location", {
       writable: true,
-      value: { search: "?url=/reset-password&email=test@example.com" },
+      value: { search: `?url=${encodedUrl}&email=test@example.com` },
     });
     pushMock.mockReset();
     verifyOtpMock.mockReset();
   });
 
   afterAll(() => {
-    window.location = originalLocation;
+    // Restore window.location to its original state
+    Object.defineProperty(window, "location", {
+      writable: true,
+      value: originalLocation,
+    });
   });
 
   it("renders the main UI elements", () => {
@@ -57,7 +65,7 @@ describe("ConfirmReset Page", () => {
     await userEvent.click(screen.getByRole("button", { name: /Reset Password/i }));
     await waitFor(() => {
       expect(verifyOtpMock).toHaveBeenCalledWith({
-        token: "/reset-password",
+        token: "pkce_testtoken",
         email: "test@example.com",
         type: "recovery",
       });
