@@ -3,9 +3,9 @@
 
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { useState, useEffect, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import PasswordInput from "@/components/ui/password-input";
 import MainButton from "@/components/ui/main-button";
 import * as z from "zod";
@@ -23,7 +23,6 @@ export default function ResetPasswordForm() {
     // -------------------
     // State
     // -------------------
-    const [code, setCode] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
@@ -34,35 +33,12 @@ export default function ResetPasswordForm() {
       number: false,
       specialChar: false,
     });
-    const [sessionChecked, setSessionChecked] = useState(false);
+   
 
     const router = useRouter();
     const supabase = createClient();
-    const searchParams = useSearchParams();
-    const hasErrorParam = searchParams?.has("error");
 
-    // -------------------
-    // On mount: extract code param and check session
-    // -------------------
-    useEffect(() => {
-      if (typeof window !== 'undefined') {
-        const pathName = window.location.search;
-        const urlParams = new URLSearchParams(pathName);
-        const pathUrl = urlParams?.get('code');
-        if (typeof pathUrl === 'string') {
-          setCode(pathUrl);
-        }
-      }
-      // Check for valid session on mount
-      const checkSession = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          setError("Your session has expired or is invalid. Please request a new password reset link.");
-        }
-        setSessionChecked(true);
-      };
-      checkSession();
-    }, []);
+
 
     // -------------------
     // Handlers
@@ -110,11 +86,6 @@ export default function ResetPasswordForm() {
             setIsLoading(false);
             return;
           }
-          if (!code) {
-            setError("Your password reset link is not valid. Either it was already clicked or it has expired. Please request another password reset link");
-            setIsLoading(false);
-            return;
-          }
           const { error: updateUserError } = await supabase.auth.updateUser({
             password: confirmPassword
           });
@@ -134,21 +105,6 @@ export default function ResetPasswordForm() {
     // -------------------
     // Render
     // -------------------
-    if (hasErrorParam) {
-      return (
-        <div className="flex flex-col items-center gap-4 pt-24">
-          <p className="text-fsGray font-semibold">
-            Your password reset link is invalid or expired.
-          </p>
-          <a
-            href="/"
-            className="text-orange underline"
-          >
-            Request a new password reset link
-          </a>
-        </div>
-      );
-    }
     return (
       <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
           <div>
@@ -192,7 +148,7 @@ export default function ResetPasswordForm() {
             id='reset-password'
             text="Submit"
             type="submit"
-            disabled={!sessionChecked || !!error}
+            disabled={!!error}
           />
       </form>
     );

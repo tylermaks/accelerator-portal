@@ -6,7 +6,6 @@ import { render, waitFor, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ResetPasswordForm from "./reset-password-form";
 import * as z from "zod";
-import { useSearchParams } from "next/navigation";
 
 // Global mocks for getUser and updateUser
 const getUserMock = jest.fn();
@@ -31,7 +30,6 @@ jest.mock('next/navigation', () => ({
     forward: jest.fn(),
     prefetch: jest.fn(),
   }),
-  useSearchParams: jest.fn(),
 }));
 
 // Mock next/image to avoid jsdom URL errors
@@ -39,7 +37,7 @@ jest.mock('next/image', () => ({
   __esModule: true,
   default: (props: any) => {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img {...props} />;
+    return <img alt="" {...props} />;
   },
 }));
 
@@ -77,10 +75,7 @@ describe("ResetPasswordForm integration", () => {
     updateUserMock.mockResolvedValue({ error: null });
     // Set the URL so window.location.search is correct for all tests
     window.history.pushState({}, '', '/reset-password?code=123');
-    // Default useSearchParams mock (no error param)
-    (useSearchParams as jest.Mock).mockReturnValue({
-      has: (key: string) => false,
-    });
+  
   });
 
   it("submits and redirects on valid input", async () => {
@@ -93,14 +88,6 @@ describe("ResetPasswordForm integration", () => {
     });
   });
 
-  it("shows error if session is invalid", async () => {
-    getUserMock.mockResolvedValue({ data: { user: null } });
-    const { getByText } = render(<ResetPasswordForm />);
-    await userEvent.click(getByText(/Submit/i));
-    await waitFor(() => {
-      expect(getByText(/session has expired/i)).toBeInTheDocument();
-    });
-  });
 
   it("shows error if passwords do not match", async () => {
     const { getByLabelText, getByText, findByText } = render(<ResetPasswordForm />);
@@ -132,14 +119,5 @@ describe("ResetPasswordForm integration", () => {
         )
       ).toBeInTheDocument();
     });
-  });
-
-  it("renders error message and not the form if error param is present", () => {
-    (useSearchParams as jest.Mock).mockReturnValue({
-      has: (key: string) => key === "error",
-    });
-    render(<ResetPasswordForm />);
-    expect(screen.getByText(/invalid or expired/i)).toBeInTheDocument();
-    expect(screen.queryByLabelText(/new password/i)).not.toBeInTheDocument();
   });
 }); 
