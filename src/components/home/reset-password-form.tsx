@@ -3,7 +3,7 @@
 
 "use client"
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { useState, useEffect, FormEvent } from "react";
 import PasswordInput from "@/components/ui/password-input";
@@ -38,6 +38,8 @@ export default function ResetPasswordForm() {
 
     const router = useRouter();
     const supabase = createClient();
+    const searchParams = useSearchParams();
+    const hasErrorParam = searchParams?.has("error");
 
     // -------------------
     // On mount: extract code param and check session
@@ -132,6 +134,21 @@ export default function ResetPasswordForm() {
     // -------------------
     // Render
     // -------------------
+    if (hasErrorParam) {
+      return (
+        <div className="flex flex-col items-center gap-4 pt-24">
+          <p className="text-fsGray font-semibold">
+            Your password reset link is invalid or expired.
+          </p>
+          <a
+            href="/"
+            className="text-orange underline"
+          >
+            Request a new password reset link
+          </a>
+        </div>
+      );
+    }
     return (
       <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
           <div>
