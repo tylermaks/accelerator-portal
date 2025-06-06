@@ -21,6 +21,7 @@ jest.mock("@/utils/supabase/client", () => ({
 
 const mockPush = jest.fn();
 jest.mock('next/navigation', () => ({
+  ...jest.requireActual("next/navigation"),
   useRouter: () => ({
     push: mockPush,
     replace: jest.fn(),
@@ -36,7 +37,7 @@ jest.mock('next/image', () => ({
   __esModule: true,
   default: (props: any) => {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img {...props} />;
+    return <img alt="" {...props} />;
   },
 }));
 
@@ -74,6 +75,7 @@ describe("ResetPasswordForm integration", () => {
     updateUserMock.mockResolvedValue({ error: null });
     // Set the URL so window.location.search is correct for all tests
     window.history.pushState({}, '', '/reset-password?code=123');
+  
   });
 
   it("submits and redirects on valid input", async () => {
@@ -86,14 +88,6 @@ describe("ResetPasswordForm integration", () => {
     });
   });
 
-  it("shows error if session is invalid", async () => {
-    getUserMock.mockResolvedValue({ data: { user: null } });
-    const { getByText } = render(<ResetPasswordForm />);
-    await userEvent.click(getByText(/Submit/i));
-    await waitFor(() => {
-      expect(getByText(/session has expired/i)).toBeInTheDocument();
-    });
-  });
 
   it("shows error if passwords do not match", async () => {
     const { getByLabelText, getByText, findByText } = render(<ResetPasswordForm />);

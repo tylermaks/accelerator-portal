@@ -2,7 +2,13 @@ import Image from "next/image";
 import ResetPasswordForm from "@/components/home/reset-password-form";
 
 
-export default function ResetPassword() {
+export default function ResetPassword({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  const hasErrorParam = "error" in searchParams;
+
     return (
       <main className="flex h-screen">
         <div className="w-1/2 p-8">
@@ -13,7 +19,11 @@ export default function ResetPassword() {
             alt="logo" 
           />
           <div className="flex flex-col gap-8 p-20 items-center justify-center">
-            <ResetPasswordForm />
+            {hasErrorParam ? (
+              <p>Your link is invalid. Please request another link.</p>
+            ) : (
+              <ResetPasswordForm />
+            )}
           </div>
         </div>
         <div className="relative w-1/2">
