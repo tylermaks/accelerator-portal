@@ -1,6 +1,7 @@
 "use server"
 
 import { createClient } from '@/utils/supabase/server'
+import { requireRole } from '@/utils/supabase/requireRole'
 import { revalidatePath } from 'next/cache'
 import * as z from "zod";
 
@@ -23,6 +24,8 @@ export async function createUser(
       companyName: string
     }) {
     const supabase = await createClient()
+    await requireRole(supabase, 'admin')
+
     try {
       // Validate form data using Zod schema
       const parsedData = createUserSchema.parse(formData);  
@@ -61,6 +64,7 @@ export async function createUser(
 
 export async function deleteUser (formData: FormData){ 
     const supabase = await createClient();
+    await requireRole(supabase, 'admin')
     const userID = formData.get('userID') as string;
     const { data, error } = await supabase.rpc('delete_user', { target_user_id: userID });
 

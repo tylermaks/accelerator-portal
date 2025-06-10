@@ -1,7 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
+import { requireRole } from "@/utils/supabase/requireRole";
 
 export const getUserList = async () => { 
     const supabase = await createClient();
+    await requireRole(supabase, 'admin')
     const { data: userList, error: userListError } = await supabase
         .from("profiles")
         .select("*");
