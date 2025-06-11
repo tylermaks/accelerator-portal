@@ -38,22 +38,6 @@ export default function ProfileEditable({ data, id }: EditableTextProps) {
         }
     }, [editing, value]);
 
-    // useEffect(() => {
-    //     const cancelEditingOnOutsideClick = ( event: MouseEvent) => { 
-    //         if (textareaRef.current && !textareaRef.current.contains(event.target as Node)) { 
-    //             if(editing){ 
-    //                 setEditing(false)
-    //             }
-    //         }
-    //     }
-        
-    //     document.addEventListener("mousedown", cancelEditingOnOutsideClick);
-    //     return () => {
-    //         document.removeEventListener("mousedown", cancelEditingOnOutsideClick);
-    //     };
-    // }, [editing]);
-
-
     const toggleTruncation = () =>  {
         setTruncation(!truncation)
     }
