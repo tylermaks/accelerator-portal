@@ -9,7 +9,7 @@ const BASE_ID = env.EIR_BASE_ID
 const TABLE_ID = env.EIR_PROFILE_TABLE_ID
 
 
-export async function updateProfile(recordID: string, fieldData: Record<string, string[]>) {
+export async function updateProfile(recordID: string, fieldData: Record<string, string | string[]>) {
     const supabase = await createClient();
   
     if(!recordID || !fieldData) { 

@@ -14,6 +14,14 @@ describe('admin-actions', () => {
   beforeEach(() => {
     mockSupabase = {
       rpc: jest.fn(),
+      auth: {
+        getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'test-user-id', email: 'test@example.com', user_metadata: { user_type: 'admin' } } }, error: null }),
+      },
+      from: jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnThis(),
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({ data: { user_type: 'admin' }, error: null }),
+      }),
     };
     jest.spyOn(supabaseServer, 'createClient').mockResolvedValue(mockSupabase);
     (revalidatePath as jest.Mock).mockClear();

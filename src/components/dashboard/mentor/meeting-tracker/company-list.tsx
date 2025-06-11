@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { requireRole } from "@/utils/supabase/requireRole";
 
 interface CompanyRecord { 
-    id: string, 
+    id: string;
     fields: { 
         companyName: string
     }

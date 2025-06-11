@@ -43,7 +43,6 @@ type SupportType = {
 
 type Company =  {
   id: string; 
-  createdTime: string; 
   fields: { 
     companyName: string;
   }
@@ -59,7 +58,7 @@ export default async function MeetingTracker({
     const supportTypeOptions = await getSupportTypeList()
     const supportTypeList = supportTypeOptions && supportTypeOptions?.records?.map((item:SupportType ) => item.fields)
     const companyListOptions = await getCompanyList()
-    const companyList = companyListOptions?.map((item: Company) => item?.fields.companyName)
+    const companyList = companyListOptions?.map((item) => item?.fields.companyName)
     const programOptionsList = await getProgramOptionsList()
     const meetingObjectiveList = await getMeetingObjectiveList()
 
